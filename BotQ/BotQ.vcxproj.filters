@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Исходные файлы">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Файлы заголовков">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Файлы ресурсов">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Code\MainLoader.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Window.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\BaseLevel.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\RenderBeast.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\SSAO.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Kubizm.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Prefabs.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\Window.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\RenderBeast.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\SSAO.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\MyGlBackend.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Shaders\28days.ttf" />
+    <Font Include="Shaders\hg.ttf" />
+    <Font Include="Skin\ArialRoundedMTStd.otf" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\AlbedoInstanced.glsl" />
+    <None Include="Shaders\Blur.glsl" />
+    <None Include="Shaders\Debug.glsl" />
+    <None Include="Shaders\Flat.glsl" />
+    <None Include="Shaders\Fxaa.glsl" />
+    <None Include="Shaders\GodRays.glsl" />
+    <None Include="Shaders\Gui.glsl" />
+    <None Include="Shaders\Light.glsl" />
+    <None Include="Shaders\PostProcess.glsl" />
+    <None Include="Shaders\ShadowGeometryInstanced.glsl" />
+    <None Include="Shaders\SkyBox.glsl" />
+    <None Include="Shaders\Ssao.glsl" />
+    <None Include="Shaders\SsaoBlur.glsl" />
+    <None Include="Data\_editor.indent" />
+    <None Include="Data\assets.indent" />
+    <None Include="Data\assets2.indent" />
+    <None Include="Data\assets3.indent" />
+    <None Include="Data\assets4.indent" />
+    <None Include="Data\assets5.indent" />
+    <None Include="Data\assets6.indent" />
+    <None Include="Data\assets7.indent" />
+    <None Include="Shaders\ChromaticAberration.glsl" />
+    <None Include="Shaders\RgbSplit.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Skin\box.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\button active.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\button hover.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\button.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\toggle active.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\toggle hover.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\toggle on active.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\toggle on hover.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\toggle on.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Skin\toggle.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

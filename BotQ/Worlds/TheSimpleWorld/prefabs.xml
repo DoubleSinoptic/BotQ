@@ -1,0 +1,18 @@
+<DeclPrefab path="/PickUp.prefab">	
+	<GameObject name="CarPhysicsBody">
+		<Compoent name="RigidBody">
+			<SetProp name="mass" value="400"/>			
+		</Compoent>
+		<Compoent name="BoxCollider">
+			<SetProp name="size" value="2.4:4.1:2"/>	
+		</Compoent>	
+		<Compoent name="CarCollider">
+			<AddWheel/><AddWheel/><AddWheel/><AddWheel/>
+		</Compoent>	
+	<GameObject>
+	<GameObject  name="CarRenderBody">
+		<SelectParent name="CarPhysicsBody"/>
+		<SelectRenderMesh path="/assets/PickUp/PickUpBody.fbx">
+		<SelectLocalTransform position="0:0:0" eulerRotation="0:0:0">
+	</GameObject>
+</DeclPrefab>

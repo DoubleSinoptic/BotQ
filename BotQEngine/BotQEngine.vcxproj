@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Code\Bits\TiXml\tinystr.cpp" />
+    <ClCompile Include="Code\Bits\TiXml\tinyxml.cpp" />
+    <ClCompile Include="Code\Bits\TiXml\tinyxmlerror.cpp" />
+    <ClCompile Include="Code\Bits\TiXml\tinyxmlparser.cpp" />
+    <ClCompile Include="Code\Common\File.cpp" />
+    <ClCompile Include="Code\Graphics\Bitmap9Path.cpp" />
+    <ClCompile Include="Code\Bits\BitImpl.cpp" />
+    <ClCompile Include="Code\Camera.cpp" />
+    <ClCompile Include="Code\Graphics\Font.cpp" />
+    <ClCompile Include="Code\Gui\Box.cpp" />
+    <ClCompile Include="Code\Gui\Button.cpp" />
+    <ClCompile Include="Code\Gui\GuiRenderData.cpp" />
+    <ClCompile Include="Code\Gui\HScrollBox.cpp" />
+    <ClCompile Include="Code\Gui\ImageCanvas.cpp" />
+    <ClCompile Include="Code\Gui\CheckBox.cpp" />
+    <ClCompile Include="Code\Gui\Label.cpp" />
+    <ClCompile Include="Code\Level.cpp" />
+    <ClCompile Include="Code\Network\LocalHostCaster.cpp" />
+    <ClCompile Include="Code\Network\Network.cpp" />
+    <ClCompile Include="Code\Network\NetworkEntityBase.cpp" />
+    <ClCompile Include="Code\Network\tinyfsssocket.cpp" />
+    <ClCompile Include="Code\Network\tinyrpc.cpp" />
+    <ClCompile Include="Code\Network\tinysocket.cpp" />
+    <ClCompile Include="Code\Time.cpp" />
+    <ClCompile Include="Code\Common\Log.cpp" />
+    <ClCompile Include="Code\Common\OsInformation.cpp" />
+    <ClCompile Include="Code\Common\PathHelper.cpp" />
+    <ClCompile Include="Code\Common\String.cpp" />
+    <ClCompile Include="Code\Common\TinyFile.cpp" />
+    <ClCompile Include="Code\Common\TypedObject.cpp" />
+    <ClCompile Include="Code\Component.cpp" />
+    <ClCompile Include="Code\DigitalContainer.cpp" />
+    <ClCompile Include="Code\Display.cpp" />
+    <ClCompile Include="Code\Event.cpp" />
+    <ClCompile Include="Code\GameInstance.cpp" />
+    <ClCompile Include="Code\GameObject.cpp" />
+    <ClCompile Include="Code\GameObjectEvents.cpp" />
+    <ClCompile Include="Code\Graphics\Bitmap.cpp" />
+    <ClCompile Include="Code\Graphics\Texture.cpp" />
+    <ClCompile Include="Code\Input.cpp" />
+    <ClCompile Include="Code\IWindow.cpp" />
+    <ClCompile Include="Code\Math\Rectangle.cpp" />
+    <ClCompile Include="Code\MeshImporter.cpp" />
+    <ClCompile Include="Code\MoveMaster.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\BoxCollider.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\CarCollider.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\Collider.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\Physics.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\RigidBody.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\SphereCollider.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\TrianglesCollider.cpp" />
+    <ClCompile Include="Code\Resource.cpp" />
+    <ClCompile Include="Code\ResourceLoader.cpp" />
+    <ClCompile Include="Code\Sge2Common.cpp" />
+    <ClCompile Include="Code\SharedInfo.cpp" />
+    <ClCompile Include="Code\TaskTranslator.cpp" />
+    <ClCompile Include="Code\Tools.cpp" />
+    <ClCompile Include="Code\Gui\Control.cpp" />
+    <ClCompile Include="Code\Gui\GuiInstance.cpp" />
+    <ClCompile Include="Code\Common\Exception.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Code\Bits\TiXml\tinystr.h" />
+    <ClInclude Include="Code\Bits\TiXml\tinyxml.h" />
+    <ClInclude Include="Code\Common\File.h" />
+    <ClInclude Include="Code\Common\Format.h" />
+    <ClInclude Include="Code\Graphics\Bitmap9Path.h" />
+    <ClInclude Include="Code\Bits\stb_image.h" />
+    <ClInclude Include="Code\Bits\stb_truetype.h" />
+    <ClInclude Include="Code\Camera.h" />
+    <ClInclude Include="Code\Graphics\Font.h" />
+    <ClInclude Include="Code\Gui\Box.h" />
+    <ClInclude Include="Code\Gui\Button.h" />
+    <ClInclude Include="Code\Gui\CheckBox.h" />
+    <ClInclude Include="Code\Gui\Gui.h" />
+    <ClInclude Include="Code\Gui\GuiRenderData.h" />
+    <ClInclude Include="Code\Gui\HScrollBox.h" />
+    <ClInclude Include="Code\Gui\HSlider.h" />
+    <ClInclude Include="Code\Gui\ImageCanvas.h" />
+    <ClInclude Include="Code\Gui\Label.h" />
+    <ClInclude Include="Code\Network\LocalHostCaster.h" />
+    <ClInclude Include="Code\Network\NetworkEntityBase.h" />
+    <ClInclude Include="Code\Network\Network.h" />
+    <ClInclude Include="Code\Network\tinybinarystream.h" />
+    <ClInclude Include="Code\Network\tinyfsssocket.h" />
+    <ClInclude Include="Code\Network\tinyrpc.h" />
+    <ClInclude Include="Code\Network\tinysocket.h" />
+    <ClInclude Include="Code\Time.hpp" />
+    <ClInclude Include="Code\Common\Assert.h" />
+    <ClInclude Include="Code\Common\DataVector.h" />
+    <ClInclude Include="Code\Common\Defines.h" />
+    <ClInclude Include="Code\Common\DynamicArray.h" />
+    <ClInclude Include="Code\Common\Guard.h" />
+    <ClInclude Include="Code\Common\Log.h" />
+    <ClInclude Include="Code\Common\OsInformation.h" />
+    <ClInclude Include="Code\Common\PathHelper.h" />
+    <ClInclude Include="Code\Common\Ref.h" />
+    <ClInclude Include="Code\Common\StorageFunction.h" />
+    <ClInclude Include="Code\Common\String.h" />
+    <ClInclude Include="Code\Common\TinyFile.h" />
+    <ClInclude Include="Code\Common\TypedObject.h" />
+    <ClInclude Include="Code\Common\Utf8.h" />
+    <ClInclude Include="Code\Common\Wrong.h" />
+    <ClInclude Include="Code\Component.h" />
+    <ClInclude Include="Code\Core.h" />
+    <ClInclude Include="Code\DigitalContainer.h" />
+    <ClInclude Include="Code\Display.h" />
+    <ClInclude Include="Code\Event.h" />
+    <ClInclude Include="Code\GameInstance.h" />
+    <ClInclude Include="Code\GameObject.h" />
+    <ClInclude Include="Code\GameObjectEvents.h" />
+    <ClInclude Include="Code\Graphics\Bitmap.h" />
+    <ClInclude Include="Code\Graphics\Texture.h" />
+    <ClInclude Include="Code\Input.h" />
+    <ClInclude Include="Code\InputKeys.h" />
+    <ClInclude Include="Code\IWindow.h" />
+    <ClInclude Include="Code\Level.h" />
+    <ClInclude Include="Code\Math\BBox3.h" />
+    <ClInclude Include="Code\Math\Color.h" />
+    <ClInclude Include="Code\Math\Color4f.h" />
+    <ClInclude Include="Code\Math\Math.h" />
+    <ClInclude Include="Code\Math\Matrix4.h" />
+    <ClInclude Include="Code\Math\PointAndSize.h" />
+    <ClInclude Include="Code\Math\Quaternion.h" />
+    <ClInclude Include="Code\Math\Rectangle.h" />
+    <ClInclude Include="Code\Math\Vector2.h" />
+    <ClInclude Include="Code\Math\Vector3.h" />
+    <ClInclude Include="Code\Math\Vector4.h" />
+    <ClInclude Include="Code\MeshImporter.h" />
+    <ClInclude Include="Code\ModelDump.h" />
+    <ClInclude Include="Code\MoveMaster.h" />
+    <ClInclude Include="Code\PhysicsComponents\BoxCollider.h" />
+    <ClInclude Include="Code\PhysicsComponents\CarCollider.h" />
+    <ClInclude Include="Code\PhysicsComponents\Collider.h" />
+    <ClInclude Include="Code\PhysicsComponents\Detail\BtDetail.h" />
+    <ClInclude Include="Code\PhysicsComponents\Physics.h" />
+    <ClInclude Include="Code\PhysicsComponents\RigidBody.h" />
+    <ClInclude Include="Code\PhysicsComponents\SphereCollider.h" />
+    <ClInclude Include="Code\PhysicsComponents\TrianglesCollider.h" />
+    <ClInclude Include="Code\Resource.h" />
+    <ClInclude Include="Code\ResourceLoader.h" />
+    <ClInclude Include="Code\Sge2Common.h" />
+    <ClInclude Include="Code\Stream.h" />
+    <ClInclude Include="Code\TaskTranslator.h" />
+    <ClInclude Include="Code\Tools.h" />
+    <ClInclude Include="Code\Gui\Control.h" />
+    <ClInclude Include="Code\Gui\GuiInstance.h" />
+    <ClInclude Include="Code\Common\Exception.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BotQGraphics\BotQGraphics.vcxproj">
+      <Project>{341ce871-dfde-41f3-8453-292ffade6838}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\BotQSystemTools\BotQSystemTools.vcxproj">
+      <Project>{e14f9642-0f16-4ee1-9d5e-355d217d3601}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\BulletPhysics\BulletPhysics.vcxproj">
+      <Project>{5d01c370-2342-4e5b-9a82-9e7f7d43ff1a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\zlib_static\zlib_static.vcxproj">
+      <Project>{2db74202-936d-4f53-92de-3c99ac2a3185}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Code\Network\tinyclient_crc32.inl" />
+    <None Include="Code\Network\tinysocket_parser.inl" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{FAFF638C-07E1-4482-89C6-0D335ECE9CAD}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>BotQEngine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <TargetExt>.dll</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>./Code;../BulletPhysics/Code;../BotQSystemTools/Code;;../BotQGraphics/Code;../ThirdParty/include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>"..\ThirdParty\bin\assimpd-vc140-mt.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>./Code;../BulletPhysics/Code;../BotQSystemTools/Code;;../BotQGraphics/Code;../ThirdParty/include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>"..\ThirdParty\bin64\assimpd-vc140-mt.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>./Code;../BulletPhysics/Code;../BotQSystemTools/Code;;../BotQGraphics/Code;../ThirdParty/include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>"..\ThirdParty\bin\assimp-vc140-mt.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalIncludeDirectories>./Code;../BulletPhysics/Code;../BotQSystemTools/Code;;../BotQGraphics/Code;../ThirdParty/include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>"..\ThirdParty\bin64\assimp-vc140-mt.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
