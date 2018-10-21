@@ -21,7 +21,6 @@ uniform sampler2D rez_map;
 uniform sampler2D god_map;
 uniform sampler2D blur_map;
 uniform sampler2D glow_map;
-
 float gamma = 2.2;
 
 vec3 linearToneMapping(vec3 color)
@@ -121,8 +120,10 @@ void main()
 	vec3 blur = texture(blur_map, coordX).rgb ;
 	vec3 god = texture(god_map, coordX).rgb * 0.1;
 	vec3 color = texture(rez_map, coordX).rgb;
+	vec3 glow = texture(glow_map, coordX).rgb;
 
-	vec3 final = Uncharted2ToneMappingConfigure(color + god + blur * 1.0);
+	
+	vec3 final = Uncharted2ToneMappingConfigure(color  + blur  + god );
 	
 
     FragColor = vec4(final, 1.0);

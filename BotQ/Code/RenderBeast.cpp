@@ -498,7 +498,7 @@ void RenderBeast::Draw()
 		shadowPas = new Gl3dFrameBuffer(SHADOW_SIZE_W, SHADOW_SIZE_H, { }, { PixelFormat::DEPTH_16 });	
 		pingpongHFBOobject = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
 		pingpongVFBOobject = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
-		glowPas = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
+		glowPas = new Gl3dFrameBuffer(s.width , s.height , { PixelFormat::RGBA_16F });
 		fxaaPas = new Gl3dFrameBuffer(s.width, s.height, { PixelFormat::RGBA_16F });	
 		godRaysPas = new Gl3dFrameBuffer(s.width, s.height, { PixelFormat::RGBA_16F });
 		for(int i = 0; i < 2; i++)
@@ -890,7 +890,7 @@ void RenderBeast::Draw()
 	}*/
 
 
-	Gl3dDevice::Viewport(s.width / 5, s.height / 5);
+	Gl3dDevice::Viewport(s.width , s.height );
 	{
 		Stopwacth __("Glow-S pass");
 		Gl3dRenderPas pass(glow.GetPtr(), glowPas.GetPtr());
@@ -903,7 +903,8 @@ void RenderBeast::Draw()
 
 	bool horizontal = true;
 	bool first_iteration = true;
-	int amount = 10;
+	const int c = 3;
+	const int amount = 2 * c;
 
 	Gl3dDevice::Viewport(s.width / 5, s.height / 5);
 	{	
@@ -987,7 +988,8 @@ void RenderBeast::Draw()
 		//rezultPass.Uniform("rez_map", renderPas->GetColorTexture(0));
 		rezultPass.FastUniform("rez_map", compositPas[0]->GetColorTexture(0));
 		rezultPass.FastUniform("blur_map", getHVpingbong(!horizontal)->GetColorTexture(0));
-
+		rezultPass.FastUniform("glow_map", glowPas->GetColorTexture(0));
+		
 		quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 		
 
