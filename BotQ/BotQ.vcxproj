@@ -64,9 +64,11 @@
     <None Include="Shaders\Debug.glsl" />
     <None Include="Shaders\Flat.glsl" />
     <None Include="Shaders\Fxaa.glsl" />
+    <None Include="Shaders\Glow.glsl" />
     <None Include="Shaders\GodRays.glsl" />
     <None Include="Shaders\Gui.glsl" />
     <None Include="Shaders\Light.glsl" />
+    <None Include="Shaders\PostProcess — копия.glsl" />
     <None Include="Shaders\PostProcess.glsl" />
     <None Include="Shaders\RgbSplit.glsl" />
     <None Include="Shaders\ShadowGeometryInstanced.glsl" />
@@ -75,6 +77,8 @@
     <None Include="Shaders\SsaoBlur.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Shaders\GeometryHide.png" />
+    <Image Include="Shaders\NDF.png" />
     <Image Include="Skin\box.png" />
     <Image Include="Skin\button active.png" />
     <Image Include="Skin\button hover.png" />

@@ -360,7 +360,7 @@ RenderBeast::RenderBeast()
 	shaderStates.Add(new ShaderState("./Shaders/SkyBox.glsl", skybox));
 	shaderStates.Add(new ShaderState("./Shaders/Fxaa.glsl", fxaa));
 	shaderStates.Add(new ShaderState("./Shaders/Gui.glsl", gui));
-	
+	shaderStates.Add(new ShaderState("./Shaders/Glow.glsl", glow));
 
 	RerootAllSquncys();
 
@@ -498,6 +498,7 @@ void RenderBeast::Draw()
 		shadowPas = new Gl3dFrameBuffer(SHADOW_SIZE_W, SHADOW_SIZE_H, { }, { PixelFormat::DEPTH_16 });	
 		pingpongHFBOobject = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
 		pingpongVFBOobject = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
+		glowPas = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
 		fxaaPas = new Gl3dFrameBuffer(s.width, s.height, { PixelFormat::RGBA_16F });	
 		godRaysPas = new Gl3dFrameBuffer(s.width, s.height, { PixelFormat::RGBA_16F });
 		for(int i = 0; i < 2; i++)
@@ -889,6 +890,16 @@ void RenderBeast::Draw()
 	}*/
 
 
+	Gl3dDevice::Viewport(s.width / 5, s.height / 5);
+	{
+		Stopwacth __("Glow-S pass");
+		Gl3dRenderPas pass(glow.GetPtr(), glowPas.GetPtr());
+		Gl3dDevice::Clear();
+	
+		pass.Uniform("input", renderPas->GetColorTexture(1));
+		quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
+	}
+
 
 	bool horizontal = true;
 	bool first_iteration = true;
@@ -903,7 +914,7 @@ void RenderBeast::Draw()
 
 
 			pingpongpass.FastUniform("horizontal", horizontal);
-			pingpongpass.FastUniform("image", first_iteration ? renderPas->GetColorTexture(1) : getHVpingbong(!horizontal)->GetColorTexture(0));
+			pingpongpass.FastUniform("image", first_iteration ? glowPas->GetColorTexture(0) : getHVpingbong(!horizontal)->GetColorTexture(0));
 
 			quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 

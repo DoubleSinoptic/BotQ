@@ -20,6 +20,7 @@ in vec2 frag_texcoord;
 uniform sampler2D rez_map;
 uniform sampler2D god_map;
 uniform sampler2D blur_map;
+uniform sampler2D glow_map;
 
 float gamma = 2.2;
 
@@ -92,7 +93,7 @@ vec3 Uncharted2ToneMappingConfigure(vec3 color)
 	color = ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
 	float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
 	color /= white;
-	color = pow(color, vec3(1.0 / 1.2));
+	color = pow(color, vec3(1.0 / 1.35));
 	return color;
 }
 
@@ -108,40 +109,6 @@ vec3 filmicToneMapping(vec3 color)
 	return color;
 }
 
-vec3 lineraze(vec3 c)
-{
-	return pow(c, vec3(1 / 2.2));
-}
-
-vec3 blur_attach(vec2 texel)
-{
-	const float hfMul = 310.0;
-	vec2 pixelExtents = vec2(1.0) / vec2(textureSize(rez_map, 0));
-	float glow = 4.0 * ((pixelExtents.x + pixelExtents.y) / 2.0);
-	vec3 bloom = vec3(0);
-	int count = 0;
-	for(float x = texel.x - glow; x < texel.x + glow; x += pixelExtents.x)
-	{
-		for(float y = texel.y - glow; y < texel.y + glow; y += pixelExtents.y)
-		{	
-			if(length(vec2(x, y) - texel) <= glow)
-			{
-				bloom += (texture(rez_map, vec2(x, y)).rgb - 0.4) * hfMul;
-				count++;
-			}
-			
-		}
-
-	}
-	bloom = clamp(bloom / (count * hfMul), 0.0, 1.0);
-	return bloom;
-}
-
-bool lnfnc(vec3 c)
-{
-	return max(max(c.r, c.g), c.b) > 1.0;
-}
-
 void main()
 {
 #define USE_BORDER_MASK
@@ -151,15 +118,11 @@ void main()
 	coordX = coordX * vec2(1.0 - offset) + vec2(offset / 2.0);
 #endif
 
-	vec3 blur = texture(blur_map, coordX).rgb * 0.1;
+	vec3 blur = texture(blur_map, coordX).rgb ;
 	vec3 god = texture(god_map, coordX).rgb * 0.1;
 	vec3 color = texture(rez_map, coordX).rgb;
-	
 
-
-	color += blur_attach( coordX) ;
-	
-	vec3 final = Uncharted2ToneMappingConfigure(color + god + blur);
+	vec3 final = Uncharted2ToneMappingConfigure(color + god + blur * 1.0);
 	
 
     FragColor = vec4(final, 1.0);

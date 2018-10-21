@@ -52,6 +52,7 @@ class RenderBeast
 	Ref<Gl3dShader> ssao;
 	Ref<Gl3dShader> ssaoBlur;
 	Ref<Gl3dShader> fxaa;
+	Ref<Gl3dShader> glow;
 
 	Ref<Gl3dShader> albedoInstanced;
 	Ref<Gl3dShader> albedo;
@@ -85,6 +86,7 @@ class RenderBeast
 	Ref<Gl3dArray<Vector2>> quad2Vertexes;
 	int quad2VertexesCount;
 	Ref<Gl3dFrameBuffer> godRaysPas;
+	Ref<Gl3dFrameBuffer> glowPas;
 	Ref<Gl3dFrameBuffer> pingpongHFBOobject;
 	Ref<Gl3dFrameBuffer> pingpongVFBOobject;
 	Ref<Gl3dFrameBuffer>& getHVpingbong(bool i)

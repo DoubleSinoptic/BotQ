@@ -80,6 +80,8 @@
     <None Include="Data\assets7.indent" />
     <None Include="Shaders\ChromaticAberration.glsl" />
     <None Include="Shaders\RgbSplit.glsl" />
+    <None Include="Shaders\Glow.glsl" />
+    <None Include="Shaders\PostProcess — копия.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Skin\box.png">
@@ -110,6 +112,12 @@
       <Filter>Файлы ресурсов</Filter>
     </Image>
     <Image Include="Skin\toggle.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Shaders\GeometryHide.png">
+      <Filter>Файлы ресурсов</Filter>
+    </Image>
+    <Image Include="Shaders\NDF.png">
       <Filter>Файлы ресурсов</Filter>
     </Image>
   </ItemGroup>
