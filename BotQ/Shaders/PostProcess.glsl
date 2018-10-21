@@ -154,7 +154,10 @@ void main()
 	vec3 blur = texture(blur_map, coordX).rgb * 0.1;
 	vec3 god = texture(god_map, coordX).rgb * 0.1;
 	vec3 color = texture(rez_map, coordX).rgb;
-	//color += blur_attach( coordX) ;
+	
+
+
+	color += blur_attach( coordX) ;
 	
 	vec3 final = Uncharted2ToneMappingConfigure(color + god + blur);
 	
