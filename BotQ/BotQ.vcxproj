@@ -59,6 +59,10 @@
     <None Include="Data\assets7.indent" />
     <None Include="Data\_editor.indent" />
     <None Include="Shaders\AlbedoInstanced.glsl" />
+    <None Include="Shaders\BloomDownsample.glsl" />
+    <None Include="Shaders\BloomFinal.glsl" />
+    <None Include="Shaders\BloomPrefilter.glsl" />
+    <None Include="Shaders\BloomUpsample.glsl" />
     <None Include="Shaders\Blur.glsl" />
     <None Include="Shaders\ChromaticAberration.glsl" />
     <None Include="Shaders\Debug.glsl" />

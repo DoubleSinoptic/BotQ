@@ -27,6 +27,8 @@ Gl3dRenderPas::~Gl3dRenderPas()
 
 void Gl3dRenderPas::Uniform(const char* uniform, Gl3dTexture* texture) const
 {
+	if (!texture)
+		return;
 	int cap = mShader->MapLocation(uniform, -1);
 	g3dlogD("G3D$:: uniform val texture(%d): %s\n", cap, uniform);
 	Gl3dTexture::Activate(cap, texture);

@@ -1,8 +1,14 @@
 #pragma once
-
+#include <cmath>
 class Mathf
 {
 public:
+
+	static inline float Log(float a, float b)
+	{
+		return  std::log(a) / std::log(b);
+	}
+
 	static inline bool Equal(float a, float b, float epsilon = 0.000001)
 	{
 		if (Mathf::Abs(a - b) > epsilon)
@@ -39,14 +45,14 @@ public:
 		return v1;
 	}
 
+	
 	static float Clamp(float v, float min, float max)
 	{
 		if (v < min)
 			return min;
 		else if (v > max)
 			return max;
-		return v;
-	
+		return v;	
 	}
 
 	static float Clamp01(float val)

@@ -347,7 +347,7 @@ RenderBeast::RenderBeast()
 	shaderStates.Add(new ShaderState("./Shaders/GodRays.glsl", godRays));
 	shaderStates.Add(new ShaderState("./Shaders/PostProcess.glsl", postProcess));
 	shaderStates.Add(new ShaderState("./Shaders/ShadowGeometry.glsl", shadowGeometry));
-	shaderStates.Add(new ShaderState("./Shaders/Blur.glsl", blur));
+	
 	shaderStates.Add(new ShaderState("./Shaders/Flat.glsl", flat));
 	shaderStates.Add(new ShaderState("./Shaders/Debug.glsl", debug));
 	shaderStates.Add(new ShaderState("./Shaders/Albedo.glsl", albedo));
@@ -360,7 +360,14 @@ RenderBeast::RenderBeast()
 	shaderStates.Add(new ShaderState("./Shaders/SkyBox.glsl", skybox));
 	shaderStates.Add(new ShaderState("./Shaders/Fxaa.glsl", fxaa));
 	shaderStates.Add(new ShaderState("./Shaders/Gui.glsl", gui));
-	shaderStates.Add(new ShaderState("./Shaders/Glow.glsl", glow));
+
+	shaderStates.Add(new ShaderState("./Shaders/BloomDownsample.glsl", bloom.downsample));
+	shaderStates.Add(new ShaderState("./Shaders/BloomUpsample.glsl", bloom.upsimple));
+	shaderStates.Add(new ShaderState("./Shaders/BloomPrefilter.glsl", bloom.prefilter));
+	shaderStates.Add(new ShaderState("./Shaders/BloomFinal.glsl", bloom.final));
+
+	bloom.quad2 = quad2;
+	bloom.vertexesCount = quad2VertexesCount;
 
 	RerootAllSquncys();
 
@@ -496,9 +503,6 @@ void RenderBeast::Draw()
 			PixelFormat::RGBA_16F 
 			});
 		shadowPas = new Gl3dFrameBuffer(SHADOW_SIZE_W, SHADOW_SIZE_H, { }, { PixelFormat::DEPTH_16 });	
-		pingpongHFBOobject = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
-		pingpongVFBOobject = new Gl3dFrameBuffer(s.width / 5, s.height / 5, { PixelFormat::RGBA_16F });
-		glowPas = new Gl3dFrameBuffer(s.width , s.height , { PixelFormat::RGBA_16F });
 		fxaaPas = new Gl3dFrameBuffer(s.width, s.height, { PixelFormat::RGBA_16F });	
 		godRaysPas = new Gl3dFrameBuffer(s.width, s.height, { PixelFormat::RGBA_16F });
 		for(int i = 0; i < 2; i++)
@@ -890,40 +894,11 @@ void RenderBeast::Draw()
 	}*/
 
 
-	Gl3dDevice::Viewport(s.width , s.height );
-	{
-		Stopwacth __("Glow-S pass");
-		Gl3dRenderPas pass(glow.GetPtr(), glowPas.GetPtr());
-		Gl3dDevice::Clear();
 	
-		pass.Uniform("input", renderPas->GetColorTexture(1));
-		quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
-	}
-
-
-	bool horizontal = true;
-	bool first_iteration = true;
-	const int c = 5;
-	const int amount = 2 * c;
-
-	Gl3dDevice::Viewport(s.width / 5, s.height / 5);
 	{	
-		Stopwacth __("Glow blum pass");
-		for (int i = 0; i < amount; i++)
-		{
-			Gl3dRenderPas pingpongpass(blur.GetPtr(), getHVpingbong(horizontal).GetPtr());
+		Stopwacth __("Filmic Bloom");
+		bloom.Draw(renderPas->GetColorTexture(0), s.width, s.height);
 
-
-			pingpongpass.FastUniform("horizontal", horizontal);
-			pingpongpass.FastUniform("image", first_iteration ? renderPas->GetColorTexture(1) : getHVpingbong(!horizontal)->GetColorTexture(0));
-
-			quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
-
-			horizontal = !horizontal;
-			if (first_iteration)
-				first_iteration = false;
-		}
-		TRY_EXEC;
 	}
 
 	
@@ -987,9 +962,9 @@ void RenderBeast::Draw()
 		rezultPass.FastUniform("god_map", godRaysPas->GetColorTexture(0));
 		//rezultPass.Uniform("rez_map", renderPas->GetColorTexture(0));
 		rezultPass.FastUniform("rez_map", compositPas[0]->GetColorTexture(0));
-		rezultPass.FastUniform("blur_map", getHVpingbong(!horizontal)->GetColorTexture(0));
-		rezultPass.FastUniform("glow_map", glowPas->GetColorTexture(0));
-		
+		rezultPass.FastUniform("blur_map", bloom.rezult->GetColorTexture(0));
+		rezultPass.FastUniform("pre_map", bloom.prefiltered->GetColorTexture(0));
+
 		quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 		
 

@@ -20,12 +20,12 @@ in vec2 frag_texcoord;
 uniform sampler2D rez_map;
 uniform sampler2D god_map;
 uniform sampler2D blur_map;
-uniform sampler2D glow_map;
-float gamma = 2.2;
+uniform sampler2D pre_map;
+float gamma = 1.35;
 
 vec3 linearToneMapping(vec3 color)
 {
-	float exposure = 5.0;
+	float exposure = 1.0;
 	color = clamp(exposure * color, 0.0, 1.0);
 	color = pow(color, vec3(1.0 / gamma));
 	return color;
@@ -117,13 +117,12 @@ void main()
 	coordX = coordX * vec2(1.0 - offset) + vec2(offset / 2.0);
 #endif
 
-	vec3 blur = pow(texture(blur_map, coordX).rgb, vec3(2.2)) * 0.5 ;
+	vec3 blur = texture(blur_map, coordX).rgb;
 	vec3 god = texture(god_map, coordX).rgb * 0.1;
 	vec3 color = texture(rez_map, coordX).rgb;
-	vec3 glow = texture(glow_map, coordX).rgb;
-
+    vec3 pre = texture(pre_map, coordX).rgb;
 	
-	vec3 final = Uncharted2ToneMappingConfigure(color  + blur  + god );
+	vec3 final = Uncharted2ToneMappingConfigure( blur );
 	
 
     FragColor = vec4(final, 1.0);

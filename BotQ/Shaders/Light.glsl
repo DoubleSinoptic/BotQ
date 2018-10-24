@@ -231,7 +231,7 @@ void main()
 		vec3 H = normalize(V + L);
 		float distance = length(lightPosition - fragPos);
 		float attenuation = 1.0 / (distance * distance);
-		vec3 radiance = lights[i].color * attenuation;
+		vec3 radiance = lights[i].color * attenuation * vec3(1);
 		
 		float NDF = DistributionGGX(N, H, roughness);   
 		float G   = GeometrySmith(N, V, L, roughness);      
@@ -280,7 +280,7 @@ void main()
 	
 
 	float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
-
+	#define BLUR_MODEL_A
 #ifdef BLUR_MODEL_A
     RezBrightColor = vec4(color, fragColor.a);
 	 RezFragColor = vec4(color, fragColor.a);

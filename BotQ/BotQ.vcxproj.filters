@@ -83,6 +83,10 @@
     <None Include="Shaders\Glow.glsl" />
     <None Include="Shaders\PostProcess — копия.glsl" />
     <None Include="Shaders\Downsample.glsl" />
+    <None Include="Shaders\BloomDownsample.glsl" />
+    <None Include="Shaders\BloomPrefilter.glsl" />
+    <None Include="Shaders\BloomUpsample.glsl" />
+    <None Include="Shaders\BloomFinal.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Skin\box.png">
