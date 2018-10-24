@@ -62,6 +62,7 @@
     <None Include="Shaders\Blur.glsl" />
     <None Include="Shaders\ChromaticAberration.glsl" />
     <None Include="Shaders\Debug.glsl" />
+    <None Include="Shaders\Downsample.glsl" />
     <None Include="Shaders\Flat.glsl" />
     <None Include="Shaders\Fxaa.glsl" />
     <None Include="Shaders\Glow.glsl" />

@@ -82,6 +82,7 @@
     <None Include="Shaders\RgbSplit.glsl" />
     <None Include="Shaders\Glow.glsl" />
     <None Include="Shaders\PostProcess — копия.glsl" />
+    <None Include="Shaders\Downsample.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Skin\box.png">

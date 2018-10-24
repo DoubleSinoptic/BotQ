@@ -903,7 +903,7 @@ void RenderBeast::Draw()
 
 	bool horizontal = true;
 	bool first_iteration = true;
-	const int c = 3;
+	const int c = 5;
 	const int amount = 2 * c;
 
 	Gl3dDevice::Viewport(s.width / 5, s.height / 5);
@@ -915,7 +915,7 @@ void RenderBeast::Draw()
 
 
 			pingpongpass.FastUniform("horizontal", horizontal);
-			pingpongpass.FastUniform("image", first_iteration ? glowPas->GetColorTexture(0) : getHVpingbong(!horizontal)->GetColorTexture(0));
+			pingpongpass.FastUniform("image", first_iteration ? renderPas->GetColorTexture(1) : getHVpingbong(!horizontal)->GetColorTexture(0));
 
 			quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 
