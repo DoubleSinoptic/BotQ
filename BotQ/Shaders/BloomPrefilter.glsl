@@ -28,6 +28,7 @@ uniform float	  _Intensity;
 
 float Brightness(vec3 c)
 {
+	//c = pow(c, vec3(4));
     return max(max(c.r, c.g), c.b);
 }
 

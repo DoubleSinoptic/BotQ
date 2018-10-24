@@ -49,7 +49,7 @@ public:
 
 
 
-	float _radius = 2.5f;
+	float _radius = 5.5f;
 	float _intensity = 0.8f;
 	const int kMaxIterations = 16;
 	float _softKnee = 0.5f;
@@ -57,7 +57,7 @@ public:
 	float _threshold = 1.16f;
 	float GammaToLiner(float x) 
 	{	
-		return pow(x, 2.2f);
+		return pow(x, 1/2.2f);
 	}
 	float LinerToGamma(float v)
 	{
@@ -118,7 +118,7 @@ public:
 	}
 	Ref<Gl3dFrameBuffer> last;
 	Ref<Gl3dFrameBuffer> rezult;
-	void Draw(Gl3dTexture* mainTexture, int tw, int th) 
+	void Draw(Gl3dTexture* mainTexture, Gl3dTexture* baseTexture, int tw, int th)
 	{	
 		logh = Mathf::Log(th, 2) + _radius - 8;
 		logh_i = (int)logh;
@@ -154,9 +154,9 @@ public:
 			last = _bludBuffer2[level];
 		}
 
-		_BaseTex = mainTexture;
-		InitOrResize(rezult, mainTexture->GetWidth(),
-			mainTexture->GetHeight());
+		_BaseTex = baseTexture;
+		InitOrResize(rezult, baseTexture->GetWidth(),
+			baseTexture->GetHeight());
 		Blit(last->GetColorTexture(0), rezult, final);
 
 	}

@@ -183,11 +183,9 @@ void main()
 
 	if(fragSett.z > 0)
 	{
-		RezBrightColor = vec4(vec3(pow(1, 1/2.2)), 1.0);
+		RezBrightColor = vec4(fragColor.xyz, 1.0);
 		RezFragColor = vec4(fragColor.xyz , 1.0);
-		//RezBrightColor = vec4(vec3(0.0), 1.0);
-		//RezFragColor = vec4(vec3(0.0), 1.0);
-		RezGodRay = vec4(1.0);	
+		RezGodRay = vec4(fragColor.xyz , 1.0);
 		return;
 	}
 	RezGodRay = vec4(vec3(0.0), 1.0);
@@ -280,9 +278,9 @@ void main()
 	
 
 	float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
-	#define BLUR_MODEL_A
+#define BLUR_MODEL_A
 #ifdef BLUR_MODEL_A
-    RezBrightColor = vec4(color, fragColor.a);
+    RezBrightColor = vec4(pow(color, vec3(1.0)) , fragColor.a);
 	 RezFragColor = vec4(color, fragColor.a);
 #else
 	 RezBrightColor = vec4(pow(clamp(color * brightness, vec3(0.0), vec3(1893.0)), vec3(1/2.2)), 1.0);

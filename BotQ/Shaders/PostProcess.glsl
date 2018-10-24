@@ -87,7 +87,7 @@ vec3 Uncharted2ToneMappingConfigure(vec3 color)
 	float F = 0.30;
 	float W = 11.2;
 	//old 6.4
-	float exposure = 8.0;
+	float exposure = 6.4;
 	color *= exposure;
 	color = ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
 	float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
@@ -122,7 +122,7 @@ void main()
 	vec3 color = texture(rez_map, coordX).rgb;
     vec3 pre = texture(pre_map, coordX).rgb;
 	
-	vec3 final = Uncharted2ToneMappingConfigure( blur );
+	vec3 final = Uncharted2ToneMappingConfigure( blur + god);
 	
 
     FragColor = vec4(final, 1.0);

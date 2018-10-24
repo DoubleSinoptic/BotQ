@@ -897,7 +897,7 @@ void RenderBeast::Draw()
 	
 	{	
 		Stopwacth __("Filmic Bloom");
-		bloom.Draw(renderPas->GetColorTexture(0), s.width, s.height);
+		bloom.Draw(renderPas->GetColorTexture(1), renderPas->GetColorTexture(0), s.width, s.height);
 
 	}
 
