@@ -164,6 +164,7 @@ vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness)
 }   
 //Конец натации
 
+
 void main()
 {
 	fragPos = texture(FragPosition, fragTexcoord).xyz;
@@ -229,8 +230,9 @@ void main()
 		vec3 H = normalize(V + L);
 		float distance = length(lightPosition - fragPos);
 		float attenuation = 1.0 / (distance * distance);
-		vec3 radiance = lights[i].color * attenuation * vec3(1);
-		
+		vec3 radiance = pow(lights[i].color, vec3(2.2)) * 15 * attenuation * vec3(1);
+		//pow(lights[i].color * 0.25, vec3(2.2))
+		//pow(lights[i].color * 0.25, vec3(2.2))
 		float NDF = DistributionGGX(N, H, roughness);   
 		float G   = GeometrySmith(N, V, L, roughness);      
 		vec3 F    = fresnelSchlick(clamp(dot(H, V), 0.0, 1.0), F0);
@@ -251,8 +253,8 @@ void main()
 	
 	
 
-	#define COSEL_PANNING
-#ifdef COSEL_PANNING
+#define PERFORM_CUBEMAP
+#ifdef PERFORM_CUBEMAP
     vec3 F = fresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
     
     vec3 kS = F;
@@ -269,18 +271,18 @@ void main()
 
 
     vec3 ambient = (kD * diffuse + specular) * ao;
+	
 #else
     vec3 ambient = vec3(0.33) * albedo * ao;
 	
 #endif
 
     color = ambient + Lo * mullCoff;
-	
 
 	float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
 #define BLUR_MODEL_A
 #ifdef BLUR_MODEL_A
-    RezBrightColor = vec4(pow(color, vec3(1.0)) , fragColor.a);
+     RezBrightColor = vec4(color , fragColor.a);
 	 RezFragColor = vec4(color, fragColor.a);
 #else
 	 RezBrightColor = vec4(pow(clamp(color * brightness, vec3(0.0), vec3(1893.0)), vec3(1/2.2)), 1.0);

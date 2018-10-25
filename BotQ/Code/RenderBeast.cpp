@@ -397,7 +397,7 @@ RenderBeast::RenderBeast()
 #ifdef LIGHT_TEST
 	Ref<Ligth> lg = new Ligth();
 	//lg->powerdColor = Vector3(0.58597f, 0.5f, 0.38f) * 50.0;
-	lg->powerdColor = Vector3(255.0 / 255.0, 244.0 / 255.0, 214.0 / 255.0) * 20.0;
+	lg->powerdColor = Vector3(255.0 / 255.0, 244.0 / 255.0, 214.0 / 255.0);
 	lg->position = Vector3(-1, 1, -1).Normalized();
 	lg->position.Normalize();
 	lg->inFragSpace = true;
