@@ -284,9 +284,10 @@ public:
 				const int dx = mousePoint.x - curre23nt.x;
 				const int dy = mousePoint.y - curre23nt.y;
 				curre23nt = mousePoint;
-				angleX -= dx * Mathf::Pi() / (360 * 4);
-				angleY += dy * Mathf::Pi() / (360 * 4);
-				GetGameObject()->SetRotation(Quaternion(angleY, angleX, 0));
+
+				GetGameObject()->SetLocalRotation(Quaternion(
+					GetGameObject()->GetLocalRotation().GetEuler()
+					+ Vector3(dy * 0.1f, -dx * 0.1f, 0)));
 
 			}
 			else

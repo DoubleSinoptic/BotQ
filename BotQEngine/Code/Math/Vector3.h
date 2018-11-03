@@ -83,8 +83,11 @@ public:
 
 	FORCEINLINE Vector3 Normalized()
 	{
+		float ln = Length();
+		if (ln == 0.0f)
+			return Vector3::Zero();
 		Vector3 e = *this;
-		return e /= Length();
+		return e /= ln;
 	}
 
 	FORCEINLINE Vector3& Normalize()
@@ -107,6 +110,12 @@ public:
 				floats[1] + (v.floats[1] - floats[1]) * t,
 				floats[2] + (v.floats[2] - floats[2]) * t);
 	}
+
+	static FORCEINLINE Vector3 Lerp(const Vector3& v, const Vector3& v1, float t)
+	{
+		return v.Lerp(v1, t);
+	}
+
 
 	FORCEINLINE Vector3& operator*=(const Vector3& v)
 	{

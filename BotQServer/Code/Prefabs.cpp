@@ -146,12 +146,20 @@ void LoadDefaultPrefabs()
 		ct->AddComponent<RigidBody>()->SetMass(0.0);
 		ct->AddComponent<TrianglesCollider>()->CollectMeshesFromRenderer();
 
+		//Tools::SetMaps(ct,
+		//	LoadTextureE("/assets/Custom/leaf-fall1-albedo.png"),
+		//	LoadTextureE("/assets/Custom/leaf-fall3-normal-ue.png"),
+		//	LoadTextureE("/assets/Custom/leaf-fall1-metalness.png"),
+		//	LoadTextureE("/assets/Custom/leaf-fall1-roughness.png"),
+		//	LoadTextureE("/assets/Custom/leaf-fall1-ao.png"));
+
 		Tools::SetMaps(ct,
-			LoadTextureE("/assets/Custom/leaf-fall1-albedo.png"),
-			LoadTextureE("/assets/Custom/leaf-fall3-normal-ue.png"),
-			LoadTextureE("/assets/Custom/leaf-fall1-metalness.png"),
-			LoadTextureE("/assets/Custom/leaf-fall1-roughness.png"),
-			LoadTextureE("/assets/Custom/leaf-fall1-ao.png"));
+			LoadTextureE("/assets/Sand/sandyground1_Base_Color.png"),
+			LoadTextureE("/assets/Sand/sandyground1_Normal.png"),
+			LoadTextureE("/assets/Sand/sandyground1_Metallic.png"),
+			LoadTextureE("/assets/Sand/sandyground1_Roughness.png"),
+			LoadTextureE("/assets/Sand/sandyground1_Ambient_Occlusion.png"));
+
 
 		return ct;
 	});
@@ -174,6 +182,11 @@ void LoadDefaultPrefabs()
 		return home;
 	});
 
+	GameObject::AddPrefab("/Ak12.prefab", []()
+	{
+		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.obj")->construct();
+		return home;
+	});
 
 	GameObject::AddPrefab("/Ogne.prefab", []()
 	{

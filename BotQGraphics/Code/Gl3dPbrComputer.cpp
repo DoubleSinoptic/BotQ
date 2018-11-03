@@ -333,7 +333,7 @@ void Gl3dPbrComputer::RenderMaps(Gl3dTexture * hdrSphereMap)
 	pass.Uniform("projection", captureProjection);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	unsigned int maxMipLevels = 5;
+	unsigned int maxMipLevels = 11;
 	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
 	{
 		// reisze framebuffer according to mip-level size.

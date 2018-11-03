@@ -139,8 +139,8 @@ void CarCollider::ApplayDriverState(bool _U, bool _D, bool _L, bool _R)
 			mImpl->_wsteer -= 5;
 	}
 
-	m_vehicle->setSteeringValue(static_cast<float>(mImpl->_wsteer) * (3.14 / 180.0), 0);
-	m_vehicle->setSteeringValue(static_cast<float>(mImpl->_wsteer) * (3.14 / 180.0), 1);
+	m_vehicle->setSteeringValue(static_cast<float>(mImpl->_wsteer) * DEG_TO_RAD, 0);
+	m_vehicle->setSteeringValue(static_cast<float>(mImpl->_wsteer) * DEG_TO_RAD, 1);
 }
 
 void CarCollider::AddWheel(GameObject* wheelT, const Vector3 & position, bool isFrontWheel)
@@ -199,7 +199,7 @@ void CarCollider::PhysicUpdate()
 			i.wheelModel->SetLocalPosition(
 				internal_convert(wheel.m_localTransform.getOrigin())); 
 			i.wheelModel->SetLocalRotation(
-				internal_convert(wheel.m_localTransform.getRotation())  * Quaternion(0, Mathf::Pi(), 0)
+				internal_convert(wheel.m_localTransform.getRotation())  * Quaternion(0, 180, 0)
 			);
 		}
 		else

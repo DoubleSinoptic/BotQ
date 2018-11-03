@@ -70,7 +70,7 @@ void FixedRotation::Awake()
 
 void FixedRotation::PhysicUpdate()
 {
-    GetGameObject()->SetLocalRotation(Quaternion(0.0, Time::GetTotalTime() * Mathf::Pi() / 6, 0.0));
+    GetGameObject()->SetLocalRotation(Quaternion(0.0, Time::GetTotalTime() * (Mathf::Pi() / 6 ) * RAD_TO_DEG , 0.0));
 }
 
 void Tools::RotateLocalAll(class GameObject* cube, const Quaternion& rot)

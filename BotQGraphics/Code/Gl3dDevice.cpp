@@ -107,6 +107,7 @@ void Gl3dDevice::Configurate()
 void Gl3dDevice::CullBack()
 {
 	glCullFace(GL_BACK);
+	
 }
 
 void Gl3dDevice::CullFront()

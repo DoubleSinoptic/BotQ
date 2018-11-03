@@ -122,7 +122,7 @@ void main()
 	vec3 color = texture(rez_map, coordX).rgb;
     vec3 pre = texture(pre_map, coordX).rgb;
 	
-	vec3 final = Uncharted2ToneMappingConfigure( blur + god);
+	vec3 final = Uncharted2ToneMappingConfigure( blur  + god);
 	
 
     FragColor = vec4(final, 1.0);

@@ -195,6 +195,9 @@
     <ClCompile Include="Code\Bits\TiXml\tinyxmlparser.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Code\Math\Math.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\Camera.h">

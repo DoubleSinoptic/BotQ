@@ -1,16 +1,132 @@
 #pragma once
 
 #include "Vector3.h"
+#include "Math.h"
 #include <float.h>
+
+
+#define RAD_TO_DEG (180.0f / Mathf::Pi())
+#define DEG_TO_RAD (Mathf::Pi() / 180.0f)
+
+inline float NormalizeAngle(float c) 
+{
+	float p2 = Mathf::Pi() * 2.0f;
+	if(c > 0.0)
+		for (; c > p2; c -= p2) {}
+	else
+		for (; c < -p2; c += p2) {}
+	return c;
+}
+inline Vector3 NormalizeAngle(const Vector3& c)
+{
+	return { NormalizeAngle(c.x), NormalizeAngle(c.y), NormalizeAngle(c.z) };
+}
+
+
 
 class Quaternion 
 {
+
+	class _Matrix3
+	{
+	public:
+		float m[3][3];
+
+		const float* operator[] (size_t row) const
+		{
+			return (float*)m[row];
+		}
+		float* operator[] (size_t row)
+		{
+			return (float*)m[row];
+		}
+
+		Vector3 multiply(const Vector3& vec) const
+		{
+			Vector3 prod;
+			for (size_t row = 0; row < 3; row++)
+			{
+				prod[row] =
+					m[row][0] * vec[0] +
+					m[row][1] * vec[1] +
+					m[row][2] * vec[2];
+			}
+
+			return prod;
+		}
+
+		bool toEulerAngles(float& xAngle, float& yAngle, float& zAngle) const
+		{
+
+			xAngle = -asinf(m[1][2]);
+			if (xAngle < Mathf::HalfPi())
+			{
+				if (xAngle > -Mathf::HalfPi())
+				{
+					yAngle = atan2f(m[0][2], m[2][2]);
+					zAngle = atan2f(m[1][0], m[1][1]);
+
+					return true;
+				}
+				else
+				{
+					xAngle = -Mathf::HalfPi();
+					yAngle = atan2f(-m[0][1], m[0][0]);
+					zAngle = (0.0f);
+
+					return false;
+				}
+			}
+			else
+			{
+				xAngle = Mathf::HalfPi();
+				yAngle = atan2f(m[0][1], m[0][0]);
+				zAngle = (0.0f);
+
+				return false;
+			}
+		}
+	};
+
+	FORCEINLINE void ToRotationMatrix(_Matrix3& mat) const
+	{
+		float tx = x + x;
+		float ty = y + y;
+		float fTz = z + z;
+		float twx = tx * w;
+		float twy = ty * w;
+		float twz = fTz * w;
+		float txx = tx * x;
+		float txy = ty * x;
+		float txz = fTz * x;
+		float tyy = ty * y;
+		float tyz = fTz * y;
+		float tzz = fTz * z;
+
+		mat[0][0] = 1.0f - (tyy + tzz);
+		mat[0][1] = txy - twz;
+		mat[0][2] = txz + twy;
+		mat[1][0] = txy + twz;
+		mat[1][1] = 1.0f - (txx + tzz);
+		mat[1][2] = tyz - twx;
+		mat[2][0] = txz - twy;
+		mat[2][1] = tyz + twx;
+		mat[2][2] = 1.0f - (txx + tyy);
+	}
 public:
+
+	
+
 	FORCEINLINE Quaternion() {}
+
+	FORCEINLINE Quaternion(const Quaternion& f)
+		: x(f.x), y(f.y), z(f.z), w(f.w)
+	{}
 
 	FORCEINLINE Quaternion(const float& _x, const float& _y, const float& _z, const float& _w)
 		: x(_x), y(_y), z(_z), w(_w)
 	{}
+
 
 	FORCEINLINE Quaternion(const Vector3& _axis, const float& _angle)
 	{
@@ -22,7 +138,7 @@ public:
 		SetEuler(pitch, yaw, roll);
 	}
 
-	FORCEINLINE Quaternion(const Vector3& eulerAngles)
+	FORCEINLINE explicit Quaternion(const Vector3& eulerAngles)
 	{
 		SetEuler(eulerAngles.x, eulerAngles.y, eulerAngles.z);
 	}
@@ -44,21 +160,25 @@ public:
 		w = _w;
 	}
 
-	FORCEINLINE void SetEuler(const float& pitch, const float& yaw, const float& roll)
+	FORCEINLINE void SetEuler(const float& xa, const float& ya, const float& za)
 	{
-		float halfYaw = float(yaw) * float(0.5);
-		float halfPitch = float(pitch) * float(0.5);
-		float halfRoll = float(roll) * float(0.5);
-		float cosYaw = cosf(halfYaw);
-		float sinYaw = sinf(halfYaw);
-		float cosPitch = cosf(halfPitch);
-		float sinPitch = sinf(halfPitch);
-		float cosRoll = cosf(halfRoll);
-		float sinRoll = sinf(halfRoll);
-		SetValue(cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw,
-			cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw,
-			sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw,
-			cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw);
+		Vector3 s, c;
+		Mathf::SinCos(0.5f * Vector3(xa, ya, za) * DEG_TO_RAD, s, c);
+
+		x = s.x * c.y * c.z + s.y * s.z * c.x;
+		y = s.y * c.x * c.z - s.x * s.z * c.y;
+		z = s.z * c.x * c.y - s.x * s.y * c.z;
+		w = c.x * c.y * c.z + s.y * s.z * s.x;
+
+	}
+
+	FORCEINLINE Vector3 GetEuler() const
+	{
+		_Matrix3 c;
+		ToRotationMatrix(c);
+		Vector3 eul;
+		c.toEulerAngles(eul.x, eul.y, eul.z);
+		return eul * RAD_TO_DEG;
 	}
 
 	FORCEINLINE static Quaternion LookRotation(Vector3 forward, Vector3 up)
@@ -118,23 +238,6 @@ public:
 		quaternion.w = (m01 - m10) * num2;
 		return quaternion;
 #undef __MATH_ROOT
-	}
-
-	FORCEINLINE void SetEulerZYX(const float& yaw, const float& pitch, const float& roll)
-	{
-		float halfYaw = float(yaw) * float(0.5);
-		float halfPitch = float(pitch) * float(0.5);
-		float halfRoll = float(roll) * float(0.5);
-		float cosYaw = cosf(halfYaw);
-		float sinYaw = sinf(halfYaw);
-		float cosPitch = cosf(halfPitch);
-		float sinPitch = sinf(halfPitch);
-		float cosRoll = cosf(halfRoll);
-		float sinRoll = sinf(halfRoll);
-		SetValue(sinRoll * cosPitch * cosYaw - cosRoll * sinPitch * sinYaw, //x
-			cosRoll * sinPitch * cosYaw + sinRoll * cosPitch * sinYaw, //y
-			cosRoll * cosPitch * sinYaw - sinRoll * sinPitch * cosYaw, //z
-			cosRoll * cosPitch * cosYaw + sinRoll * sinPitch * sinYaw); //formerly yzx
 	}
 	
 	FORCEINLINE	Quaternion& operator+=(const Quaternion& q)
@@ -245,7 +348,18 @@ public:
 	
 	FORCEINLINE Quaternion Inverse() const
 	{
-		return Quaternion(-floats[0], -floats[1], -floats[2], floats[3]);
+		float fNorm = w * w + x * x + y * y + z * z;
+		if (fNorm > 0.0f)
+		{
+			float fInvNorm = 1.0f / fNorm;
+			return Quaternion(-x * fInvNorm, -y * fInvNorm, -z * fInvNorm, w*fInvNorm);
+		}
+		else
+		{
+			// Return an invalid result to flag the error
+			return Quaternion(0.0, 0.0, 0.0, 0.0);
+		}
+		/*return Quaternion(-floats[0], -floats[1], -floats[2], floats[3]);*/
 	}
 
 	
@@ -261,6 +375,11 @@ public:
 	{
 		const Quaternion& q1 = *this;
 		return Quaternion(q1.x - q2.x, q1.y - q2.y, q1.z - q2.z, q1.floats[3] - q2.floats[3]);
+	}
+
+	static FORCEINLINE Quaternion Slerp(const Quaternion& q, const Quaternion& q1, const float& t) 
+	{	
+		return q.Slerp(q1, t);		
 	}
 
 	FORCEINLINE Quaternion Slerp(const Quaternion& q, const float& t) const
@@ -321,6 +440,9 @@ FORCEINLINE Quaternion operator*(const Quaternion& q1, const Quaternion& q2)
 
 FORCEINLINE Vector3 operator*(const Quaternion &q, const Vector3 &posf)
 {
+	/*_Matrix3 c;
+	q.ToRotationMatrix(c);
+	return c.multiply(posf);*/
 	Vector3 u(q.x, q.y, q.z);
 	float s = q.w;
 	return 2.0f * u.Dot(posf) * u

@@ -182,6 +182,11 @@ void LoadDefaultPrefabs()
 		return home;
 	});
 
+	GameObject::AddPrefab("/Ak12.prefab", []()
+	{
+		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.obj")->construct();
+		return home;
+	});
 
 	GameObject::AddPrefab("/Ogne.prefab", []()
 	{

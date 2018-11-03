@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
-class Mathf
+#include "Vector3.h"
+class SGE_EXPORT Mathf
 {
 public:
 
@@ -8,6 +9,11 @@ public:
 	{
 		return  std::log(a) / std::log(b);
 	}
+
+
+	static Vector3 Sin(const Vector3& a);
+	static Vector3 Cos(const Vector3& a);
+	static void SinCos(const Vector3& a, Vector3& s, Vector3& c);
 
 	static inline bool Equal(float a, float b, float epsilon = 0.000001)
 	{
@@ -30,7 +36,10 @@ public:
 	{
 		return 3.14159265359f;
 	}
-
+	static float HalfPi()
+	{
+		return 3.14159265359f / 2.0f;
+	}
 	static float Max(float v, float v1)
 	{
 		if (v > v1)

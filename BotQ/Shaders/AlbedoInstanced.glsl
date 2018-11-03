@@ -51,7 +51,7 @@ void main(void)
 	o_normal = mat3(model) * normal;
 
 	o_texCoord = texCoord;
-	gl_Position = projection * view *  model * vec4(vertex, 1.0);
+	gl_Position = projection * view *  model * vec4(vertex, 1.0) ;
 }
 
 &
@@ -123,7 +123,7 @@ void main(void)
 	
 	//FragPBR = vec4(0.5, 100.0 / 255.0, 1.0, 1.0);
 	
-	FragPBR = vec4(mraoStatic, 1.0);
+	FragPBR = vec4(mraoStatic , 1.0);
 	if(_mEnable)
 		FragPBR.x = texture(_m, o_texCoord).r;
 	if(_rEnable)

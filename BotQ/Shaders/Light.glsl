@@ -230,7 +230,7 @@ void main()
 		vec3 H = normalize(V + L);
 		float distance = length(lightPosition - fragPos);
 		float attenuation = 1.0 / (distance * distance);
-		vec3 radiance = pow(lights[i].color, vec3(2.2)) * 31 * attenuation * vec3(1);
+		vec3 radiance = pow(lights[i].color, vec3(2.2)) * 31 * attenuation;
 		//pow(lights[i].color * 0.25, vec3(2.2))
 		//pow(lights[i].color * 0.25, vec3(2.2))
 		float NDF = DistributionGGX(N, H, roughness);   
@@ -264,7 +264,7 @@ void main()
     vec3 irradiance = texture(irradianceMap, N).rgb;
     vec3 diffuse      = irradiance * albedo;
 
-    const float MAX_REFLECTION_LOD = 4.0;
+    const float MAX_REFLECTION_LOD = 10.0;
     vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;    
     vec2 brdf  = texture(brdfLUT, vec2(max(dot(N, V), 0.0), roughness)).rg;
     vec3 specular = prefilteredColor * (F * brdf.x + brdf.y);
@@ -288,7 +288,7 @@ void main()
 		RezBrightColor = vec4(vec3(0.0), fragColor.a);
 	 RezFragColor = vec4(color, fragColor.a);
 #else
-	 RezBrightColor = vec4(pow(clamp(color * brightness, vec3(0.0), vec3(1893.0)), vec3(1/2.2)), 1.0);
+	RezBrightColor = vec4(color , fragColor.a);
 	 RezFragColor = vec4(color, fragColor.a);
 #endif
 }

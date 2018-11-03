@@ -143,7 +143,7 @@ Vector2 CUAD_TEXCOORDS_DATA[] =
 
 unsigned short CUAD_INDECES_DATA[] = { 0, 1, 2, 2, 1 ,3 };
 
-#define CAMERA_ANGLE (3.14f / 180.0f * 75.0)
+#define CAMERA_ANGLE (3.14f / 180.0f * 50.0)
 
 
 
@@ -457,7 +457,9 @@ void RenderBeast::Draw()
 #endif
 	Size outS = Display::GetCurrent()->GetSize();
 	GameObject* CameraObject = Display::GetCurrent()->GetCamera();
-	Matrix4 lookat = Matrix4::LookAt(CameraObject->GetPosition(), CameraObject->GetPosition() + CameraObject->GetForward(), Vector3(0, 1, 0));
+	Matrix4 lookat = Matrix4::LookAt(CameraObject->GetPosition(), CameraObject->GetPosition() + CameraObject->GetForward(),  
+		CameraObject->GetForward().Cross(CameraObject->GetRight())
+		);
 	//Matrix4 lookat = Matrix4::LookAt(Vector3(24, 24, 24), Vector3(0, 0, 0) , Vector3(0, 1, 0));
 
 	float aspectRatio = float(s.width) / float(s.height);

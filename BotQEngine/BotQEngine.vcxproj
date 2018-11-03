@@ -36,6 +36,7 @@
     <ClCompile Include="Code\Gui\CheckBox.cpp" />
     <ClCompile Include="Code\Gui\Label.cpp" />
     <ClCompile Include="Code\Level.cpp" />
+    <ClCompile Include="Code\Math\Math.cpp" />
     <ClCompile Include="Code\Network\LocalHostCaster.cpp" />
     <ClCompile Include="Code\Network\Network.cpp" />
     <ClCompile Include="Code\Network\NetworkEntityBase.cpp" />
