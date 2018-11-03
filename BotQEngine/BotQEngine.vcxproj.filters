@@ -198,6 +198,9 @@
     <ClCompile Include="Code\Math\Math.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Code\PhysicsComponents\CharacterController.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\Camera.h">
@@ -456,6 +459,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Code\Bits\TiXml\tinyxml.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\PhysicsComponents\CharacterController.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

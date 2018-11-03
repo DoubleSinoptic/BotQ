@@ -352,6 +352,12 @@ void RigidBody::AddTorgue(const Vector3 & value)
 	mImpl->_body.applyTorque(internal_convert(value));
 }
 
+void RigidBody::DisableRotation()
+{
+	mImpl->_body.setAngularFactor(0.0f);
+	mImpl->_body.setSleepingThresholds(0.0, 0.0);
+}
+
 Vector3 RigidBody::GetAngularVelocity() const
 {
     return internal_convert(mImpl->_body.getAngularVelocity());

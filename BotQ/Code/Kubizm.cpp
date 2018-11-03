@@ -17,7 +17,7 @@
 #include <PhysicsComponents/CarCollider.h>
 #include <Display.h>
 #include <PhysicsComponents/RigidBody.h>
-
+#include <PhysicsComponents/CharacterController.h>
 
 
 class FacControl : public Component
@@ -200,8 +200,9 @@ public:
 		}
 	
 		attac->strafingCoof = e.Dot(GetGameObject()->GetRight());
-		GetGameObject()->SetPosition(GetGameObject()->GetPosition() + e);
-
+	/*	GetGameObject()->SetPosition(GetGameObject()->GetPosition() + e);*/
+		GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(e * 2.1f);
+		GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(Vector3(0, -7, 0) * Time::GetDeltaTime());
 		if (Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_LEFT))
 		{
 			if (hasPressed)
@@ -286,7 +287,14 @@ public:
 		e->postProxy = stableProxy;
 		e->preProxy = stablePositionAndRotation;
 		
+	
 		cam->GetComponent<CameraController>()->attac = e;
+
+		GameObject* p = new GameObject();
+		p->SetPosition(cam->GetPosition());
+		cam->SetLocalPosition(Vector3(0, 1.0f, 0));
+		cam->SetParent(p);
+		p->AddComponent<CharacterController>();
 	}
 
 	virtual void UnloadLevel() override

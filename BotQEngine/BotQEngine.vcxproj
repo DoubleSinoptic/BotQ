@@ -43,6 +43,7 @@
     <ClCompile Include="Code\Network\tinyfsssocket.cpp" />
     <ClCompile Include="Code\Network\tinyrpc.cpp" />
     <ClCompile Include="Code\Network\tinysocket.cpp" />
+    <ClCompile Include="Code\PhysicsComponents\CharacterController.cpp" />
     <ClCompile Include="Code\Time.cpp" />
     <ClCompile Include="Code\Common\Log.cpp" />
     <ClCompile Include="Code\Common\OsInformation.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="Code\Network\tinyfsssocket.h" />
     <ClInclude Include="Code\Network\tinyrpc.h" />
     <ClInclude Include="Code\Network\tinysocket.h" />
+    <ClInclude Include="Code\PhysicsComponents\CharacterController.h" />
     <ClInclude Include="Code\Time.hpp" />
     <ClInclude Include="Code\Common\Assert.h" />
     <ClInclude Include="Code\Common\DataVector.h" />

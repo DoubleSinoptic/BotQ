@@ -42,7 +42,7 @@ public:
 	void AddForce(const Vector3& value);
 	void AddForceAtPosition(const Vector3& value, const Vector3& position);
 	void AddTorgue(const Vector3& value);
-
+	void DisableRotation();
 
 	RigidBody();
 	~RigidBody();

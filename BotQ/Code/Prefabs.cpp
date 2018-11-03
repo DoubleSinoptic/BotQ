@@ -184,7 +184,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Ak12.prefab", []()
 	{
-		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.obj")->construct();
+		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.fbx")->construct();
 		return home;
 	});
 

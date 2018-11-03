@@ -454,17 +454,9 @@ public:
 
 volatile int hask;
 
-void tests() 
-{
 
 
-	Quaternion b(1.0, 2.0, 3.0);
 
-	hask = printf("%f %f %f %f\n", b.x, b.y, b.z, b.w);
-	Vector3 e = b.GetEuler();
-	hask = printf("%f %f %f", e.x, e.y, e.z);
-	
-}
 
 /*
 GPU->main thread
@@ -473,8 +465,7 @@ Phys->child thread
 void LoadDefaultPrefabs();
 int main()
 {
-	tests();
-
+	
 
 
 
