@@ -2,8 +2,7 @@
 #include "Display.h"
 #include "GameObject.h"
 #include "Time.hpp"
-#include <al.h>
-#include <alc.h>
+
 PhysicsInstance*	Internal_AllocateAndConstructPhysicsContext();
 void				Internal_DestructAndDeallocatePhysicsContext(PhysicsInstance* c);
 void				Internal_SimulatePhysicsContext(PhysicsInstance* c, float time, int substepscount, float substeptime);
@@ -35,13 +34,6 @@ GameInstance::GameInstance() :
 	prefabs.EnsureCapacity(10);
 	Log("GameInstance instance is inited: force size is: %zu", sizeof(GameInstance));
 
-	ALCdevice *device;
-	device = alcOpenDevice(NULL);
-	if (!device)
-		throw Exception("error auido init");
-	ALCcontext *context = alcCreateContext(device, NULL);
-	if (!alcMakeContextCurrent(context))
-		throw Exception("error auido init 2");
 }
 
 GameInstance* currentGameInstance = nullptr;
@@ -49,6 +41,7 @@ GameInstance* currentGameInstance = nullptr;
 void GameInstance::SetThisCurrent()
 {
 	currentGameInstance = this;
+	audioInstance.MakeCurrent();
 }
 
 GameInstance * GameInstance::GetCurrent()

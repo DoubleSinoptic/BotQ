@@ -23,8 +23,14 @@ public:
 	void Destroy() override;
 	void Awake() override;
 	void Play();
-	
+
+	REGISTER_PROPETRY(Ref<AudioClip>, Clip)
 	void SetClip(const Ref<AudioClip>& clip);
+	Ref<AudioClip> GetClip() const;
+
+	REGISTER_PROPETRY(float, Volume)
+	void SetVolume(float vol);
+	float GetVolume() const;
 
 	REGISTER_PROPETRY(bool, Looping)
 	void SetLooping(bool val);

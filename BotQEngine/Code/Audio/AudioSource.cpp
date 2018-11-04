@@ -3,12 +3,19 @@
 
 void AudioSource::SetupListener(const Vector3 & p, const Quaternion & r)
 {
+	ALenum error;
 	Vector3 f[2];
-	f[0] = r * Vector3(1.0, 0.0, 0.0);
+	f[0] = r * Vector3(0.0, 0.0, 1.0);
 	f[1] = r * Vector3(0.0, 1.0, 0.0);
 	alListener3f(AL_POSITION, p.x, p.y, p.z);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 	alListener3f(AL_VELOCITY, 0, 0, 0);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 	alListenerfv(AL_ORIENTATION, (float*)f);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 }
 
 void AudioSource::Destroy()
@@ -19,10 +26,24 @@ void AudioSource::Destroy()
 
 void AudioSource::Awake()
 {
+	ALenum error;
 	alGenSources(1, &sourceId);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
+
 	alSource3f(sourceId, AL_VELOCITY, 0, 0, 0);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 	alSourcef(sourceId, AL_PITCH, 1);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 	alSourcef(sourceId, AL_GAIN, 1);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
+	Vector3 v = GetGameObject()->GetPosition();
+	alSource3f(sourceId, AL_POSITION, v.x, v.y, v.z);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 	onTransformChanged = EventHandler<>([&]() 
 	{
 		Vector3 v = GetGameObject()->GetPosition();
@@ -33,24 +54,60 @@ void AudioSource::Awake()
 
 void AudioSource::Play()
 {
+	ALenum error;
 	alSourcePlay(sourceId);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 }
 
 void AudioSource::SetClip(const Ref<AudioClip>& clip)
 {
+	ALenum error;
 	this->clip = clip;
 	alSourcei(sourceId, AL_BUFFER, clip->GetAlHandle());
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
+}
+
+
+void AudioSource::SetVolume(float vol)
+{
+	ALenum error;
+	alSourcef(sourceId, AL_GAIN, Mathf::Clamp01(vol));
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
+}
+
+float AudioSource::GetVolume() const
+{
+	float c;
+	ALenum error;
+	alGetSourcef(sourceId, AL_GAIN, &c);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
+	return c;
+}
+
+Ref<AudioClip> AudioSource::GetClip() const
+{
+	return clip;
 }
 
 void AudioSource::SetLooping(bool val) 
 {
+	ALenum error;
 	alSourcei(sourceId, AL_LOOPING, val ? AL_TRUE : AL_FALSE);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 }
 
 bool AudioSource::GetLooping() const 
 {
+	ALenum error;
 	ALint c;
 	alGetSourcei(sourceId, AL_LOOPING, &c);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 	return c == AL_TRUE;
 }
 
@@ -93,7 +150,11 @@ ALenum ToAlFormat(short channels, short samples)
 
 AudioClip::AudioClip(const DynamicArray<char>& rawWav) 
 {
+	ALenum error;
+
 	alGenBuffers(1, &buffer);
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
 
 	const char* beg = rawWav.GetData();
 	const wavfile_header* hdr = reinterpret_cast<const wavfile_header*>(beg);
@@ -101,6 +162,10 @@ AudioClip::AudioClip(const DynamicArray<char>& rawWav)
 
 	alBufferData(buffer, ToAlFormat(hdr->num_channels, hdr->bits_per_sample),
 		PCMbeg, hdr->data_length, hdr->sample_rate);
+
+	if ((error = alGetError()) != AL_NO_ERROR)
+		throw Exception("error auido: %d", error);
+
 }
 
 AudioClip::~AudioClip()

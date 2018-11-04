@@ -31,10 +31,7 @@ public:
 		SetEnabled(true);
 
 		s = GetGameObject()->AddComponent<AudioSource>();
-
-		FileStream f("./w.wav", OpenMode::Read);
-		Ref<AudioClip> clip = New <AudioClip>(f.AllBytes());
-		s->SetClip(clip);
+		s->SetClip(Resource::Find("/assets/ak12/fire.wav")->GetObject<Ref<AudioClip>>());
 	}
 	GameObject* postProxy;
 	GameObject*  preProxy;

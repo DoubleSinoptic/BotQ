@@ -5,6 +5,7 @@
 #include "Resource.h"
 #include "./TaskTranslator.h"
 #include "SyncObject.h"
+#include "./Audio/AudioInstance.h"
 class Display;
 class PhysicsInstance;
 class MeshRenderer;
@@ -14,6 +15,7 @@ public:
 	GameInstance();
 	~GameInstance();
 
+	AudioInstance audioInstance;
 	class PrefabPreference { public: StorageFunction<GameObject*(void)> spawner; String path; };
 	PhysicsInstance*				physics = nullptr;
 

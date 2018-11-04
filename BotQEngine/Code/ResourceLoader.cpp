@@ -9,6 +9,7 @@
 #include "Graphics/Bitmap.h"
 #include "Common/PathHelper.h"
 #include "../../zlib_static/Code/zlib.h"
+#include "Audio/AudioSource.h"
 //#include "Common/ArrayStreamIterator.h"
 using namespace std::experimental;
 
@@ -56,6 +57,10 @@ void InstantResource(DynamicArray <Def>& coruntune, const String& fpath, Ref<Dyn
 		String text(dt->Length(), ' ');
 		memcpy(&text[0], dt->GetData(), dt->Length());
 		new Resource(text, fpath);
+	}
+	else if (ext == "wav" || ext == "WAV")
+	{
+		new Resource(New<AudioClip>(*dt), fpath);
 	}
 	else if (ext == "ttf" || ext == "ttf")
 	{
