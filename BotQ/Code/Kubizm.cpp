@@ -18,15 +18,23 @@
 #include <Display.h>
 #include <PhysicsComponents/RigidBody.h>
 #include <PhysicsComponents/CharacterController.h>
-
+#include <Audio/AudioSource.h>
 
 class FacControl : public Component
 {
 public:
 
+	
+	AudioSource * s;
 	void Awake()override
 	{
 		SetEnabled(true);
+
+		s = GetGameObject()->AddComponent<AudioSource>();
+
+		FileStream f("./w.wav", OpenMode::Read);
+		Ref<AudioClip> clip = New <AudioClip>(f.AllBytes());
+		s->SetClip(clip);
 	}
 	GameObject* postProxy;
 	GameObject*  preProxy;
@@ -111,7 +119,7 @@ public:
 			if (detla >= (60.0f / shootingSpeedPerMinute))
 			{
 				last = current;
-				//weapomPl.Play();
+				s->Play();
 
 				postProxy->SetLocalRotation( Quaternion::Slerp(postProxy->GetLocalRotation(), moveFireQuat, realMovementScale));
 				postProxy->SetLocalPosition( Vector3::Lerp(postProxy->GetLocalPosition(), moveFireLoc, realMovementScale));
@@ -230,6 +238,7 @@ public:
 		}
 		else
 			hasPressed = false;
+		AudioSource::SetupListener(GetGameObject()->GetPosition(), GetGameObject()->GetRotation());
 
 	}
 
