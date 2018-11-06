@@ -20,7 +20,7 @@ public:
 		if (!stbtt_BakeFontBitmap((const unsigned char *)scanData, 0, fontSize,(unsigned char*) buffer, 1024, 1024, 0x0, 0x500, cdata))
 			Error("Create font fail");
 		mSplat->FromGray((const UnsignedColorChanel*)buffer);
-		mSplat->Save("./file.png", Bitmap::TargetFormat::Png);
+		/*mSplat->Save("./file.png", Bitmap::TargetFormat::Png);*/
 		mSplatTexture = new Texture();
 		mSplatTexture->SetFromBitmap(mSplat);
 		mSplatTexture->EnableFiltration(false);

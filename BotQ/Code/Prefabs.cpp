@@ -153,13 +153,19 @@ void LoadDefaultPrefabs()
 		//	LoadTextureE("/assets/Custom/leaf-fall1-roughness.png"),
 		//	LoadTextureE("/assets/Custom/leaf-fall1-ao.png"));
 
-		Tools::SetMaps(ct,
+		/*Tools::SetMaps(ct,
 			LoadTextureE("/assets/Sand/sandyground1_Base_Color.png"),
 			LoadTextureE("/assets/Sand/sandyground1_Normal.png"),
 			LoadTextureE("/assets/Sand/sandyground1_Metallic.png"),
 			LoadTextureE("/assets/Sand/sandyground1_Roughness.png"),
-			LoadTextureE("/assets/Sand/sandyground1_Ambient_Occlusion.png"));
+			LoadTextureE("/assets/Sand/sandyground1_Ambient_Occlusion.png"));*/
 
+		Tools::SetMaps(ct,
+			LoadTextureE("/assets/RedSand/sand1-albedo.png"),
+			LoadTextureE("/assets/RedSand/sand1-normal-ue.png"),
+			LoadTextureE("/assets/RedSand/sand1-metalness.png"),
+			LoadTextureE("/assets/RedSand/sand1-roughness.png"),
+			nullptr); 
 
 		return ct;
 	});

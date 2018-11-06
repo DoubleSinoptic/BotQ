@@ -319,7 +319,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>"..\ThirdParty\bin\assimp-vc140-mt.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"..\ThirdParty\bin\assimp-vc140-mt.lib";"..\ThirdParty\bin\OpenAL32.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

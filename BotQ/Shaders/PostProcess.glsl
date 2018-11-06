@@ -122,7 +122,16 @@ void main()
 	vec3 color = texture(rez_map, coordX).rgb;
     vec3 pre = texture(pre_map, coordX).rgb;
 	
+#define USE_1SOFT_TONEMAP
+#ifdef USE_SOFT_TONEMAP
+	float MaxB = 14;
+	float Exp = 14;
+	blur *= Exp * (Exp/MaxB+1.0)/(Exp+1.0); 
+	vec3 final = _Uncharted2Tonemap( blur  + god);
+	final = pow(final, vec3(1/2.2));
+#else
 	vec3 final = Uncharted2ToneMappingConfigure( blur  + god);
+#endif
 	
 
     FragColor = vec4(final, 1.0);
