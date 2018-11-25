@@ -21,7 +21,7 @@ uniform sampler2D rez_map;
 uniform sampler2D god_map;
 uniform sampler2D blur_map;
 uniform sampler2D pre_map;
-float gamma = 1.35;
+const float gamma = 2.2;
 
 vec3 linearToneMapping(vec3 color)
 {
@@ -108,6 +108,32 @@ vec3 filmicToneMapping(vec3 color)
 	return color;
 }
 
+vec3 RehToneMapping(vec3 color)
+{
+	const float exposure  = 1.0;
+	const float pureWhite = 1.5;
+
+	color *= exposure;
+	float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
+	float mappedLuminance = (luminance * (1.0 + luminance/(pureWhite*pureWhite))) / (1.0 + luminance);
+	vec3 mappedColor = (mappedLuminance / luminance) * color;
+
+	return pow(mappedColor, vec3(1.0/gamma));
+}
+
+
+vec3 LinearToGammaSpace (vec3 color)
+{
+    color = max(color, vec3(0, 0, 0));
+    return max(1.055 * pow(color, vec3(0.416666667)) - 0.055, 0);
+}
+
+vec3 GammaToLinearSpace (vec3 color)
+{
+    return color * (color * (color * 0.305306011 + 0.682171111) + 0.012522878);
+}
+
+
 void main()
 {
 #define USE_BORDER_MASK
@@ -130,9 +156,18 @@ void main()
 	vec3 final = _Uncharted2Tonemap( blur  + god);
 	final = pow(final, vec3(1/2.2));
 #else
-	vec3 final = Uncharted2ToneMappingConfigure( blur  + god);
+
+
+
+	vec3 final = filmicToneMapping( blur  + god);
+	//final = GammaToLinearSpace(final);
+	//vec3 final = pow( color  + god, vec3(1/2.2));
 #endif
 	
+	final = v
+	vec3(1.0, 0.0, 0.0) * final.r +
+	vec3(0.0, 1.0, 0.0) * final.g +
+	vec3(0.0, 0.0, 1.0) * final.b;
 
     FragColor = vec4(final, 1.0);
 }

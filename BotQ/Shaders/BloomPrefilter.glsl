@@ -25,6 +25,16 @@ uniform float	  _PrefilterOffs;
 uniform float	  _SampleScale;
 uniform float	  _Intensity;
 
+vec3 LinearToGammaSpace (vec3 color)
+{
+    color = max(color, vec3(0, 0, 0));
+    return max(1.055 * pow(color, vec3(0.416666667)) - 0.055, 0);
+}
+
+vec3 GammaToLinearSpace (vec3 color)
+{
+    return color * (color * (color * 0.305306011 + 0.682171111) + 0.012522878);
+}
 
 float Brightness(vec3 c)
 {
@@ -37,12 +47,31 @@ vec3 Median(vec3 a, vec3 b, vec3 c)
     return a + b + c - min(min(a, b), c) - max(max(a, b), c);
 }
 
+
 void main()
 {
+	float _softKnee = 0.5f;
+	float _threshold = pow(0.954, 2.2);
+	float knee = _threshold * _softKnee + 1e-5f;
+	vec3 curve = vec3(_threshold - knee, knee * 2, 0.25f / knee);
+
 	vec3 m = texture(_MainTex, uv).rgb;
 
+	float br = Brightness(m);
 
-	m = pow(m, vec3(1/2.2));
+	float rq = clamp(br - curve.x, 0, curve.y);
+    rq = curve.z * rq * rq;
+
+	m *= max(rq, br - _threshold) / max(br, 1e-5);
+
+	FragColor = vec4(m, 1.0);
+
+
+	/*
+
+	
+	vec3 m = texture(_MainTex, uv).rgb;
+
 
 	float br = Brightness(m);
 
@@ -52,4 +81,5 @@ void main()
 	m *= max(rq, br - _Threshold) / max(br, 1e-5);
 
 	FragColor = vec4(m, 1.0);
+	*/
 }

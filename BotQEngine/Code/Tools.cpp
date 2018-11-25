@@ -17,7 +17,20 @@ void Tools::SetMaterial(GameObject *cube, Material* m)
 	}
 
 }
+void Tools::SetMRAO(GameObject* cube, float m, float r, float ao)
+{
+	for (GameObject* c : *cube)
+		SetMRAO(c,  m,  r,  ao);
 
+	DynamicArray<MeshRenderer*> re = cube->GetComponents<MeshRenderer>();
+	for (auto& i : re)
+	{
+
+		static_cast<ObjectMaterial*>(i->GetMaterial())->metalic_roughness_ao_static = Vector3(m, r, ao);
+
+	}
+
+}
 void Tools::SetMaps(GameObject *cube, Texture *k, Texture *n, Texture *mt, Texture *rt, Texture *ao)
 {
     for (GameObject* c : *cube)

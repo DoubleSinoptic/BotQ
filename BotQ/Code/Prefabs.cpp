@@ -191,6 +191,7 @@ void LoadDefaultPrefabs()
 	GameObject::AddPrefab("/Ak12.prefab", []()
 	{
 		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.fbx")->construct();
+		Tools::SetMRAO(home, 0.5, 0.5, 1.0);
 		return home;
 	});
 
@@ -241,6 +242,13 @@ void LoadDefaultPrefabs()
 	});
 	
 
+
+	GameObject::AddPrefab("/Sphere.prefab", []()
+	{
+		return MeshImporter::Import("/assets/Gold/Sphere.FBX")->construct();;
+	});
+
+	
 	GameObject::AddPrefab("/NT_Mattests.prefab", []()
 	{
 		GameObject* obj = new GameObject();

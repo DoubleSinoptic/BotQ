@@ -19,6 +19,7 @@ public:
 	void RenderMaps(class Gl3dTexture* hdrSphereMap);
 	void RenderBrdfLut();
 
+	static void CalculateSunLuma(float* vec);
 
 	~Gl3dPbrComputer();
 };

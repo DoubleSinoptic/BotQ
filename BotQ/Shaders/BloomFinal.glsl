@@ -54,11 +54,9 @@ void main()
     vec4 base = texture(_BaseTex, uv + texelSize * _PrefilterOffs);
     vec3 blur = UpsampleFilter(uv);
 
-    base.rgb = pow(base.rgb, vec3(1/2.2));
-
+ 
     vec3 cout = base.rgb + blur * _Intensity;
 
-    cout = pow(cout, vec3(2.2));
-
+  
     FragColor = vec4(cout, base.a);
 }

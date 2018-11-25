@@ -57,11 +57,11 @@ public:
 	float _threshold = 1.16f;
 	float GammaToLiner(float x) 
 	{	
-		return pow(x, 1/2.2f);
+		return pow(x, 2.2f);
 	}
 	float LinerToGamma(float v)
 	{
-		return pow(v, 2.2);
+		return pow(v, 1/2.2);
 	}
 
 	Gl3dTexture*  _BaseTex = nullptr;

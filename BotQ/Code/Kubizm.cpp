@@ -199,15 +199,21 @@ public:
 		}
 		
 		Vector3 e = acum.Normalized() * 2.9f * Time::GetDeltaTime();
-		if (Input::IsKeyDown(SGE_KEY_LEFT_SHIFT))
-		{
-			e *= 0.1;
-		}
+		
 	
 		attac->strafingCoof = e.Dot(GetGameObject()->GetRight());
-	/*	GetGameObject()->SetPosition(GetGameObject()->GetPosition() + e);*/
-		GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(e * 2.1f);
-		GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(Vector3(0, -7, 0) * Time::GetDeltaTime());
+
+
+		if (Input::IsKeyDown(SGE_KEY_LEFT_SHIFT))
+		{
+			GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(e * 2.1f);
+			GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(Vector3(0, -7, 0) * Time::GetDeltaTime());
+		}
+		else 
+		{
+			GetGameObject()->GetParent()->GetComponent<CharacterController>()->Move(e * 10.0f);
+		}
+
 		if (Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_LEFT))
 		{
 			if (hasPressed)
@@ -260,7 +266,8 @@ public:
 		GameObject::SpawnPrefab("/Doom.prefab", "", Vector3(-36, -3.1, -13), Quaternion(0, (Mathf::Pi() / 3.5f) * RAD_TO_DEG, 0));
 		GameObject::SpawnPrefab("/Palms.prefab", "", Vector3::Zero(), Quaternion::Identity());
 		GameObject::SpawnPrefab("/SandHome.prefab", "", Vector3(0, -2, 0), Quaternion::Identity());
-		GameObject::SpawnPrefab("/SandHome.prefab", "", Vector3(0, -2, 0), Quaternion::Identity());
+		GameObject::SpawnPrefab("/Sphere.prefab", "", Vector3(-42, -2, 0), Quaternion::Identity());
+		
 		for (int i = 0; i < 13; i++)
 			if(i % 2 == 0)
 				GameObject::SpawnPrefab("/Matbol.prefab", "", Vector3(i * 1.8, 28, -6), Quaternion::Identity());				

@@ -72,6 +72,7 @@ String PrepareMacroses(const String& str, const DynamicArray<String>& macroses)
 	return rez;
 }
 
+
 void ExportShaderWithMacros(Gl3dShader* tlg, const String& filename, const DynamicArray<String>& macroses)
 {
 
@@ -397,6 +398,9 @@ RenderBeast::RenderBeast()
 #ifdef LIGHT_TEST
 	Ref<Ligth> lg = new Ligth();
 	//lg->powerdColor = Vector3(0.58597f, 0.5f, 0.38f) * 50.0;
+
+	float luma;
+	Gl3dPbrComputer::CalculateSunLuma(&luma);
 	lg->powerdColor = Vector3(255.0 / 255.0, 244.0 / 255.0, 214.0 / 255.0);
 	lg->position = Vector3(-1, 1, -1).Normalized();
 	lg->position.Normalize();
