@@ -47,8 +47,6 @@ public:
 	Ref<Gl3dShader> upsimple;
 	Ref<Gl3dShader> final;
 
-
-
 	float _radius = 5.5f;
 	float _intensity = 0.8f;
 	const int kMaxIterations = 16;
@@ -203,10 +201,16 @@ class RenderBeast
 	Ref<Gl3dVertexArray_3x1> debugVertexArray;
 	Ref<Gl3dVertexArray_3x1> sphere;
 
+	Ref<Gl3dVertexArrayBase> skyboxSpherical;
+	Ref<Gl3dArray<Vector3>> skyboxSphericalVertexes;
+	Ref<Gl3dArray<int>> skyboxSphericalIndeces;
+	int skyboxSphericalN;
 	Ref<Gl3dTexture> noiseTexture;
 	Ref<Gl3dTexture> brdfLut;
 	Ref<Gl3dTexture> envaromentHdrSMap;
 	Ref<Gl3dPbrComputer> pbrComuter;
+
+	Ref<Gl3dTexture> colorCorrectLut;
 
 	Ref<Gl3dVertexArrayBase> quad2;
 	Ref<Gl3dArray<Vector2>> quad2Vertexes;

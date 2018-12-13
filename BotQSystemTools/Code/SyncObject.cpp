@@ -18,10 +18,6 @@ bool SyncObject::TryLock()
 
 void SyncObject::Lock() 
 {
-	//валидируем на блок в этом потоке
-	//...
-	
-
 	while (!TryLock())
 		std::this_thread::yield();
 }

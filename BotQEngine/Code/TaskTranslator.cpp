@@ -16,7 +16,8 @@ class TaskTranslatorImpl
 {
 public:
 	SyncObject lock;
-	DynamicArray<Tasker> tasks;
+	DynamicArray<Tasker> tasks[2];
+	bool currentId = false;
 	std::thread::id id;
 };
 
@@ -44,36 +45,39 @@ void TaskTranslator::Translate(CompliteFlag * volatile compliteflag, const Stora
 	if (compliteflag)
 		*compliteflag = false;
 
-	mImpl->tasks.Add(Tasker { Task, compliteflag });
+	mImpl->tasks[mImpl->currentId ? 1 : 0].Add(Tasker { Task, compliteflag });
 }
 
 void TaskTranslator::Excecute()
 {
-	if (mImpl->tasks.Length() == 0)
-		return;
-	LockGuard<SyncObject> spin(mImpl->lock);
-	if (mImpl->tasks.Length() == 0)
-		return;
-	for (int i = 0; i < mImpl->tasks.Length(); i++) 
+	DynamicArray<Tasker>& current = mImpl->tasks[mImpl->currentId ? 1 : 0];
 	{
-		mImpl->tasks[i].task();
-		if (mImpl->tasks[i].flag)
-			*mImpl->tasks[i].flag = true;
+		LockGuard<SyncObject> spin(mImpl->lock);
+		mImpl->currentId = !mImpl->currentId;
 	}
-	mImpl->tasks.Clear();
+
+	for (int i = 0; i < current.Length(); i++)
+	{
+		current[i].task();
+		if (current[i].flag)
+			*current[i].flag = true;
+	}
+	current.Clear();
 }
 
 void TaskTranslator::ClearAccamulator()
 {
-	if (mImpl->tasks.Length() == 0)
-		return;
 	LockGuard<SyncObject> spin(mImpl->lock);
-	if (mImpl->tasks.Length() == 0)
-		return;
-	for (int i = 0; i < mImpl->tasks.Length(); i++)
-		if (mImpl->tasks[i].flag)
-			*mImpl->tasks[i].flag = true;	
-	mImpl->tasks.Clear();
+	
+	for (int i = 0; i < mImpl->tasks[0].Length(); i++)
+		if (mImpl->tasks[0][i].flag)
+			*mImpl->tasks[0][i].flag = true;	
+	mImpl->tasks[0].Clear();
+
+	for (int i = 0; i < mImpl->tasks[1].Length(); i++)
+		if (mImpl->tasks[1][i].flag)
+			*mImpl->tasks[1][i].flag = true;
+	mImpl->tasks[1].Clear();
 }
 
 void TaskTranslator::Attach() 

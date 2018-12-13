@@ -7,6 +7,7 @@ LevelBase* LevelBase::GetCurrent()
 	return vak;
 }
 
+
 void LevelBase::LoadLevel(LevelBase* level) 
 {
 	if (vak)

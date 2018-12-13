@@ -17,6 +17,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib_static", "zlib_static\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BotQServer", "BotQServer\BotQServer.vcxproj", "{1331927E-3DC7-4BE1-AA99-4568309777EB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "objtoc", "objtoc\objtoc.vcxproj", "{2C600746-F547-42C4-901A-34DEBF2EDF38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -81,6 +83,14 @@ Global
 		{1331927E-3DC7-4BE1-AA99-4568309777EB}.Release|x64.Build.0 = Release|x64
 		{1331927E-3DC7-4BE1-AA99-4568309777EB}.Release|x86.ActiveCfg = Release|Win32
 		{1331927E-3DC7-4BE1-AA99-4568309777EB}.Release|x86.Build.0 = Release|Win32
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Debug|x64.ActiveCfg = Debug|x64
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Debug|x64.Build.0 = Debug|x64
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Debug|x86.ActiveCfg = Debug|Win32
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Debug|x86.Build.0 = Debug|Win32
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Release|x64.ActiveCfg = Release|x64
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Release|x64.Build.0 = Release|x64
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Release|x86.ActiveCfg = Release|Win32
+		{2C600746-F547-42C4-901A-34DEBF2EDF38}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

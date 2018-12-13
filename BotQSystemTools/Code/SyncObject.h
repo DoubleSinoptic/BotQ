@@ -1,11 +1,13 @@
 #pragma once
 
+#include <mutex>
 #include <atomic>
 #include "Export.h"
 /*
 	Это по сути быстрый не системный тип удовлетворяющий
 	интерфейсу ISync
-	Который можно юзать в качестве conditional_variable
+	Который можно юзать в качестве conditional_variabl
+	и да... это тупо спинлок
 */
 class KH_EXPORT SyncObject
 {

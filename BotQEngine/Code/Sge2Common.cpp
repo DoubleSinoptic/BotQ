@@ -73,7 +73,6 @@ MeshVariant::~MeshVariant()
 	});
 }
 
-
 Mesh::Mesh() : _deletedFlag(false)
 {
 	GameInstance::GetCurrent()->translator.SigTranslate([&]()

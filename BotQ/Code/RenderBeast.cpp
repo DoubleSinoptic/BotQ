@@ -274,6 +274,9 @@ void StopwacthSwap() {
 	stopwacthPairs.Clear();
 }
 
+
+
+
 Ref<Gl3dArray<Vector2>> CreateQuadGrid(int& count, float droble)
 {
 	float distance = 2.0 / droble;
@@ -428,6 +431,18 @@ RenderBeast::RenderBeast()
 	}*/
 
 	new Resource(StorageFunction<void(void)>([&]() { RerootAllSquncys(); }), "/Functions/ReloadShaders");
+
+	Bitmap mp("./Data/lut.png");
+	colorCorrectLut = new Gl3dTexture();
+	colorCorrectLut->SetData(mp.GetWidth(), mp.GetHeight(), PixelFormat::RGBA_8, mp.GetBits());
+
+	skyboxSphericalVertexes = new Gl3dArray<Vector3>(Gl3dArrayTarget::Array);
+	skyboxSphericalIndeces = new Gl3dArray<int>(Gl3dArrayTarget::Element);
+	skyboxSphericalVertexes->Add((Vector3*)model_sphere::vertexes, model_sphere::vertexesCount);
+	skyboxSphericalIndeces->Add((int*)model_sphere::indeces, model_sphere::indecesCount);
+	skyboxSpherical = new Gl3dVertexArrayBase();
+	skyboxSpherical->Attach(0, skyboxSphericalVertexes.GetPtr());
+	skyboxSpherical->Attach(1, skyboxSphericalIndeces.GetPtr());
 }
 
 RenderBeast::~RenderBeast()
@@ -761,18 +776,19 @@ void RenderBeast::Draw()
 		TRY_EXEC;
 	}
 
+	Gl3dDevice::CullTest(false);
 	Gl3dDevice::Viewport(s.width, s.height);
 	{
 		Stopwacth __("Skybox pass");
 		Gl3dRenderPas skyboxPass(skybox.GetPtr(), realAlbedo.GetPtr());		
 		skyboxPass.FastUniform("projection", perspective);
 		skyboxPass.FastUniform("view", lookat);
-		//skyboxPass.Uniform("skybox", cubeMap.GetPtr());
 		skyboxPass.FastUniform("skybox", pbrComuter->EnvaromentSkybox);
-		skyboxVertexArray->DrawAllTriangles(36);
+		//skyboxVertexArray->DrawAllTriangles(36);
+		skyboxSpherical->DrawIndexed(Gl3dDrawPrimitive::Triangles, skyboxSphericalIndeces->Length());
 		TRY_EXEC;
 	}
-
+	Gl3dDevice::CullTest(true);
 
 	if (msaaEnabled)
 	{
@@ -970,7 +986,7 @@ void RenderBeast::Draw()
 		rezultPass.FastUniform("rez_map", compositPas[0]->GetColorTexture(0));
 		rezultPass.FastUniform("blur_map", bloom.rezult->GetColorTexture(0));
 		rezultPass.FastUniform("pre_map", bloom.prefiltered->GetColorTexture(0));
-
+		rezultPass.FastUniform("cc_map", colorCorrectLut.GetPtr());
 		quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 		
 

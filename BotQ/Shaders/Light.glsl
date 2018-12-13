@@ -390,6 +390,13 @@ vec3 lg_brdf_base()
 }
 */
 
+float fogFactorLinear(
+  const float dist,
+  const float start,
+  const float end
+) {
+  return 1.0 - clamp((end - dist) / (end - start), 0.0, 1.0);
+}
 
 void main()
 {
@@ -399,20 +406,27 @@ void main()
 	fragSett = texture(FragSettings, fragTexcoord);
 	fragDepth = texture(FragDepth, fragTexcoord);
 	fragPBR = texture(FragPBR, fragTexcoord);
+	float ssaoAttantion = 1.0f;
+
 	if(ssaoEnabled)
 	{
-		float ssaoAttantion = texture(FragSSAO, fragTexcoord).r;
-		ssaoAttantion = pow(ssaoAttantion, 2.0);
-		fragColor =  vec4(vec3(ssaoAttantion) * fragColor.xyz, fragColor.w);
+		ssaoAttantion = texture(FragSSAO, fragTexcoord).r;
+		ssaoAttantion = pow(ssaoAttantion, 4.0);
+		//fragColor =  vec4(vec3(ssaoAttantion) * fragColor.xyz, fragColor.w);
 	}
 
 	//fragColor *= ssaoAttantion;
 
 	if(fragSett.z > 0)
 	{
-		RezBrightColor = vec4(fragColor.xyz, 1.0);
-		RezFragColor = vec4(fragColor.xyz , 1.0);
-		RezGodRay = vec4(fragColor.xyz , 1.0);
+		float brightness = dot(fragColor.xyz, vec3(0.2126, 0.7152, 0.0722));
+		if(brightness < 2.96)
+			RezBrightColor = vec4(vec3(0.0) , fragColor.a);
+		else
+			RezBrightColor = vec4(fragColor.xyz , fragColor.a);
+
+		RezFragColor = vec4(fragColor.xyz, 1.0);
+		RezGodRay = vec4(fragColor.xyz * 3 , 1.0);
 		return;
 	}
 	RezGodRay = vec4(vec3(0.0), 1.0);
@@ -489,18 +503,19 @@ void main()
 #endif
 	
 	
-    color = ambient + Lo * mullCoff;
+    color = ambient * ssaoAttantion  + Lo * mullCoff;
+	
+#define FOG_START 100
+#define FOG_END 500
+    float fogDistance = length(fragPos - lookPosition);
+	float fogAmount = fogFactorLinear(fogDistance, FOG_START, FOG_END);
+
+
 	
 	float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
-#define BLUR_MODEL_A
-#ifdef BLUR_MODEL_A
-	if(brightness > 2.96)
+	if(brightness < 11.96)
 		RezBrightColor = vec4(vec3(0.0) , fragColor.a);
 	else
 		RezBrightColor = vec4(color / 2, fragColor.a);
-	 RezFragColor = vec4(color, fragColor.a);
-#else
-	RezBrightColor = vec4(color , fragColor.a);
-	 RezFragColor = vec4(color, fragColor.a);
-#endif
+	RezFragColor = vec4(color + vec3(1.0) * fogAmount, fragColor.a);
 }
