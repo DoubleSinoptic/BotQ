@@ -408,7 +408,7 @@ void main()
 	fragPBR = texture(FragPBR, fragTexcoord);
 	float ssaoAttantion = 1.0f;
 
-	if(ssaoEnabled)
+	if(ssaoEnabled && false )
 	{
 		ssaoAttantion = texture(FragSSAO, fragTexcoord).r;
 		ssaoAttantion = pow(ssaoAttantion, 4.0);
@@ -502,8 +502,8 @@ void main()
 	
 #endif
 	
-	
-    color = ambient * ssaoAttantion  + Lo * mullCoff;
+	 color = (ambient  + Lo * mullCoff)  *  ssaoAttantion;
+   // color = ambient   + Lo * mullCoff;
 	
 #define FOG_START 100
 #define FOG_END 500

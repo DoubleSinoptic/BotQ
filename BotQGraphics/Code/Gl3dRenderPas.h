@@ -12,11 +12,63 @@ class Gl3dTexture;
 #define FastUniform(...) Uniform(__VA_ARGS__)  
 #endif
 
+enum class Gl3dDepth 
+{
+	Disable = 0,
+	LessEqual = 1,
+	Greater = 2,
+	GreaterEqual = 3,
+	Less = 4
+};
+
+enum class Gl3dCullFace
+{
+	Disable = 0,
+	Front = 1,
+	Back = 2
+};
+
+enum class Gl3dBlending
+{
+	Disable = 0
+};
+
+struct Gl3dViewport
+{
+	int x;
+	int y;
+	int w;
+	int h;
+};
+
+enum class Gl3dClear
+{
+	None = 0,
+	Depth = 1,
+	Color = 2,
+	DepthColor = 3
+};
+
+struct Gl3dClearColor4f
+{
+	float r,  g,  b,  a;
+};
+
+struct Gl3dRenderPassDesc
+{
+	Gl3dDepth    depth;
+	Gl3dCullFace cullFace;
+	Gl3dBlending blending;
+	Gl3dViewport viewport;
+	Gl3dClear    clear;
+	Gl3dClearColor4f clearColor;
+	float        clearDepth;
+};
 
 class GL3DC_EXPORT Gl3dRenderPas
 {
 public:
-	Gl3dRenderPas(Gl3dShader* shader, Gl3dFrameBufferBase* framebuffer);
+	Gl3dRenderPas(Gl3dShader* shader, Gl3dFrameBufferBase* framebuffer, Gl3dRenderPassDesc* desc = nullptr);
 	~Gl3dRenderPas();
 
 	void OUniform(int cap, const char* uniform, Gl3dTexture* texture) const;

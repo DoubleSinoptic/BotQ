@@ -4,18 +4,81 @@
 #include "Gl3dFrameBuffer.h"
 #include "Gl3dDevice.h"
 #include "glad.h"
+#include <stdio.h>
 #undef GetObject
-Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuffer)
+Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuffer, Gl3dRenderPassDesc* desc)
 	: mShader(shader), mFramebuffer(framebuffer)
 {
 	if (!framebuffer)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glUseProgram(shader->GetObject());
-		return;
+		glUseProgram(shader->GetObject());		
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetObject());
-	glUseProgram(shader->GetObject());
+	else 
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetObject());
+		glUseProgram(shader->GetObject());
+	}
+
+
+	if (!desc)
+		return;
+
+	if (desc->clear != Gl3dClear::None)
+	{	
+		glClearDepth(desc->clearDepth);
+		glClearColor(desc->clearColor.r, desc->clearColor.g, desc->clearColor.b, desc->clearColor.a);
+		switch (desc->clear)
+		{
+		case Gl3dClear::Color:
+			glClear(GL_COLOR_BUFFER_BIT);
+			break;
+		case Gl3dClear::DepthColor:
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			break;
+		case Gl3dClear::Depth:
+			glClear(GL_DEPTH_BUFFER_BIT);
+			break;
+		}
+	}
+
+	glViewport(desc->viewport.x, desc->viewport.y, desc->viewport.w, desc->viewport.h);
+
+	if (desc->depth == Gl3dDepth::Disable)
+		glDisable(GL_DEPTH_TEST);
+	else
+	{
+		glEnable(GL_DEPTH_TEST);
+		switch (desc->depth)
+		{
+		case Gl3dDepth::Greater:
+			glDepthFunc(GL_GREATER);
+			break;
+		case Gl3dDepth::Less:
+			glDepthFunc(GL_LESS);
+			break;
+		case Gl3dDepth::GreaterEqual:
+			glDepthFunc(GL_GEQUAL);
+			break;
+		case Gl3dDepth::LessEqual:
+			glDepthFunc(GL_LEQUAL);
+			break;
+		}
+	}
+		
+	if (desc->cullFace == Gl3dCullFace::Disable)
+		glDisable(GL_CULL_FACE);
+	else
+	{
+		glEnable(GL_CULL_FACE);
+		glFrontFace(GL_CW);
+		glDepthFunc(desc->cullFace == Gl3dCullFace::Front ? GL_FRONT : GL_BACK);
+	}
+
+	if (desc->blending == Gl3dBlending::Disable)
+		glDisable(GL_BLEND);
+	else 
+	{}
 }
 
 Gl3dRenderPas::~Gl3dRenderPas()

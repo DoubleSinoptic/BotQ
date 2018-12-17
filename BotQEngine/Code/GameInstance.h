@@ -3,9 +3,10 @@
 #include "Core.h"
 #include "Component.h"
 #include "Resource.h"
-#include "./TaskTranslator.h"
+#include "./CommandQueue.h"
 #include "SyncObject.h"
 #include "./Audio/AudioInstance.h"
+#include "./Time.hpp"
 class Display;
 class PhysicsInstance;
 class MeshRenderer;
@@ -25,7 +26,8 @@ public:
 	DynamicArray<Resource*>			resources;
 	DynamicArray<class Material*>	materials;
 
-	TaskTranslator					translator;
+	CommandQueue					renderThreadQueue;
+	CommandQueue					physicsThreadQueue;
 	SignalAccamulator				physicsSig;
 
 	bool hasClosed;
@@ -37,11 +39,11 @@ public:
 	double							tickRate;
 	double							renderTickRate;
 
-	double							lastTimePoint;
-	double							lastRenderTimePoint;
 
-	double							epsilon;
-	double							renderEpsilon;
+	TimeSpan						lastTimePointTS;
+	TimeSpan						lastRenderTimePointTS;
+
+	double							epsilonTS;
 
 	double							delta;
 	double							renderDelta;

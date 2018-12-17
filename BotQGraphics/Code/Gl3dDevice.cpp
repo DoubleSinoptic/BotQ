@@ -2,6 +2,9 @@
 #include "glad.h"
 #undef GetObject
 #include <stack>
+
+bool invaertCullface = true;
+
 void Gl3dDevice::Clear()
 {
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -60,15 +63,15 @@ void Gl3dDevice::DepthTest(bool value)
 
 void Gl3dDevice::CullTest(bool value)
 {
-    if (value)
-    {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-    }
-    else
-    {
-        glDisable(GL_CULL_FACE);
-    }
+	if (value)
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+	else
+	{
+		glDisable(GL_CULL_FACE);
+	}
 }
 
 void Gl3dDevice::SrTest(bool value)
@@ -102,16 +105,20 @@ void Gl3dDevice::Configurate()
 
 	glEnable(GL_CULL_FACE);
 
+	glFrontFace(GL_CW);
+
 }
 
 void Gl3dDevice::CullBack()
 {
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	
 }
 
 void Gl3dDevice::CullFront()
 {
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_FRONT);
 }
 

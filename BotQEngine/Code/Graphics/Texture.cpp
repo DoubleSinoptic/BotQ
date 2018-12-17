@@ -12,10 +12,10 @@
 
 Texture::~Texture()
 {
-	GameInstance::GetCurrent()->translator.SigTranslate([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
 	{
 		delete handle.Get<Gl3dTexture*>();
-	});
+	}));
 	
 }
 
@@ -35,7 +35,7 @@ void Texture::SetFromBitmap(const Ref<Bitmap>& bitmap)
 	Assert(!bitmap.IsNull());
 	w = bitmap->GetWidth();
 	h = bitmap->GetHeight();
-	GameInstance::GetCurrent()->translator.SigTranslate([&]() 
+	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
 	{
 		Gl3dTexture* gt = new Gl3dTexture();
 		handle.Set(gt);
@@ -43,7 +43,7 @@ void Texture::SetFromBitmap(const Ref<Bitmap>& bitmap)
 		/*gt->SetMagMinFilters(Filter::LINEAR, Filter::LINEAR);*/
 		gt->SetMagMinFilters(Filter::NEAREST, Filter::MIPMAP_LINEAR);
 		gt->GenMipmaps();
-	});
+	}));
 	isCubeMap = false;
 }
 
@@ -57,7 +57,7 @@ void Texture::SetFromCubeBitmap(const Ref<Bitmap>& left, const Ref<Bitmap>& righ
 	Assert(!front.IsNull());
 	w = left->GetWidth();
 	h = left->GetHeight();
-	GameInstance::GetCurrent()->translator.SigTranslate([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
 	{
 		Gl3dTexture* gt = new Gl3dTexture();
 		handle.Set(gt);
@@ -67,7 +67,7 @@ void Texture::SetFromCubeBitmap(const Ref<Bitmap>& left, const Ref<Bitmap>& righ
 		gt->SetDataCube(3, bottom->GetWidth(), bottom->GetHeight(), PixelFormat::RGBA_8, bottom->GetBits());
 		gt->SetDataCube(4, back->GetWidth(), back->GetHeight(), PixelFormat::RGBA_8, back->GetBits());
 		gt->SetDataCube(5, front->GetWidth(), front->GetHeight(), PixelFormat::RGBA_8, front->GetBits());
-	});
+	}));
 
 }
 
@@ -83,19 +83,19 @@ int Texture::GetHeight() const
 
 void Texture::EnableFiltration(bool value)
 {
-	GameInstance::GetCurrent()->translator.Translate(nullptr, [=]()
+	GameInstance::GetCurrent()->renderThreadQueue.Enqueue(new StoragedCommand([=]()
 	{
 		if(value)
 			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Filter::NEAREST, Filter::LINEAR);
 		else
 			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Filter::NEAREST, Filter::NEAREST);
-	});
+	}));
 }
 
 void Texture::GenMipmaps()
 {
-	GameInstance::GetCurrent()->translator.Translate(nullptr, [=]()
+	GameInstance::GetCurrent()->renderThreadQueue.Enqueue(new StoragedCommand([=]()
 	{
 		handle.Get<Gl3dTexture*>()->GenMipmaps();
-	});
+	}));
 }

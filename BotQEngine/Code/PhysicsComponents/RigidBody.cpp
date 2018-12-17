@@ -5,7 +5,7 @@
 #include "Physics.h"
 
 
-#define KH_PHYSICS
+//#define KH_PHYSICS
 #ifdef KH_PHYSICS
 
 #include "Utility.h"
@@ -51,7 +51,8 @@ public:
 
 };
 Ref<MyTaskShedulerFromBt> KH_TASK_SHEDULLER = nullptr;
-
+#else
+int cpuCount = 1;
 #endif
 
 

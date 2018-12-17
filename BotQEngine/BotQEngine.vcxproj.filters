@@ -63,9 +63,6 @@
     <ClCompile Include="Code\Sge2Common.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Code\TaskTranslator.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Code\Tools.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -207,6 +204,9 @@
     <ClCompile Include="Code\Audio\AudioInstance.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Code\CommandQueue.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\Camera.h">
@@ -267,9 +267,6 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Code\Stream.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\TaskTranslator.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Code\Tools.h">
@@ -474,6 +471,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Code\Audio\AudioInstance.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\CommandQueue.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

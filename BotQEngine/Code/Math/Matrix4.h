@@ -26,7 +26,15 @@ public:
 		M[3][0] = 0.0f; M[3][1] = 0.0f; M[3][2] = 0.0f; M[3][3] = 0.0f;		
 	}
 
-
+	Matrix4 Transpose() const 
+	{
+		Matrix4 r;
+		r.SetRow(0, this->operator [](0));
+		r.SetRow(1, this->operator [](1));
+		r.SetRow(2, this->operator [](2));
+		r.SetRow(3, this->operator [](3));
+		return r;
+	}
 
 	static Matrix4 FromQuaternion(const Quaternion& q)
 	{
@@ -88,97 +96,89 @@ public:
 		m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
 		return m;
 	}
-	
+	static const bool leftHanded = true;
 	static Matrix4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar)
 	{
-		Matrix4 Result(1);
-		Result[0][0] = static_cast<float>(2) / (right - left);
-		Result[1][1] = static_cast<float>(2) / (top - bottom);
-		Result[3][0] = -(right + left) / (right - left);
-		Result[3][1] = -(top + bottom) / (top - bottom);
-		Result[2][2] = -static_cast<float>(2) / (zFar - zNear);
-		Result[3][2] = -(zFar + zNear) / (zFar - zNear);
+		if (leftHanded)
+		{
+			Matrix4 Result(1);
+			Result[0][0] = static_cast<float>(2) / (right - left);
+			Result[1][1] = static_cast<float>(2) / (top - bottom);
+			Result[2][2] = static_cast<float>(2) / (zFar - zNear);
+			Result[3][0] = -(right + left) / (right - left);
+			Result[3][1] = -(top + bottom) / (top - bottom);
+			Result[3][2] = -(zFar + zNear) / (zFar - zNear);
+			return Result;
+		}
+		else 
+		{
+			Matrix4 Result(1);
+			Result[0][0] = static_cast<float>(2) / (right - left);
+			Result[1][1] = static_cast<float>(2) / (top - bottom);
+			Result[3][0] = -(right + left) / (right - left);
+			Result[3][1] = -(top + bottom) / (top - bottom);
+			Result[2][2] = -static_cast<float>(2) / (zFar - zNear);
+			Result[3][2] = -(zFar + zNear) / (zFar - zNear);
 
-		return Result;
+			return Result;
+		}
+	
 	}
-  /*  static Matrix4 LookAtRetro(const Vector3& eye, const Vector3& center, const Vector3& up)
-    {
-        Matrix4 Matrix;
-        Vector3 X, Y, Z;
-        Z = eye - center;
-        Z.Normalize();
-        Y = up;
-        X = Y.Cross(Z);
-        X.Normalize();
-        Y.Normalize();
-        Matrix[0][0] = X.x;
-        Matrix[1][0] = X.y;
-        Matrix[2][0] = X.z;
-        Matrix[3][0] = -X.Dot(eye);
-        Matrix[0][1] = Y.x;
-        Matrix[1][1] = Y.y;
-        Matrix[2][1] = Y.z;
-        Matrix[3][1] = -Y.Dot(eye);
-        Matrix[0][2] = Z.x;
-        Matrix[1][2] = Z.y;
-        Matrix[2][2] = Z.z;
-        Matrix[3][2] = -Z.Dot(eye);
-        Matrix[0][3] = 0;
-        Matrix[1][3] = 0;
-        Matrix[2][3] = 0;
-        Matrix[3][3] = 1.0f;
-        return Matrix;
-    }*/
+
+
 
 	static Matrix4 LookAt(const Vector3& eye, const Vector3& center, const Vector3& up)
 	{
+		if (leftHanded)
+		{
+			Vector3 const f = ((center - eye).Normalized());
+			Vector3 const s = ((up.Cross(f)).Normalized());
+			Vector3 const u = (f.Cross(s)).Normalized();
 
-		/*Vector3 f = (eye - center).Normalize();
-		Vector3 s = (f.Cross(up)).Normalize();
-		Vector3 u = s.Cross(f);
-
-		Matrix4 Result(1.0f);
-
-		Result[0][0] = s.x;
-		Result[1][0] = s.y;
-		Result[2][0] = s.z;
-		Result[0][1] = u.x;
-		Result[1][1] = u.y;
-		Result[2][1] = u.z;
-		Result[0][2] = f.x;
-		Result[1][2] = f.y;
-		Result[2][2] = f.z;
-		Result[3][0] = -s.Dot(eye);
-		Result[3][1] = -u.Dot(eye);
-		Result[3][2] = -f.Dot(eye);
-		return Result;*/
-
-		Matrix4 Matrix;
-		Vector3 X, Y, Z;
-		Z = eye - center;
-		Z.Normalize();
-		Y = up;
-		X = Y.Cross(Z);
-		Y = Z.Cross(X);
-		X.Normalize();
-		Y.Normalize();
-		Matrix[0][0] = X.x;
-		Matrix[1][0] = X.y;
-		Matrix[2][0] = X.z;
-		Matrix[3][0] = -X.Dot(eye);
-		Matrix[0][1] = Y.x;
-		Matrix[1][1] = Y.y;
-		Matrix[2][1] = Y.z;
-		Matrix[3][1] = -Y.Dot(eye);
-		Matrix[0][2] = Z.x;
-		Matrix[1][2] = Z.y;
-		Matrix[2][2] = Z.z;
-		Matrix[3][2] = -Z.Dot(eye);
-		Matrix[0][3] = 0;
-		Matrix[1][3] = 0;
-		Matrix[2][3] = 0;
-		Matrix[3][3] = 1.0f;
-		return Matrix;
+			Matrix4 Result(1.0);
+			Result[0][0] = s.x;
+			Result[1][0] = s.y;
+			Result[2][0] = s.z;
+			Result[0][1] = u.x;
+			Result[1][1] = u.y;
+			Result[2][1] = u.z;
+			Result[0][2] = f.x;
+			Result[1][2] = f.y;
+			Result[2][2] = f.z;
+			Result[3][0] = -s.Dot(eye);
+			Result[3][1] = -u.Dot(eye);
+			Result[3][2] = -f.Dot(eye);
+			return Result;
+		}
+		else 
+		{
+			Matrix4 Matrix;
+			Vector3 X, Y, Z;
+			Z = eye - center;
+			Z.Normalize();
+			Y = up;
+			X = Y.Cross(Z);
+			Y = Z.Cross(X);
+			X.Normalize();
+			Y.Normalize();
+			Matrix[0][0] = X.x;
+			Matrix[1][0] = X.y;
+			Matrix[2][0] = X.z;
+			Matrix[3][0] = -X.Dot(eye);
+			Matrix[0][1] = Y.x;
+			Matrix[1][1] = Y.y;
+			Matrix[2][1] = Y.z;
+			Matrix[3][1] = -Y.Dot(eye);
+			Matrix[0][2] = Z.x;
+			Matrix[1][2] = Z.y;
+			Matrix[2][2] = Z.z;
+			Matrix[3][2] = -Z.Dot(eye);
+			Matrix[0][3] = 0;
+			Matrix[1][3] = 0;
+			Matrix[2][3] = 0;
+			Matrix[3][3] = 1.0f;
+			return Matrix;
+		}
 	}
 
 	Vector3 GetTranslationComponent() const
@@ -218,76 +218,43 @@ public:
 		return Vector4(M[0][id], M[1][id], M[2][id], M[3][id]);
 	}
 
-	static Matrix4 PerspectiveRH(float fovy, float aspect, float near, float far)
+	FORCEINLINE void SetRow(int id, const Vector4& c) 
 	{
-		float const tanHalfFovy = tan(fovy / static_cast<float>(2));
-
-		Matrix4 Result(0.0);
-		Result[0][0] = static_cast<float>(1) / (aspect * tanHalfFovy);
-		Result[1][1] = static_cast<float>(1) / (tanHalfFovy);
-		Result[2][2] = -(far + near) / (far - near);
-		Result[2][3] = -static_cast<float>(1);
-		Result[3][2] = -(static_cast<float>(2) * far * near) / (far - near);
-		
-		return Result;
+		M[0][id] = c.x;
+		M[1][id] = c.y;
+		M[2][id] = c.z;
+		M[3][id] = c.w;
 	}
 
-	static Matrix4 Perspective(float y_fov, float aspect, float n, float f)
+	static Matrix4 Perspective(float fovy, float aspect, float near, float far)
 	{
-		Matrix4 mret;
-		Vector4* m = mret.M;
-		float const a = 1.f / (float)tan(y_fov / 2.f);
+		if (leftHanded)
+		{
+			float const tanHalfFovy = tan(fovy / static_cast<float>(2));
 
-		m[0][0] = a / aspect;
-		m[0][1] = 0.f;
-		m[0][2] = 0.f;
-		m[0][3] = 0.f;
+			Matrix4 Result(0.0);
+			Result[0][0] = static_cast<float>(1) / (aspect * tanHalfFovy);
+			Result[1][1] = static_cast<float>(1) / (tanHalfFovy);
+			Result[2][2] = (far + near) / (far - near);
+			Result[2][3] = static_cast<float>(1);
+			Result[3][2] = -(static_cast<float>(2) * far * near) / (far - near);
+			return Result;
+		}
+		else 
+		{
+			float const tanHalfFovy = tan(fovy / static_cast<float>(2));
 
-		m[1][0] = 0.f;
-		m[1][1] = a;
-		m[1][2] = 0.f;
-		m[1][3] = 0.f;
+			Matrix4 Result(0.0);
+			Result[0][0] = static_cast<float>(1) / (aspect * tanHalfFovy);
+			Result[1][1] = static_cast<float>(1) / (tanHalfFovy);
+			Result[2][2] = -(far + near) / (far - near);
+			Result[2][3] = -static_cast<float>(1);
+			Result[3][2] = -(static_cast<float>(2) * far * near) / (far - near);
 
-		m[2][0] = 0.f;
-		m[2][1] = 0.f;
-		m[2][2] = -((f + n) / (f - n));
-		m[2][3] = -1.f;
-
-		m[3][0] = 0.f;
-		m[3][1] = 0.f;
-		m[3][2] = -((2.f * f * n) / (f - n));
-		m[3][3] = 0.f;
-
-		return mret;
+			return Result;
+		}
 	}
 
-	/*FORCEINLINE Matrix4 operator*(const Matrix4& rhs) const
-	{
-		Matrix4 r;
-#define m M
-
-		r.m[0][0] = m[0][0] * rhs.m[0][0] + m[0][1] * rhs.m[1][0] + m[0][2] * rhs.m[2][0] + m[0][3] * rhs.m[3][0];
-		r.m[0][1] = m[0][0] * rhs.m[0][1] + m[0][1] * rhs.m[1][1] + m[0][2] * rhs.m[2][1] + m[0][3] * rhs.m[3][1];
-		r.m[0][2] = m[0][0] * rhs.m[0][2] + m[0][1] * rhs.m[1][2] + m[0][2] * rhs.m[2][2] + m[0][3] * rhs.m[3][2];
-		r.m[0][3] = m[0][0] * rhs.m[0][3] + m[0][1] * rhs.m[1][3] + m[0][2] * rhs.m[2][3] + m[0][3] * rhs.m[3][3];
-
-		r.m[1][0] = m[1][0] * rhs.m[0][0] + m[1][1] * rhs.m[1][0] + m[1][2] * rhs.m[2][0] + m[1][3] * rhs.m[3][0];
-		r.m[1][1] = m[1][0] * rhs.m[0][1] + m[1][1] * rhs.m[1][1] + m[1][2] * rhs.m[2][1] + m[1][3] * rhs.m[3][1];
-		r.m[1][2] = m[1][0] * rhs.m[0][2] + m[1][1] * rhs.m[1][2] + m[1][2] * rhs.m[2][2] + m[1][3] * rhs.m[3][2];
-		r.m[1][3] = m[1][0] * rhs.m[0][3] + m[1][1] * rhs.m[1][3] + m[1][2] * rhs.m[2][3] + m[1][3] * rhs.m[3][3];
-
-		r.m[2][0] = m[2][0] * rhs.m[0][0] + m[2][1] * rhs.m[1][0] + m[2][2] * rhs.m[2][0] + m[2][3] * rhs.m[3][0];
-		r.m[2][1] = m[2][0] * rhs.m[0][1] + m[2][1] * rhs.m[1][1] + m[2][2] * rhs.m[2][1] + m[2][3] * rhs.m[3][1];
-		r.m[2][2] = m[2][0] * rhs.m[0][2] + m[2][1] * rhs.m[1][2] + m[2][2] * rhs.m[2][2] + m[2][3] * rhs.m[3][2];
-		r.m[2][3] = m[2][0] * rhs.m[0][3] + m[2][1] * rhs.m[1][3] + m[2][2] * rhs.m[2][3] + m[2][3] * rhs.m[3][3];
-
-		r.m[3][0] = m[3][0] * rhs.m[0][0] + m[3][1] * rhs.m[1][0] + m[3][2] * rhs.m[2][0] + m[3][3] * rhs.m[3][0];
-		r.m[3][1] = m[3][0] * rhs.m[0][1] + m[3][1] * rhs.m[1][1] + m[3][2] * rhs.m[2][1] + m[3][3] * rhs.m[3][1];
-		r.m[3][2] = m[3][0] * rhs.m[0][2] + m[3][1] * rhs.m[1][2] + m[3][2] * rhs.m[2][2] + m[3][3] * rhs.m[3][2];
-		r.m[3][3] = m[3][0] * rhs.m[0][3] + m[3][1] * rhs.m[1][3] + m[3][2] * rhs.m[2][3] + m[3][3] * rhs.m[3][3];
-#undef m
-		return r;
-	}*/
 };
 //
 FORCEINLINE Matrix4 operator*(const Matrix4& m1, const Matrix4& m2)

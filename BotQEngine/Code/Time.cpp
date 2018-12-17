@@ -16,6 +16,12 @@ double Time::GetTotalTime()
 	return double(std::chrono::duration_cast<std::chrono::microseconds>(delta).count()) * 0.000001;
 }
 
+TimeSpan Time::GetTotalMicroseconds()
+{
+	std::chrono::high_resolution_clock::duration delta = std::chrono::high_resolution_clock::now() - clockX;
+	return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
+}
+
 double Time::GetDeltaTime()
 {
 	return GameInstance::GetCurrent()->delta;

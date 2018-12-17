@@ -4,7 +4,7 @@
 #include <Common/DynamicArray.h>
 #include <Sge2Common.h>
 #include <Display.h>
-
+#include "FastMesh.h"
 float skyboxVertices[] = {
 	// positions          
 	-1.0f,  1.0f, -1.0f,
@@ -305,10 +305,12 @@ Ref<Gl3dArray<Vector2>> CreateQuadGrid(int& count, float droble)
 			arr->Add(startTriangles[0] + Vector2(distance * i, distance * j));
 			arr->Add(startTriangles[1] + Vector2(distance * i, distance * j));
 			arr->Add(startTriangles[2] + Vector2(distance * i, distance * j));
+			
 
 			arr->Add(startTriangles[3] + Vector2(distance * i, distance * j));
 			arr->Add(startTriangles[4] + Vector2(distance * i, distance * j));
 			arr->Add(startTriangles[5] + Vector2(distance * i, distance * j));
+			
 		}
 	}
 
@@ -482,7 +484,7 @@ void RenderBeast::Draw()
 	//Matrix4 lookat = Matrix4::LookAt(Vector3(24, 24, 24), Vector3(0, 0, 0) , Vector3(0, 1, 0));
 
 	float aspectRatio = float(s.width) / float(s.height);
-	Matrix4 perspective = Matrix4::PerspectiveRH(CAMERA_ANGLE, aspectRatio, 0.1f, 2000.0f);
+	Matrix4 perspective = Matrix4::Perspective(CAMERA_ANGLE, aspectRatio, 0.1f, 2000.0f);
 	if (lastFrameSize != s)
 	{
 
@@ -713,7 +715,7 @@ void RenderBeast::Draw()
 		Stopwacth __("Debug pass");
 		Gl3dRenderPas rezultPass(debug.GetPtr(), realAlbedo.GetPtr());
 		
-		Gl3dDevice::CullBack();
+		Gl3dDevice::CullFront();
 		rezultPass.FastUniform("mvp", perspective * lookat);
 		auto x = [&](const Vector3& p, const Vector3& p1, const Vector3& c, const Vector3& c1)
 		{
@@ -788,7 +790,9 @@ void RenderBeast::Draw()
 		skyboxSpherical->DrawIndexed(Gl3dDrawPrimitive::Triangles, skyboxSphericalIndeces->Length());
 		TRY_EXEC;
 	}
-	Gl3dDevice::CullTest(true);
+
+	Gl3dDevice::DepthTest(false);
+	
 
 	if (msaaEnabled)
 	{
@@ -804,7 +808,7 @@ void RenderBeast::Draw()
 
 	*/
 
-	Gl3dDevice::DepthTest(false);
+
 	ssaoEnabled = true;
 	if (ssaoEnabled)
 	{
@@ -824,6 +828,8 @@ void RenderBeast::Draw()
 			pass.FastUniform("gPosition", albedoPas->GetColorTexture(0));
 			pass.FastUniform("gPositionDepth", albedoPas->GetDepthTexture(0));
 			pass.FastUniform("gNormal", albedoPas->GetColorTexture(1));
+
+			
 			pass.FastUniform("texNoise", noiseTexture.GetPtr());
 			quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 			TRY_EXEC;
@@ -961,7 +967,7 @@ void RenderBeast::Draw()
 	}
 
 	Gl3dDevice::Viewport(outS.width, outS.height);
-
+	//outType = RenderBeast::DisplayOut::SSAO;
 	switch (outType)
 	{
 	case RenderBeast::DisplayOut::SSAO:
@@ -987,6 +993,9 @@ void RenderBeast::Draw()
 		rezultPass.FastUniform("blur_map", bloom.rezult->GetColorTexture(0));
 		rezultPass.FastUniform("pre_map", bloom.prefiltered->GetColorTexture(0));
 		rezultPass.FastUniform("cc_map", colorCorrectLut.GetPtr());
+
+		rezultPass.FastUniform("albedo_map", albedoPas->GetColorTexture(2));
+		rezultPass.FastUniform("cmp_map", renderPas->GetColorTexture(0));
 		quad2->Draw(Gl3dDrawPrimitive::Triangles, quad2VertexesCount);
 		
 

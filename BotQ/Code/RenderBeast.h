@@ -11,7 +11,7 @@
 #include <GameInstance.h>
 #include <PhysicsComponents/BoxCollider.h>
 #include <Common/TinyFile.h>
-#include <TaskTranslator.h>
+#include <CommandQueue.h>
 #include <MeshImporter.h>
 #include <PhysicsComponents/TrianglesCollider.h>
 #include <Graphics/Texture.h>
@@ -241,7 +241,7 @@ public:
 	String profileString;
 
 	Ref<Gl3dShader> gui;
-	TaskTranslator	renderSyncRoot;
+	CommandQueue	renderSyncRoot;
 
 	bool DebugDrawShadowOrhoProjection = false;
 	bool DebugDrawPhysicsLens = false;

@@ -22,6 +22,10 @@ uniform sampler2D god_map;
 uniform sampler2D blur_map;
 uniform sampler2D pre_map;
 uniform sampler2D cc_map;
+
+uniform sampler2D albedo_map;
+uniform sampler2D cmp_map;
+
 vec3 LinearToGammaSpace (vec3 color)
 {
     color = max(color, vec3(0, 0, 0));
@@ -86,9 +90,13 @@ void main()
 	float cTonemapMaxWhite = 5.0f;
 
 	 vec3 final = 
-	    Uncharted2Tonemap(max(color * cTonemapExposureBias, 0.0)) / 
+	    Uncharted2Tonemap(max(blur * cTonemapExposureBias, 0.0)) / 
         Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));
 	//final += god;
 
+	/*
+	uniform sampler2D albedo_map;
+uniform sampler2D cmp_map;
+	*/
     FragColor = vec4(LinearToGammaSpace(final), 1.0);
 }

@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Time.hpp"
 
+#define PERFORM(x) {printf("%s\n",(x));}
+
 PhysicsInstance*	Internal_AllocateAndConstructPhysicsContext();
 void				Internal_DestructAndDeallocatePhysicsContext(PhysicsInstance* c);
 void				Internal_SimulatePhysicsContext(PhysicsInstance* c, float time, int substepscount, float substeptime);
@@ -18,10 +20,9 @@ double							fullTime;
 GameInstance::GameInstance() : 
 					tickRate(60.0),
 					renderTickRate(0.0),
-					lastTimePoint(Time::GetTotalTime()),
-					lastRenderTimePoint(Time::GetTotalTime()),
-					epsilon(0.0),
-					renderEpsilon(0.0),
+					lastTimePointTS(Time::GetTotalMicroseconds()),
+					lastRenderTimePointTS(Time::GetTotalMicroseconds()),
+					epsilonTS(0),
 					delta(0.0),
 					renderDelta(0.0),
 
@@ -61,36 +62,29 @@ GameInstance * GameInstance::GetCurrent()
 
 bool GameInstance::Update()
 {
-	double updateCallTimePoint = Time::GetTotalTime();
+	//PERFORM("GameInstance::Update");
+	physicsThreadQueue.Excecute();
+
+	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool updateFlag = false;
-
-	delta = updateCallTimePoint - lastTimePoint;
-	double updatePeriod = 1.0 / tickRate;
-	if ((delta + epsilon) >= updatePeriod)
+	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / tickRate);
+	TimeSpan deltaTime = currentTime - lastTimePointTS;
+	if ((deltaTime + epsilonTS) >= frameStep)
 	{
-		lastTimePoint = updateCallTimePoint;
-		epsilon += (delta - updatePeriod);
-		
-		/*
-		говорим рендерущему потоку о том что он должен обновится
-		*/
-		physicsSig.Notify();
-		/*
-		выравниваем дельту чтобы физический движок в один момент 
-		не принял за dt всё время которое движок сидел в afk
-		*/
-		delta = Mathf::Clamp(delta, 0.0f, 10.0);
-		
-		updateFlag = true;
-		SetThisCurrent();
+			lastTimePointTS = currentTime;
+	        epsilonTS += (deltaTime - frameStep);
+			
+			updateFlag = true;
+			SetThisCurrent();
+			
+		    Internal_SimulatePhysicsContext(physics, TimeSpawnToFloatSeconds(deltaTime), -1, -1);
+			for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
+			{
+				Component* c = updatebleComponents[i];
+				c->PhysicUpdate();
+			}
 
-		Internal_SimulatePhysicsContext(physics, delta, -1, -1);
-		for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-		{
-			Component* c = updatebleComponents[i];
-			c->PhysicUpdate();
-		}
-		
+			physicsSig.Notify();
 	}
 	return updateFlag;
 }
@@ -102,55 +96,30 @@ bool GameInstance::Update()
 */
 bool GameInstance::RenderUpdate()
 {
-	double RenderUpdateStartTimePoint = Time::GetTotalTime();
+	//PERFORM("GameInstance::RenderUpdate");
+	renderThreadQueue.Excecute();
+
+	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool render_flag = false;
-
-	
-	translator.Excecute();
-	copyTime = Time::GetTotalTime() - RenderUpdateStartTimePoint;
-
-	renderDelta = Time::GetTotalTime() - lastRenderTimePoint;
-	//											   чекаем пришёл ли сигнал
-	if ((renderTickRate > 0 && (renderDelta >= (1.0 / renderTickRate))) || physicsSig.Take())
+	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / renderTickRate);
+	TimeSpan deltaTime = currentTime - lastRenderTimePointTS;
+	if ((renderTickRate > 0 && deltaTime >= frameStep) || physicsSig.Take())
 	{
-		lastRenderTimePoint = RenderUpdateStartTimePoint;
-
+		lastRenderTimePointTS = currentTime;
 		render_flag = true;
-		SetThisCurrent();	
+		SetThisCurrent();
 		for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
 		{
 			Component* c = updatebleComponents[i];
 			c->FrameUpdate();
 		}
-	}	
+	}
 	return render_flag;
 }
 
 bool GameInstance::FakeRenderUpdate()
 {
 	throw Exception("not supported exception");
-	//bool render_flag = false;
-
-	//double ege = Time::GetTotalTime();
-	//translator.ClearAccamulator();
-	//copyTime = Time::GetTotalTime() - ege;
-
-	//renderDelta = Time::GetTotalTime() - lastRenderTimePoint;
-	////											   чекаем пришёл ли сигнал
-	//if ((renderTickRate > 0 && (renderDelta >= (1.0 / renderTickRate))) || physicsSig.Take())
-	//{
-	//	
-	//	lastRenderTimePoint = Time::GetTotalTime();
-
-	//	render_flag = true;
-	//	SetThisCurrent();
-	//	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-	//	{
-	//		Component* c = updatebleComponents[i];
-	//		c->FrameUpdate();
-	//	}
-	//}
-	//return render_flag;
 }
 
 GameInstance::~GameInstance()

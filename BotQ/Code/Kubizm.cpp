@@ -225,9 +225,9 @@ public:
 
 				GetGameObject()->SetLocalRotation(Quaternion(
 					GetGameObject()->GetLocalRotation().GetEuler()
-					+ Vector3(dy * 0.1f, -dx * 0.1f, 0)));
+					+ Vector3(dy * 0.1f, dx * 0.1f, 0)));
 				float a = slesh;
-				float b = -dx;
+				float b = dx;
 				slesh = (a + (b - a) * 0.1);
 				attac->CamRight(slesh * 0.2f);
 			}
@@ -281,6 +281,8 @@ public:
 				GameObject::SpawnPrefab("/Cars/PickUp.prefab", "", Vector3(j * 4.0, 10, i * 4.0), Quaternion::Identity());				
 			}
 		}
+
+		/*
 		Display::GetCurrent()->GetCamera()->AddComponent<CameraController>();
 
 		GameObject* ak12 = GameObject::SpawnPrefab("/Ak12.prefab", "", Vector3::Zero(), Quaternion::Identity());
@@ -307,7 +309,7 @@ public:
 		p->SetPosition(cam->GetPosition());
 		cam->SetLocalPosition(Vector3(0, 1.0f, 0));
 		cam->SetParent(p);
-		p->AddComponent<CharacterController>();
+		p->AddComponent<CharacterController>();*/
 	}
 
 	virtual void UnloadLevel() override

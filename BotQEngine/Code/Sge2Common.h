@@ -16,7 +16,7 @@
 #include "Math/Matrix4.h"
 #include "Math/Vector3.h"
 #include "Math/Vector2.h"
-#include "TaskTranslator.h"
+#include "CommandQueue.h"
 #include "Common/DataVector.h"
 
 
@@ -111,6 +111,25 @@ class SGE_EXPORT MeshRenderer : public Component
 	int id = -1;
 	Vector3 scale;
 	friend class MeshVariant;
+
+
+	struct SGE_EXPORT UpdateCommand : public CommandDesc
+	{
+		MeshRenderer* m_renderer;
+		virtual void Execute() override;
+	} updateCommand;
+
+	struct SGE_EXPORT AddCommand : public CommandDesc
+	{
+		MeshRenderer* m_renderer;
+		virtual void Execute() override;
+	} addCommand;
+
+	struct SGE_EXPORT RemoveCommand : public CommandDesc
+	{
+		MeshRenderer* m_renderer;
+		virtual void Execute() override;
+	} removeCommand;
 public:
 	
 	Mesh * GetMesh() const;
@@ -119,6 +138,10 @@ public:
 
 	virtual void Awake() override
 	{
+		updateCommand.m_renderer = this;
+		addCommand.m_renderer =  this;
+		removeCommand.m_renderer = this;
+
 		SetEnabled(false);
 		scale = Vector3(1.0, 1.0, 1.0);
 		mTransformChanged = new EventHandler<>([=]()

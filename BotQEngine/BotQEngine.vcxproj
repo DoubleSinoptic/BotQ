@@ -78,7 +78,7 @@
     <ClCompile Include="Code\ResourceLoader.cpp" />
     <ClCompile Include="Code\Sge2Common.cpp" />
     <ClCompile Include="Code\SharedInfo.cpp" />
-    <ClCompile Include="Code\TaskTranslator.cpp" />
+    <ClCompile Include="Code\CommandQueue.cpp" />
     <ClCompile Include="Code\Tools.cpp" />
     <ClCompile Include="Code\Gui\Control.cpp" />
     <ClCompile Include="Code\Gui\GuiInstance.cpp" />
@@ -169,7 +169,7 @@
     <ClInclude Include="Code\ResourceLoader.h" />
     <ClInclude Include="Code\Sge2Common.h" />
     <ClInclude Include="Code\Stream.h" />
-    <ClInclude Include="Code\TaskTranslator.h" />
+    <ClInclude Include="Code\CommandQueue.h" />
     <ClInclude Include="Code\Tools.h" />
     <ClInclude Include="Code\Gui\Control.h" />
     <ClInclude Include="Code\Gui\GuiInstance.h" />

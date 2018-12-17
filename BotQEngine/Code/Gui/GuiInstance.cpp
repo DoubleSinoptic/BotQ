@@ -251,6 +251,8 @@ void GuiInstance::DrawGpu()
 	Size sz = Display::GetCurrent()->GetSize();
 	Gl3dDevice::Viewport(sz.width, sz.height);
 	{
+		Gl3dDevice::CullTest(false);
+		Gl3dDevice::DepthTest(false);
 		Gl3dDevice::AlphaTest(true);
 		Gl3dRenderPas pass(shader.GetPtr(), nullptr);
 		//Gl3dDevice::Clear();

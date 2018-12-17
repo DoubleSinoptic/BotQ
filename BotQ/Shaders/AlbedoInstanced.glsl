@@ -51,7 +51,8 @@ void main(void)
 	o_normal = mat3(model) * normal;
 
 	o_texCoord = texCoord;
-	gl_Position = projection * view *  model * vec4(vertex, 1.0) ;
+	vec4 trez = projection * view *  model * vec4(vertex, 1.0) ;
+    gl_Position = trez; 
 }
 
 &
