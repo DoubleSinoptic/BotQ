@@ -191,11 +191,11 @@ public:
 		}
 		if (Input::IsKeyDown(SGE_KEY_A))
 		{
-			acum += right;
+			acum -= right;
 		}
 		if (Input::IsKeyDown(SGE_KEY_D))
 		{
-			acum -= right;
+			acum += right;
 		}
 		
 		Vector3 e = acum.Normalized() * 2.9f * Time::GetDeltaTime();
@@ -281,8 +281,7 @@ public:
 				GameObject::SpawnPrefab("/Cars/PickUp.prefab", "", Vector3(j * 4.0, 10, i * 4.0), Quaternion::Identity());				
 			}
 		}
-
-		/*
+			
 		Display::GetCurrent()->GetCamera()->AddComponent<CameraController>();
 
 		GameObject* ak12 = GameObject::SpawnPrefab("/Ak12.prefab", "", Vector3::Zero(), Quaternion::Identity());
@@ -309,7 +308,7 @@ public:
 		p->SetPosition(cam->GetPosition());
 		cam->SetLocalPosition(Vector3(0, 1.0f, 0));
 		cam->SetParent(p);
-		p->AddComponent<CharacterController>();*/
+		p->AddComponent<CharacterController>();
 	}
 
 	virtual void UnloadLevel() override

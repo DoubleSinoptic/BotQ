@@ -69,8 +69,6 @@ public:
 	void EnqueueAndWaitDelete(CommandDesc* command);
 	void EnqueueAndWait(CommandDesc* command);
 
-
-
 	void Excecute();
 	void ClearAccamulator();
 

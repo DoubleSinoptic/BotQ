@@ -2,6 +2,7 @@
 #define TOOLS_H
 
 #include "Component.h"
+#include "Math/PointAndSize.h"
 
 class SGE_EXPORT FixedRotation : public Component
 {
@@ -9,6 +10,22 @@ public:
 	void Awake() override;
     void PhysicUpdate() override;
 };
+
+
+class SGE_EXPORT DebugFlyCamera : public Component
+{
+	int dx = 0;
+	int dy = 0;
+	float slesh = 0;
+	float angleX = 0.0;
+	float angleY = 0.0;
+	bool hasPressed = true;
+	Point curre23nt = Point(0, 0);
+public:
+	void Awake() override;
+	void PhysicUpdate() override;
+};
+
 
 
 class SGE_EXPORT Tools

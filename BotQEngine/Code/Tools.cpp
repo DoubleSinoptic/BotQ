@@ -3,7 +3,8 @@
 #include "Graphics/Texture.h"
 #include "Sge2Common.h"
 #include "Time.hpp"
-
+#include "Input.h"
+#include "Audio/AudioSource.h"
 
 void Tools::SetMaterial(GameObject *cube, Material* m)
 {
@@ -91,4 +92,70 @@ void Tools::RotateLocalAll(class GameObject* cube, const Quaternion& rot)
 	for (GameObject* c : *cube)
 		RotateLocalAll(c, rot);
 	cube->SetLocalRotation(rot);
+}
+
+void DebugFlyCamera::Awake()
+{
+	SetEnabled(true);
+}
+
+void DebugFlyCamera::PhysicUpdate()
+{
+
+	float mull = 1.0f;
+	const float FlashSpeed = 40.5f;
+	const float thisSpeed = FlashSpeed;
+	float renderDelta = Time::GetRenderDeltaTime();
+
+	Vector3 forward = (GetGameObject()->GetForward() *  Vector3(1.0f, 1.0f, 1.0f)).Normalized();
+	Vector3 right = (GetGameObject()->GetRight() *  Vector3(1.0f, 1.0f, 1.0f)).Normalized();
+	Vector3 acum = Vector3::Zero();
+	if (Input::IsKeyDown(SGE_KEY_W))
+	{
+		acum += forward;
+	}
+	if (Input::IsKeyDown(SGE_KEY_S))
+	{
+		acum -= forward;
+	}
+	if (Input::IsKeyDown(SGE_KEY_A))
+	{
+		acum -= right;
+	}
+	if (Input::IsKeyDown(SGE_KEY_D))
+	{
+		acum += right;
+	}
+
+	Vector3 e = acum.Normalized() * 12.9f * Time::GetDeltaTime();
+	GetGameObject()->SetLocalPosition(GetGameObject()->GetLocalPosition() + e);
+
+	if (Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_LEFT))
+	{
+		if (hasPressed)
+		{
+			const Point mousePoint = Input::GetMausePosition();
+			dx = mousePoint.x - curre23nt.x;
+			dy = mousePoint.y - curre23nt.y;
+			curre23nt = mousePoint;
+
+			GetGameObject()->SetLocalRotation(Quaternion(
+				GetGameObject()->GetLocalRotation().GetEuler()
+				+ Vector3(dy * 0.1f, dx * 0.1f, 0)));
+			float a = slesh;
+			float b = dx;
+			slesh = (a + (b - a) * 0.1);
+		}
+		else
+		{
+			hasPressed = true;
+			curre23nt = Input::GetMausePosition();
+		}
+
+
+	}
+	else
+		hasPressed = false;
+	AudioSource::SetupListener(GetGameObject()->GetPosition(), GetGameObject()->GetRotation());
+
 }

@@ -39,8 +39,13 @@ uniform vec3 displaySize;
 
 void main()
 {
-	//FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-	//return;
+	
+	 vec3 origin = vViewRay * texture(uTexLinearDepth, vTexcoord).r;
+
+
+
+
+
     vec2 noiseScale = vec2(displaySize.x/4.0, displaySize.y/4.0);
 	vec4 tx = texture(gPosition, TexCoords);
 	if((tx.w + 1) < 0.001)

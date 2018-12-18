@@ -59,7 +59,7 @@ GameInstance * GameInstance::GetCurrent()
 значительная погрешность и даже человек сможет заметить странную
 медленость симуляции.
 */
-
+static TimeSpan largeSpan = TimeSpamFromSeconds(2);
 bool GameInstance::Update()
 {
 	//PERFORM("GameInstance::Update");
@@ -71,20 +71,22 @@ bool GameInstance::Update()
 	TimeSpan deltaTime = currentTime - lastTimePointTS;
 	if ((deltaTime + epsilonTS) >= frameStep)
 	{
-			lastTimePointTS = currentTime;
-	        epsilonTS += (deltaTime - frameStep);
+		delta = TimeSpawnToFloatSeconds(deltaTime);
+		lastTimePointTS = currentTime;
+	    epsilonTS += (deltaTime - frameStep);
+		if (epsilonTS > largeSpan)
+			epsilonTS = 0;
+		updateFlag = true;
+		SetThisCurrent();
 			
-			updateFlag = true;
-			SetThisCurrent();
-			
-		    Internal_SimulatePhysicsContext(physics, TimeSpawnToFloatSeconds(deltaTime), -1, -1);
-			for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-			{
-				Component* c = updatebleComponents[i];
-				c->PhysicUpdate();
-			}
+		Internal_SimulatePhysicsContext(physics, TimeSpawnToFloatSeconds(deltaTime), -1, -1);
+		for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
+		{
+			Component* c = updatebleComponents[i];
+			c->PhysicUpdate();
+		}
 
-			physicsSig.Notify();
+		physicsSig.Notify();
 	}
 	return updateFlag;
 }
@@ -98,13 +100,14 @@ bool GameInstance::RenderUpdate()
 {
 	//PERFORM("GameInstance::RenderUpdate");
 	renderThreadQueue.Excecute();
-
+	
 	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool render_flag = false;
 	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / renderTickRate);
 	TimeSpan deltaTime = currentTime - lastRenderTimePointTS;
 	if ((renderTickRate > 0 && deltaTime >= frameStep) || physicsSig.Take())
 	{
+		renderDelta = TimeSpawnToFloatSeconds(deltaTime);
 		lastRenderTimePointTS = currentTime;
 		render_flag = true;
 		SetThisCurrent();

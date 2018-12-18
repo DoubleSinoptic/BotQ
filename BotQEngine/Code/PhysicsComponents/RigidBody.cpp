@@ -5,7 +5,7 @@
 #include "Physics.h"
 
 
-//#define KH_PHYSICS
+#define KH_PHYSICS
 #ifdef KH_PHYSICS
 
 #include "Utility.h"

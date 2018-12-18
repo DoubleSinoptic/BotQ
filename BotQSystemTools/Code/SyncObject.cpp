@@ -18,8 +18,12 @@ bool SyncObject::TryLock()
 
 void SyncObject::Lock() 
 {
+	int spinCount = 1000;
 	while (!TryLock())
-		std::this_thread::yield();
+		if (spinCount != 0)
+			spinCount--;
+		else
+			std::this_thread::yield();
 }
 
 
@@ -37,7 +41,11 @@ bool SyncObject::SwapSignal()
 
 void SyncObject::Wait()
 {
+	int spinCount = 1000;
 	while (!SwapSignal())
+		if (spinCount != 0)
+			spinCount--;
+		else
 		std::this_thread::yield();	
 }
 

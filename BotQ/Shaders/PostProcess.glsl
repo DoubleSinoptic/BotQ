@@ -80,7 +80,6 @@ void main()
 	const float offset = 0.016;
 	coordX = coordX * vec2(1.0 - offset) + vec2(offset / 2.0);
 #endif
-
 	vec3 blur = texture(blur_map, coordX).rgb;
 	vec3 god = texture(god_map, coordX).rgb * 0.1;
 	vec3 color = texture(rez_map, coordX).rgb;
