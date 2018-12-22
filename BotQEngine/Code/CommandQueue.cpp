@@ -6,12 +6,17 @@
 #include "SyncObject.h"
 #include "LockGuard.h"
 
+struct CommandDesc 
+{
+	CommandBase*  command;
+	CompliteFlag* compliteFlag;
+};
 
 class TaskTranslatorImpl 
 {
 public:
 	SyncObject lock;
-    DynamicArray<CommandDesc*> tasks[2];
+    DynamicArray<CommandDesc> tasks[2];
 	bool currentId = false;
 	std::thread::id id;
 };
@@ -33,15 +38,22 @@ CommandQueue::~CommandQueue()
 }
 
 
-void CommandQueue::Enqueue(CommandDesc* command)
+void CommandQueue::Queue(CommandBase* command, CompliteFlag* compliteFlag)
 {
+	if (std::this_thread::get_id() == mImpl->id)
+	{
+		command->Execute();
+		if (compliteFlag)
+			compliteFlag->store(true);
+		return;
+	}
 	LockGuard<SyncObject> spin(mImpl->lock);
-	mImpl->tasks[mImpl->currentId ? 1 : 0].Add(command);
+	mImpl->tasks[mImpl->currentId ? 1 : 0].Add({ command, compliteFlag });
 }
 
-void CommandQueue::Excecute()
+void CommandQueue::Playback()
 {
-	DynamicArray<CommandDesc*>* current;
+	DynamicArray<CommandDesc>* current;
 	{
 		LockGuard<SyncObject> spin(mImpl->lock);
 		current = &(mImpl->tasks[mImpl->currentId ? 1 : 0]);
@@ -50,16 +62,17 @@ void CommandQueue::Excecute()
 
 	for (int i = 0; i < current->Length(); i++)
 	{	
-		CommandDesc* cmd = (*current)[i];
-		cmd->Execute();
-		cmd->Awake();
+		CommandDesc& cmd = (*current)[i];
+		cmd.command->Execute();
+		if(cmd.compliteFlag)
+			cmd.compliteFlag->store(true);
 	}
 	current->Clear();
 }
 
 void CommandQueue::ClearAccamulator()
 {
-	DynamicArray<CommandDesc*>* current;
+	DynamicArray<CommandDesc>* current;
 	{
 		LockGuard<SyncObject> spin(mImpl->lock);
 		current = &mImpl->tasks[mImpl->currentId ? 1 : 0];
@@ -73,33 +86,9 @@ void CommandQueue::Attach()
 	mImpl->id = std::this_thread::get_id();
 }
 
-
-void CommandQueue::EnqueueAndWaitDelete(CommandDesc* command)
+void CommandQueue::QueueWait(CommandBase* command)
 {
-	if (std::this_thread::get_id() == mImpl->id)
-	{
-		command->Execute();
-		return;
-	}
-	{
-		LockGuard<SyncObject> spin(mImpl->lock);
-		mImpl->tasks[mImpl->currentId ? 1 : 0].Add(command);
-	}
-	command->Wait();
-	delete command;
+	CompliteFlag flag(false);
+	Queue(command, &flag);
+	Wait(&flag);
 }
-
-void CommandQueue::EnqueueAndWait(CommandDesc * command)
-{
-	if (std::this_thread::get_id() == mImpl->id)
-	{
-		command->Execute();
-		return;
-	}
-	{
-		LockGuard<SyncObject> spin(mImpl->lock);
-		mImpl->tasks[mImpl->currentId ? 1 : 0].Add(command);
-	}
-	command->Wait();
-}
-

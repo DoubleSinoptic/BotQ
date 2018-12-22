@@ -112,20 +112,20 @@ class SGE_EXPORT MeshRenderer : public Component
 	Vector3 scale;
 	friend class MeshVariant;
 
-
-	struct SGE_EXPORT UpdateCommand : public CommandDesc
+	struct SGE_EXPORT UpdateCommand : public CommandBase
 	{
+		Matrix4       m_transform;
 		MeshRenderer* m_renderer;
 		virtual void Execute() override;
 	} updateCommand;
 
-	struct SGE_EXPORT AddCommand : public CommandDesc
+	struct SGE_EXPORT AddCommand : public CommandBase
 	{
 		MeshRenderer* m_renderer;
 		virtual void Execute() override;
 	} addCommand;
 
-	struct SGE_EXPORT RemoveCommand : public CommandDesc
+	struct SGE_EXPORT RemoveCommand : public CommandBase
 	{
 		MeshRenderer* m_renderer;
 		virtual void Execute() override;

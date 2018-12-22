@@ -6,7 +6,7 @@
 MeshVariant::MeshVariant(Mesh * varic) :
 	m_transofrms_nva(nullptr), m_vertex_array(nullptr), m_mesh(varic), _deletedFlag(false)
 {
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		m_vertex_array = new Gl3dVertexArrayBase();
 	
@@ -21,76 +21,78 @@ MeshVariant::MeshVariant(Mesh * varic) :
 		m_transofrms_nva = new DynamicArray<Matrix4>();
 #endif
 		m_vertex_array->Attach(0, m_mesh->indeces_buffer.Get<Gl3dArray<unsigned int>*>());
-	}));
+	});
 	
 }
 
 void MeshVariant::QueryAdd(MeshRenderer * renderer)
 {
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		Matrix4 mt;
 		renderer->GetGameObject()->FillMatrix4x4(mt.Data());
 		renderer->id = m_renderers.Add(renderer);
 		m_transofrms_nva->Add(mt * Matrix4::Scale(renderer->scale));
-	}));
+	});
 }
 
 void MeshVariant::QueryRemove(MeshRenderer * renderer)
 {
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		MeshRenderer* change = m_renderers.Back();
 		change->id = m_renderers.Remove(renderer);
 		m_transofrms_nva->RemoveAt(change->id);
-	}));
+	});
 }
 
 void MeshVariant::QueryChange(MeshRenderer * renderer)
 {
-//	GameInstance::GetCurrent()->renderThreadQueue.Enqueue(new StoragedCommand([=]()
-//	{
-//		Matrix4 mt;
-//		renderer->GetGameObject()->FillMatrix4x4(mt.Data());
+//	Matrix4 mt;
+//	renderer->GetGameObject()->FillMatrix4x4(mt.Data());
+//	GameInstance::GetCurrent()->renderThreadQueue.QueueFunction([=]()
+//	{		
 //#ifdef USE_INSTANCING
 //		m_transofrms_nva->Set(renderer->id, mt * Matrix4::Scale(renderer->scale));
 //#else
 //		m_transofrms_nva->operator[](renderer->id) = (mt * Matrix4::Scale(renderer->scale));
 //#endif
-//	}));
-	GameInstance::GetCurrent()->renderThreadQueue.Enqueue(&renderer->updateCommand);
+//	});
+	renderer->GetGameObject()->FillMatrix4x4((float*)&renderer->updateCommand.m_transform);
+
+	GameInstance::GetCurrent()->renderThreadQueue.Queue(&renderer->updateCommand);
 }
 
 MeshVariant::~MeshVariant()
 {
 	Assert(!_deletedFlag);
 	_deletedFlag = true;
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([=]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([=]()
 	{
 		if (m_vertex_array)
 			delete m_vertex_array;
 		if (m_transofrms_nva)
 			delete m_transofrms_nva;
-	}));
+	});
 }
 
 Mesh::Mesh() : _deletedFlag(false)
 {
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		vertices_buffer.Set(new Gl3dArray<Vector3>(Gl3dArrayTarget::Array));
 		normals_buffer.Set(new Gl3dArray<Vector3>(Gl3dArrayTarget::Array));
 		texcoords_buffer.Set(new Gl3dArray<Vector2>(Gl3dArrayTarget::Array));
 		tangets_buffer.Set(new Gl3dArray<Vector3>(Gl3dArrayTarget::Array));
 		indeces_buffer.Set(new Gl3dArray<unsigned int>(Gl3dArrayTarget::Element));
-	}));
+	});
 }
 
 Mesh::~Mesh()
 {
 	Assert(!_deletedFlag);
 	_deletedFlag = true;
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		if (!vertices_buffer.IsNull())
 			delete vertices_buffer.Get<Gl3dArray<Vector3>*>();
@@ -102,12 +104,12 @@ Mesh::~Mesh()
 			delete texcoords_buffer.Get<Gl3dArray<Vector3>*>();
 		if (!indeces_buffer.IsNull())
 			delete indeces_buffer.Get<Gl3dArray<Vector3>*>();
-	}));
+	});
 }
 
 void Mesh::applay_data()
 {
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		vertices_buffer.Get<Gl3dArray<Vector3>*>()->Clear();
 		vertices_buffer.Get<Gl3dArray<Vector3>*>()->Add(vertices.begin(), vertices.end());
@@ -128,25 +130,25 @@ void Mesh::applay_data()
 		indeces_buffer.Get<Gl3dArray<unsigned int>*>()->Clear();
 		indeces_buffer.Get<Gl3dArray<unsigned int>*>()->Add(indeces.begin(), indeces.end());
 		indeces_buffer.Get<Gl3dArray<unsigned int>*>()->DetachRamData();
-	}));
+	});
 }
 
 Material::Material() : _deletedFlag(false)
 {
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		GameInstance::GetCurrent()->materials.Add(this);
-	}));
+	});
 }
 
 Material::~Material()
 {
 	Assert(!_deletedFlag);
 	_deletedFlag = true;
-	GameInstance::GetCurrent()->renderThreadQueue.EnqueueAndWaitDelete(new StoragedCommand([&]()
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
 		GameInstance::GetCurrent()->materials.Remove(this);
-	}));
+	});
 }
 
 void Material::TryDeleteVariant(const Ref<MeshVariant>& var)
@@ -188,12 +190,10 @@ void MeshRenderer::SetMesh(Mesh * msh)
 
 void MeshRenderer::UpdateCommand::Execute()
 {
-	Matrix4 mt;
-	m_renderer->GetGameObject()->FillMatrix4x4(mt.Data());
 #ifdef USE_INSTANCING
-	m_renderer->m_variant->m_transofrms_nva->Set(m_renderer->id, mt * Matrix4::Scale(m_renderer->scale));
+	m_renderer->m_variant->m_transofrms_nva->Set(m_renderer->id, m_transform * Matrix4::Scale(m_renderer->scale));
 #else
-	m_renderer->m_variant->m_transofrms_nva->operator[](m_renderer->id) = (mt * Matrix4::Scale(m_renderer->scale));
+	m_renderer->m_variant->m_transofrms_nva->operator[](m_renderer->id) = (m_transform * Matrix4::Scale(m_renderer->scale));
 #endif
 }
 void MeshRenderer::RemoveCommand::Execute()

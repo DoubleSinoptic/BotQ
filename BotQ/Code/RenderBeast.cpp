@@ -567,7 +567,7 @@ void RenderBeast::Draw()
 	Matrix4 projToView = CalaculateProjection(CameraObject, LightDir, fb, rezEye, rezCenter, rezUp, HalfSize);
 	{
 		Stopwacth __("Shadow pass");
-		Gl3dRenderPas current(shadowGeometryInstanced.GetPtr(), shadowPas.GetPtr());
+		Gl3dRenderPas current(shadowGeometry/*Instanced*/.GetPtr(), shadowPas.GetPtr());
 	
 		Gl3dDevice::Clear();
 		Gl3dDevice::CullFront();
@@ -612,7 +612,7 @@ void RenderBeast::Draw()
 	Gl3dDevice::Viewport(s.width, s.height);
 	{
 		Stopwacth __("Geometry albedo-mrao pass");
-		Gl3dRenderPas rezultPass(albedoInstanced.GetPtr(), realAlbedo.GetPtr());
+		Gl3dRenderPas rezultPass(albedo/*Instanced*/.GetPtr(), realAlbedo.GetPtr());
 		
 		Gl3dDevice::Clear();
 		Gl3dDevice::CullBack();

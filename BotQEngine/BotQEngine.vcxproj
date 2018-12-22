@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Code\CacheAlloc.cpp" />
     <ClCompile Include="Code\Audio\AudioInstance.cpp" />
     <ClCompile Include="Code\Audio\AudioSource.cpp" />
     <ClCompile Include="Code\Bits\TiXml\tinystr.cpp" />
@@ -85,6 +86,7 @@
     <ClCompile Include="Code\Common\Exception.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Code\CacheAlloc.h" />
     <ClInclude Include="Code\Audio\AudioInstance.h" />
     <ClInclude Include="Code\Audio\AudioSource.h" />
     <ClInclude Include="Code\Bits\TiXml\tinystr.h" />

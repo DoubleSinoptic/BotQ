@@ -561,19 +561,20 @@ int main()
 
 		while (wnd.Update() && !additionalCloseSignal.SwapSignal())
 		{
-			double delta = Time::GetTotalTime() - p;
-			if (delta >= 1.0)
-			{
-				p = Time::GetTotalTime();
-				system("cls");
-				long long a, t;
-				Gl3dDevice::GetMemory(a, t);
-				Log("\n%s [FPS/UPS] fps: %d, ups: %d\n [EXEC] Copy: %f\n [RT] R: %f G: %f S: %f F: %f U: %f\n [MEM] %ld/%ld Mbytes", *beast.profileString, gpuRatio.load(), physRatio.load(),
-					instnace.copyTime, renderTime, guiTime, swapTime, flushTime, updtTime, a / 1024, t / 1024);
-				gpuRatio = 0;
-				physRatio = 0;
 
-			}
+			//double delta = Time::GetTotalTime() - p;
+			//if (delta >= 1.0)
+			//{
+			//	p = Time::GetTotalTime();
+			//	system("cls");
+			//	long long a, t;
+			//	Gl3dDevice::GetMemory(a, t);
+			//	Log("\n%s [FPS/UPS] fps: %d, ups: %d\n [EXEC] Copy: %f\n [RT] R: %f G: %f S: %f F: %f U: %f\n [MEM] %ld/%ld Mbytes", *beast.profileString, gpuRatio.load(), physRatio.load(),
+			//		instnace.copyTime, renderTime, guiTime, swapTime, flushTime, updtTime, a / 1024, t / 1024);
+			//	gpuRatio = 0;
+			//	physRatio = 0;
+
+			//}
 
 			double tsm = Time::GetTotalTime();
 			if (instnace.RenderUpdate())

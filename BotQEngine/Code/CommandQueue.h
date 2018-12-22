@@ -5,71 +5,76 @@
 
 #include "Common/Defines.h"
 #include "Common/StorageFunction.h"
+#include "CacheAlloc.h"
 #include <atomic>
 
-class SGE_EXPORT CommandDesc
-{
-	std::atomic_bool m_compliteFlag;
-	bool m_delete;
-public:
-	CommandDesc() :
-		m_compliteFlag(false)
-	{}
-	virtual ~CommandDesc() {}
-	virtual void Execute() = 0;
+typedef std::atomic_bool CompliteFlag;
 
-	void Awake()
+class SGE_EXPORT CommandBase
+{
+public:
+	inline CommandBase() {}
+	virtual ~CommandBase() {}
+	virtual void Execute() = 0;
+};
+
+class TaskTranslatorImpl;
+class SGE_EXPORT CommandQueue
+{
+	struct StoragedCommand : public CommandBase
 	{
-		m_compliteFlag.store(true);
+		StorageFunction<void(void)> m_function;
+		template<typename  T>
+		StoragedCommand(const T& function) :
+			m_function(function)
+		{}
+		virtual void Execute() override
+		{
+			m_function();
+			CacheDestroy(this);
+		}
+	};
+
+public:
+	void Queue(CommandBase* command, CompliteFlag* compliteFlag = nullptr);
+	void QueueWait(CommandBase* command);
+
+
+	template<typename T>
+	void QueueFunction(const T& x) 
+	{	
+		StoragedCommand* c = CacheAlloc<StoragedCommand>(x);
+		Queue(c);
 	}
 
 	template<typename T>
-	void Wait(const T& h)
+	void QueueFunctionWait(const T& x)
+	{
+		StoragedCommand* c = CacheAlloc<StoragedCommand>(x);
+		QueueWait(c);
+	}
+
+	template<typename T>
+	static inline void Wait(CompliteFlag* flag, const T& h)
 	{
 		bool b = true;
-		while (!m_compliteFlag.compare_exchange_weak(b, false))
+		while (!flag->compare_exchange_weak(b, false))
 		{
 			b = true;
 			h();
 		}
 	}
 
-	void Wait() 
+	static inline void Wait(CompliteFlag* flag)
 	{
 		bool b = true;
-		while (!m_compliteFlag.compare_exchange_weak(b, false))
+		while (!flag->compare_exchange_weak(b, false))
 		{
 			b = true;
 		}
 	}
-};
 
-class SGE_EXPORT StoragedCommand : public CommandDesc
-{
-	StorageFunction<void(void)> m_function;
-public:
-	template<typename T>
-	StoragedCommand(const T& val) :
-		m_function(val)
-	{}
-
-	virtual void Execute() override 
-	{
-		m_function();
-	}
-};
-
-#define CreateCommand(x) (new StoragedCommand(x))
-
-class TaskTranslatorImpl;
-class SGE_EXPORT CommandQueue
-{
-public:
-	void Enqueue(CommandDesc* command);
-	void EnqueueAndWaitDelete(CommandDesc* command);
-	void EnqueueAndWait(CommandDesc* command);
-
-	void Excecute();
+	void Playback();
 	void ClearAccamulator();
 
 	CommandQueue();

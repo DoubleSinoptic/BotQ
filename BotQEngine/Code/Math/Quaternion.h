@@ -24,71 +24,104 @@ inline Vector3 NormalizeAngle(const Vector3& c)
 
 
 
-class Quaternion 
+class Matrix3
 {
+public:
+	float m[3][3];
 
-	class _Matrix3
+	inline Matrix3() {}
+
+	inline Matrix3(float diag)
 	{
-	public:
-		float m[3][3];
+		m[0][0] = diag;
+		m[0][1] = 0.0f;
+		m[0][2] = 0.0f;
 
-		const float* operator[] (size_t row) const
-		{
-			return (float*)m[row];
-		}
-		float* operator[] (size_t row)
-		{
-			return (float*)m[row];
-		}
+		m[1][0] = 0.0f;
+		m[1][1] = diag;
+		m[1][2] = 0.0f;
 
-		Vector3 multiply(const Vector3& vec) const
+		m[2][0] = 0.0f;
+		m[2][1] = 0.0f;
+		m[2][2] = diag;
+	}
+
+	inline Matrix3(const Vector3& a, const Vector3& b, const Vector3& c)
+	{
+		m[0][0] = a.x;
+		m[0][1] = b.x;
+		m[0][2] = c.x;
+
+		m[1][0] = a.y;
+		m[1][1] = b.y;
+		m[1][2] = c.y;
+
+		m[2][0] = a.z;
+		m[2][1] = b.z;
+		m[2][2] = c.z;
+	}
+
+	inline const float* operator[] (size_t row) const
+	{
+		return (float*)m[row];
+	}
+
+	inline float* operator[] (size_t row)
+	{
+		return (float*)m[row];
+	}
+
+	bool ToEulerAngles(float& xAngle, float& yAngle, float& zAngle) const
+	{
+		xAngle = -asinf(m[1][2]);
+		if (xAngle < Mathf::HalfPi())
 		{
-			Vector3 prod;
-			for (size_t row = 0; row < 3; row++)
+			if (xAngle > -Mathf::HalfPi())
 			{
-				prod[row] =
-					m[row][0] * vec[0] +
-					m[row][1] * vec[1] +
-					m[row][2] * vec[2];
-			}
+				yAngle = atan2f(m[0][2], m[2][2]);
+				zAngle = atan2f(m[1][0], m[1][1]);
 
-			return prod;
-		}
-
-		bool toEulerAngles(float& xAngle, float& yAngle, float& zAngle) const
-		{
-
-			xAngle = -asinf(m[1][2]);
-			if (xAngle < Mathf::HalfPi())
-			{
-				if (xAngle > -Mathf::HalfPi())
-				{
-					yAngle = atan2f(m[0][2], m[2][2]);
-					zAngle = atan2f(m[1][0], m[1][1]);
-
-					return true;
-				}
-				else
-				{
-					xAngle = -Mathf::HalfPi();
-					yAngle = atan2f(-m[0][1], m[0][0]);
-					zAngle = (0.0f);
-
-					return false;
-				}
+				return true;
 			}
 			else
 			{
-				xAngle = Mathf::HalfPi();
-				yAngle = atan2f(m[0][1], m[0][0]);
+				xAngle = -Mathf::HalfPi();
+				yAngle = atan2f(-m[0][1], m[0][0]);
 				zAngle = (0.0f);
 
 				return false;
 			}
 		}
-	};
+		else
+		{
+			xAngle = Mathf::HalfPi();
+			yAngle = atan2f(m[0][1], m[0][0]);
+			zAngle = (0.0f);
 
-	FORCEINLINE void ToRotationMatrix(_Matrix3& mat) const
+			return false;
+		}
+	}
+};
+
+inline Vector3 operator*(const Matrix3& a, const Vector3& vec)
+{
+	Vector3 prod;
+	for (size_t row = 0; row < 3; row++)
+	{
+		prod[row] =
+			a[row][0] * vec[0] +
+			a[row][1] * vec[1] +
+			a[row][2] * vec[2];
+	}
+
+	return prod;
+}
+
+
+class Quaternion 
+{
+public:
+	FORCEINLINE void ToRotationMatrix(Matrix3& mat) const
 	{
 		float tx = x + x;
 		float ty = y + y;
@@ -113,9 +146,6 @@ class Quaternion
 		mat[2][1] = tyz + twx;
 		mat[2][2] = 1.0f - (txx + tyy);
 	}
-public:
-
-	
 
 	FORCEINLINE Quaternion() {}
 
@@ -174,10 +204,10 @@ public:
 
 	FORCEINLINE Vector3 GetEuler() const
 	{
-		_Matrix3 c;
+		Matrix3 c;
 		ToRotationMatrix(c);
 		Vector3 eul;
-		c.toEulerAngles(eul.x, eul.y, eul.z);
+		c.ToEulerAngles(eul.x, eul.y, eul.z);
 		return eul * RAD_TO_DEG;
 	}
 
@@ -440,12 +470,12 @@ FORCEINLINE Quaternion operator*(const Quaternion& q1, const Quaternion& q2)
 
 FORCEINLINE Vector3 operator*(const Quaternion &q, const Vector3 &posf)
 {
-	/*_Matrix3 c;
+	Matrix3 c;
 	q.ToRotationMatrix(c);
-	return c.multiply(posf);*/
-	Vector3 u(q.x, q.y, q.z);
-	float s = q.w;
-	return 2.0f * u.Dot(posf) * u
-		+ (s*s - u.Dot(u)) * posf
-		+ 2.0f * s * u.Cross(posf);
+	return c * posf;
+	//Vector3 u(q.x, q.y, q.z);
+	//float s = q.w;
+	//return 2.0f * u.Dot(posf) * u
+	//	+ (s*s - u.Dot(u)) * posf
+	//	+ 2.0f * s * u.Cross(posf);
 }

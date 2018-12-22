@@ -91,6 +91,16 @@ public:
 		arr.CopyTo(_data.GetPtr());
 	}
 	//------------------------------------------------------
+	DynamicArray& operator =(const DynamicArray& arr)
+	{
+		_capacity = arr._capacity;
+		_length = arr._length;
+		_data = new T[arr._capacity];
+		LengthReference = _length;
+		arr.CopyTo(_data.GetPtr());
+		return *this;
+	}
+	//------------------------------------------------------
 	template<size_t sz>
 	DynamicArray& operator =(T (&arr)[sz])
 	{
@@ -100,6 +110,7 @@ public:
 		T* ptr = _data.GetPtr();
 		for (size_t i = 0; i < _length; i++)
 			ptr[i] = arr[i];
+		LengthReference = _length;
 		return *this;
 	}
 	//------------------------------------------------------
@@ -152,6 +163,7 @@ public:
 		T* ptr = _data.GetPtr();
 		ptr[_length] = elem;
 		_length++;
+		LengthReference = _length;
 		return _length - 1;
 	}
 	//------------------------------------------------------
@@ -168,6 +180,7 @@ public:
 	void Clear()
 	{
 		_length = 0;
+		LengthReference = _length;
 	}
 	//------------------------------------------------------
 	void AddRange(const T* beg, size_t len)
@@ -189,6 +202,7 @@ public:
 		EnsureCapacity(_length + (last - beg));
 		memcpy(_data.GetPtr() + _length, beg, (last - beg) * sizeof(T));
 		_length += (last - beg);
+		LengthReference = _length;
 	}
 	//------------------------------------------------------
 	void AddRange(const std::initializer_list<T>& range)
@@ -221,6 +235,7 @@ public:
 		for (size_t i = index; i < endIndex; i++)
 			Swap(i,  i + 1);
 		_length--;
+		LengthReference = _length;
 	}
 	//------------------------------------------------------
 	size_t Remove(const T& elem)
@@ -237,6 +252,7 @@ public:
 		T* ptr = _data.GetPtr();
 		Swap(index, _length - 1);
 		_length--;
+		LengthReference = _length;
 	}
 	//------------------------------------------------------
 	void PopBack() 
@@ -299,7 +315,7 @@ public:
 		return begin() + _length;
 	}
 	//------------------------------------------------------
-	const size_t& LengthReference;
+	size_t LengthReference;
 private:
 	Ref<T[]> _data;
 	size_t _length;

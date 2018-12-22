@@ -6,6 +6,6 @@
 #define SGE_EXPORT
 #endif
 
-#define USE_INSTANCING
+//#define USE_INSTANCING
 
 #define FORCEINLINE inline

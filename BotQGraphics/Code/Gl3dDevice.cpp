@@ -156,7 +156,7 @@ void Gl3dDevice::ValidateContext()
 
 void Gl3dDevice::ExecCommands()
 {
-	glFinish();
+	//glFinish();
 }
 
 int profiler[10] = {};

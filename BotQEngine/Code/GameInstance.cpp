@@ -63,7 +63,7 @@ static TimeSpan largeSpan = TimeSpamFromSeconds(2);
 bool GameInstance::Update()
 {
 	//PERFORM("GameInstance::Update");
-	physicsThreadQueue.Excecute();
+	physicsThreadQueue.Playback();
 
 	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool updateFlag = false;
@@ -99,7 +99,7 @@ bool GameInstance::Update()
 bool GameInstance::RenderUpdate()
 {
 	//PERFORM("GameInstance::RenderUpdate");
-	renderThreadQueue.Excecute();
+	renderThreadQueue.Playback();
 	
 	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool render_flag = false;
