@@ -4,6 +4,7 @@
 #include <Common/DynamicArray.h>
 #include <Sge2Common.h>
 #include <Display.h>
+#include <Tools.h>
 #include "FastMesh.h"
 float skyboxVertices[] = {
 	// positions          
@@ -478,9 +479,11 @@ void RenderBeast::Draw()
 #endif
 	Size outS = Display::GetCurrent()->GetSize();
 	GameObject* CameraObject = Display::GetCurrent()->GetCamera();
-	Matrix4 lookat = Matrix4::LookAt(CameraObject->GetPosition(), CameraObject->GetPosition() + CameraObject->GetForward(),  
-		CameraObject->GetForward().Cross(CameraObject->GetRight())
-		);
+	FilmicCamera* cm = CameraObject->GetComponent<FilmicCamera>();
+	if (!cm)
+		cm = CameraObject->AddComponent<FilmicCamera>();
+	
+	Matrix4 lookat = cm->GetCameraTransform();
 	//Matrix4 lookat = Matrix4::LookAt(Vector3(24, 24, 24), Vector3(0, 0, 0) , Vector3(0, 1, 0));
 
 	float aspectRatio = float(s.width) / float(s.height);

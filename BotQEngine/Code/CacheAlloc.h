@@ -1,4 +1,5 @@
 #pragma once
+
 #ifndef __CACHEALLOC_H__
 #define __CACHEALLOC_H__
 
@@ -6,8 +7,8 @@
 
 namespace CacheAllocator
 {
-	void* Alloc(size_t length);
-	void* Free(void* data, size_t length);
+	SGE_EXPORT void* Alloc(size_t length);
+	SGE_EXPORT void* Free(void* data, size_t length);
 }
 
 template<typename T, typename... Args>

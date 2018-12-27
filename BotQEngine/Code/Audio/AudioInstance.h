@@ -2,7 +2,7 @@
 
 #include "../Core.h"
 
-class AudioInstance
+class SGE_EXPORT AudioInstance
 {
 	class AudioInstanceImpl* mImpl;
 public:

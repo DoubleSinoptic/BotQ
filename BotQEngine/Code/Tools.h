@@ -3,6 +3,8 @@
 
 #include "Component.h"
 #include "Math/PointAndSize.h"
+#include "Math/Matrix4.h"
+#include "GameObject.h"
 
 class SGE_EXPORT FixedRotation : public Component
 {
@@ -26,7 +28,29 @@ public:
 	void PhysicUpdate() override;
 };
 
+class SGE_EXPORT FilmicCamera : public Component
+{
+	Matrix4 transform;
+public:
+	void Awake() override 
+	{
+		SetEnabled(true);
+	}
 
+	const Matrix4& GetCameraTransform() 
+	{
+		return transform;
+	}
+
+	void FrameUpdate() override
+	{
+	    transform =  Matrix4::LookAt(
+			GetGameObject()->GetPosition(), 
+			GetGameObject()->GetPosition() + GetGameObject()->GetForward(),
+			GetGameObject()->GetForward().Cross(GetGameObject()->GetRight())
+		);
+	}
+};
 
 class SGE_EXPORT Tools
 {

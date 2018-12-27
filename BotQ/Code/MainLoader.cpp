@@ -17,7 +17,8 @@
 #include <Gui/GuiInstance.h>
 #include "RenderBeast.h"
 #include <Network/Network.h>
-
+#include "LockGuard.h"
+#include "SyncObject.h"
 #undef GetObject
 #include <Gui/Box.h>
 #include <Gui/ImageCanvas.h>
@@ -496,8 +497,8 @@ int main()
 		
 
 		GameObject* camera = new GameObject("Camera");
-
 		camera->SetTransform(Vector3(3.483976, 27.737846, -9.487122), Quaternion(-0.025084, 0.013085, 0.000328, 0.999600));
+
 		ResourceLoader::LoadStaticAssets("./Data/Static");
 		ResourceLoader::LoadStaticAssets("./Static");
 
@@ -509,49 +510,34 @@ int main()
 		std::atomic_int physRatio{0};
 		std::atomic_int gpuRatio{0};
 
-		SyncObject o;
-		std::thread physicsThread([&]()
-		{			
-			
-			ResourceLoader::LoadStaticAssets("./Data");			
-			ResourceLoader::LoadStaticAssets("./");
-			LoadDefaultPrefabs();
+
+		SyncObject singleThreadRendering;
 		
-			guiInstance.pipelineState.store(1);
-			/*Ставим тик рейт в ноль чтобы в delt'у не попадал тик
-			таймера*/
-			instnace.renderTickRate = 0;
-			while (!o.SwapSignal())
-			{
-				/*функции Update и RenderUpdate возвращяет True если 
-				произошло обновление и false если для обновления ещё не пришло время*/
-				if (instnace.Update())
-				{
-					guiInstance.PhysicThread();
-					if (LevelBase::GetCurrent())
-						LevelBase::GetCurrent()->UpdateLevel();
-					physRatio++;
-					Network::ProcessCommands(64);
-				}
-				else
-					std::this_thread::yield();
-			}
-		});
-		// Win32Helper::SwapPriority(SWP_THIS,physicsThread.native_handle());
+		ResourceLoader::LoadStaticAssets("./Data");			
+		ResourceLoader::LoadStaticAssets("./");
+		LoadDefaultPrefabs();
+		
+		guiInstance.pipelineState.store(1);
+		
+		instnace.renderTickRate = 0;
+			
+	
 
 		double p = Time::GetTotalTime();
 
 		SyncObject additionalCloseSignal;
+		SyncObject destroyCloseThread;
 
 		new Resource(StorageFunction<void(void)>([&]() { additionalCloseSignal.Notify(); }), "/Functions/CloseGame");
 
-	/*	new Resource(StorageFunction<void(void)>([&]() { beast.OutPostProcTexel = true; }), "/Functions/EnableOutPostProcTexel");
-		new Resource(StorageFunction<void(void)>([&]() { beast.OutChromaticAberationTexel = true; }), "/Functions/EnableChromaticAberationTexel");
-		new Resource(StorageFunction<void(void)>([&]() { beast.OutPostProcTexel = true; }), "/Functions/EnablePostProcTexel");
 
-		new Resource(StorageFunction<void(void)>([&]() { beast.OutPostProcTexel = false; }), "/Functions/DisableOutPostProcTexel");
-		new Resource(StorageFunction<void(void)>([&]() { beast.OutChromaticAberationTexel = false; }), "/Functions/DisableChromaticAberationTexel");
-		new Resource(StorageFunction<void(void)>([&]() { beast.OutPostProcTexel = false; }), "/Functions/DisablePostProcTexel");*/
+		std::thread([&]() 
+		{
+			while (!destroyCloseThread.SwapSignal())
+			{
+				GameInstance::GetCurrent()->renderThreadQueue.Playback();
+			}
+		}).detach();
 
 		double renderTime;
 		double guiTime;
@@ -561,49 +547,36 @@ int main()
 
 		while (wnd.Update() && !additionalCloseSignal.SwapSignal())
 		{
-
-			//double delta = Time::GetTotalTime() - p;
-			//if (delta >= 1.0)
-			//{
-			//	p = Time::GetTotalTime();
-			//	system("cls");
-			//	long long a, t;
-			//	Gl3dDevice::GetMemory(a, t);
-			//	Log("\n%s [FPS/UPS] fps: %d, ups: %d\n [EXEC] Copy: %f\n [RT] R: %f G: %f S: %f F: %f U: %f\n [MEM] %ld/%ld Mbytes", *beast.profileString, gpuRatio.load(), physRatio.load(),
-			//		instnace.copyTime, renderTime, guiTime, swapTime, flushTime, updtTime, a / 1024, t / 1024);
-			//	gpuRatio = 0;
-			//	physRatio = 0;
-
-			//}
+			
+			if (instnace.Update())
+			{
+				guiInstance.PhysicThread();
+				if (LevelBase::GetCurrent())
+					LevelBase::GetCurrent()->UpdateLevel();
+				physRatio++;
+				Network::ProcessCommands(64);
+			}
+	
 
 			double tsm = Time::GetTotalTime();
 			if (instnace.RenderUpdate())
 			{
-				updtTime = Time::GetTotalTime() - tsm;
-				tsm = Time::GetTotalTime();
-				beast.Draw();	
-				renderTime = Time::GetTotalTime() - tsm;
-				tsm = Time::GetTotalTime();
-				guiInstance.DrawGpu();
-				guiTime = Time::GetTotalTime() - tsm;
-				tsm = Time::GetTotalTime();
-				Gl3dDevice::ExecCommands();
-				flushTime = Time::GetTotalTime() - tsm;
-				tsm = Time::GetTotalTime();
-				wnd.SwapBuffers();
-				swapTime = Time::GetTotalTime() - tsm;
-				tsm = Time::GetTotalTime();
-				gpuRatio++;
-
 			
+				GameInstance::GetCurrent()->renderThreadQueue.QueueFunction([&]()
+				{
+					beast.Draw();
+
+					guiInstance.DrawGpu();
+
+					wnd.SwapBuffers();
+
+					gpuRatio++;
+				});		
 			}
-		    else
-				std::this_thread::yield();
+		   
 				
 		}
-		
-		o.Notify();
-		physicsThread.join();
+		destroyCloseThread.Notify();
 
 
 	}

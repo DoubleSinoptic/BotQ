@@ -136,6 +136,12 @@ public:
 
 	void SetMesh(Mesh* msh);
 
+
+	virtual void FrameUpdate() override {
+		if (m_variant)
+			m_variant->QueryChange(this);
+	}
+
 	virtual void Awake() override
 	{
 		updateCommand.m_renderer = this;
@@ -144,12 +150,12 @@ public:
 
 		SetEnabled(false);
 		scale = Vector3(1.0, 1.0, 1.0);
-		mTransformChanged = new EventHandler<>([=]()
+	/*	mTransformChanged = new EventHandler<>([=]()
 		{
 			if(m_variant)
 				m_variant->QueryChange(this);
 		});
-		GetGameObject()->GetHandlers()->OnTransformChanged += mTransformChanged.GetPtr();
+		GetGameObject()->GetHandlers()->OnTransformChanged += mTransformChanged.GetPtr();*/
 	}
 
 	virtual void CloneTo(TypedObject* o) const override

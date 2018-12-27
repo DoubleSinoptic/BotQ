@@ -21,24 +21,27 @@ public:
 class TaskTranslatorImpl;
 class SGE_EXPORT CommandQueue
 {
-	struct StoragedCommand : public CommandBase
+	struct SGE_EXPORT StoragedCommand : public CommandBase
 	{
 		StorageFunction<void(void)> m_function;
 		template<typename  T>
 		StoragedCommand(const T& function) :
 			m_function(function)
 		{}
-		virtual void Execute() override
-		{
-			m_function();
-			CacheDestroy(this);
-		}
+
+		virtual void Execute() override;
 	};
 
 public:
+	CommandQueue();
+	~CommandQueue();
+	CommandQueue& operator=(const CommandQueue&) = delete;
+	CommandQueue(const CommandQueue&) = delete;
+
 	void Queue(CommandBase* command, CompliteFlag* compliteFlag = nullptr);
 	void QueueWait(CommandBase* command);
 
+	void ParallelFor(const StorageFunction<void(int, int)>& m_function, int beg, int end, int grainSize = 10);
 
 	template<typename T>
 	void QueueFunction(const T& x) 
@@ -75,12 +78,9 @@ public:
 	}
 
 	void Playback();
-	void ClearAccamulator();
-
-	CommandQueue();
-	~CommandQueue();
-
+	void Clear();
 	void Attach();
+	
 private:
 	TaskTranslatorImpl * mImpl;
 };

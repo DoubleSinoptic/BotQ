@@ -48,19 +48,19 @@ void MeshVariant::QueryRemove(MeshRenderer * renderer)
 
 void MeshVariant::QueryChange(MeshRenderer * renderer)
 {
-//	Matrix4 mt;
-//	renderer->GetGameObject()->FillMatrix4x4(mt.Data());
-//	GameInstance::GetCurrent()->renderThreadQueue.QueueFunction([=]()
-//	{		
-//#ifdef USE_INSTANCING
-//		m_transofrms_nva->Set(renderer->id, mt * Matrix4::Scale(renderer->scale));
-//#else
-//		m_transofrms_nva->operator[](renderer->id) = (mt * Matrix4::Scale(renderer->scale));
-//#endif
-//	});
-	renderer->GetGameObject()->FillMatrix4x4((float*)&renderer->updateCommand.m_transform);
+	Matrix4 mt;
+	renderer->GetGameObject()->FillMatrix4x4(mt.Data());
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunction([=]()
+	{		
+#ifdef USE_INSTANCING
+		m_transofrms_nva->Set(renderer->id, mt * Matrix4::Scale(renderer->scale));
+#else
+		m_transofrms_nva->operator[](renderer->id) = (mt * Matrix4::Scale(renderer->scale));
+#endif
+	});
+	/*renderer->GetGameObject()->FillMatrix4x4((float*)&renderer->updateCommand.m_transform);
 
-	GameInstance::GetCurrent()->renderThreadQueue.Queue(&renderer->updateCommand);
+	GameInstance::GetCurrent()->renderThreadQueue.Queue(&renderer->updateCommand);*/
 }
 
 MeshVariant::~MeshVariant()

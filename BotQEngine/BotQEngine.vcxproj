@@ -29,7 +29,6 @@
     <ClCompile Include="Code\Common\File.cpp" />
     <ClCompile Include="Code\Graphics\Bitmap9Path.cpp" />
     <ClCompile Include="Code\Bits\BitImpl.cpp" />
-    <ClCompile Include="Code\Camera.cpp" />
     <ClCompile Include="Code\Graphics\Font.cpp" />
     <ClCompile Include="Code\Gui\Box.cpp" />
     <ClCompile Include="Code\Gui\Button.cpp" />
@@ -84,6 +83,8 @@
     <ClCompile Include="Code\Gui\Control.cpp" />
     <ClCompile Include="Code\Gui\GuiInstance.cpp" />
     <ClCompile Include="Code\Common\Exception.cpp" />
+    <ClCompile Include="Profile.cpp" />
+    <ClCompile Include="Threading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\CacheAlloc.h" />
@@ -96,7 +97,6 @@
     <ClInclude Include="Code\Graphics\Bitmap9Path.h" />
     <ClInclude Include="Code\Bits\stb_image.h" />
     <ClInclude Include="Code\Bits\stb_truetype.h" />
-    <ClInclude Include="Code\Camera.h" />
     <ClInclude Include="Code\Graphics\Font.h" />
     <ClInclude Include="Code\Gui\Box.h" />
     <ClInclude Include="Code\Gui\Button.h" />
@@ -176,6 +176,8 @@
     <ClInclude Include="Code\Gui\Control.h" />
     <ClInclude Include="Code\Gui\GuiInstance.h" />
     <ClInclude Include="Code\Common\Exception.h" />
+    <ClInclude Include="Profile.h" />
+    <ClInclude Include="Threading.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BotQGraphics\BotQGraphics.vcxproj">
@@ -300,7 +302,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>"..\ThirdParty\bin64\assimpd-vc140-mt.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>"..\ThirdParty\bin64\assimpd-vc140-mt.lib";"..\ThirdParty\bin64\OpenAL32.lib";%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

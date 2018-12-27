@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Time.hpp"
 
+
 #define PERFORM(x) {printf("%s\n",(x));}
 
 PhysicsInstance*	Internal_AllocateAndConstructPhysicsContext();
@@ -17,7 +18,7 @@ double							delta;
 double							fullTime;
 */
 
-GameInstance::GameInstance() : 
+GameInstance::GameInstance(IRenderThreadInstance* threadInstance) :
 					tickRate(60.0),
 					renderTickRate(0.0),
 					lastTimePointTS(Time::GetTotalMicroseconds()),
@@ -25,7 +26,8 @@ GameInstance::GameInstance() :
 					epsilonTS(0),
 					delta(0.0),
 					renderDelta(0.0),
-
+					renderThreadInstance(threadInstance),
+					renderQueue(threadInstance->GetCommandQueue()),
 					hasClosed(false),
 					physics(Internal_AllocateAndConstructPhysicsContext()),
 					display(new Display())
@@ -34,7 +36,7 @@ GameInstance::GameInstance() :
 	SetThisCurrent();
 	prefabs.EnsureCapacity(10);
 	Log("GameInstance instance is inited: force size is: %zu", sizeof(GameInstance));
-
+	threadInstance->Start(this);
 }
 
 GameInstance* currentGameInstance = nullptr;
@@ -62,9 +64,6 @@ GameInstance * GameInstance::GetCurrent()
 static TimeSpan largeSpan = TimeSpamFromSeconds(2);
 bool GameInstance::Update()
 {
-	//PERFORM("GameInstance::Update");
-	physicsThreadQueue.Playback();
-
 	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool updateFlag = false;
 	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / tickRate);
@@ -86,7 +85,8 @@ bool GameInstance::Update()
 			c->PhysicUpdate();
 		}
 
-		physicsSig.Notify();
+		updateQueue.Playback();
+		renderThreadInstance->Update(this);
 	}
 	return updateFlag;
 }
@@ -98,14 +98,11 @@ bool GameInstance::Update()
 */
 bool GameInstance::RenderUpdate()
 {
-	//PERFORM("GameInstance::RenderUpdate");
-	renderThreadQueue.Playback();
-	
 	TimeSpan currentTime = Time::GetTotalMicroseconds();
 	bool render_flag = false;
 	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / renderTickRate);
 	TimeSpan deltaTime = currentTime - lastRenderTimePointTS;
-	if ((renderTickRate > 0 && deltaTime >= frameStep) || physicsSig.Take())
+	if ((renderTickRate > 0 && deltaTime >= frameStep))
 	{
 		renderDelta = TimeSpawnToFloatSeconds(deltaTime);
 		lastRenderTimePointTS = currentTime;
@@ -116,6 +113,7 @@ bool GameInstance::RenderUpdate()
 			Component* c = updatebleComponents[i];
 			c->FrameUpdate();
 		}
+		renderThreadInstance->Draw(this);
 	}
 	return render_flag;
 }
@@ -138,32 +136,7 @@ GameInstance::~GameInstance()
 		Internal_DestructAndDeallocatePhysicsContext(physics);
 	if (display)
 		delete display;
+	if (renderThreadInstance)
+		renderThreadInstance->Stop(this);
 	Log("All deleted instance is inited: force size is: %zu", sizeof(GameInstance));
-}
-
-void GameInstance::PostProcessAndDispatch(double time)
-{
-	delta = time;
-	
-
-	SetThisCurrent();
-	Internal_SimulatePhysicsContext(physics, time, -1, -1);
-	size_t ln = updatebleComponents.Length();
-	for (size_t i = 0; i < ln; i++)
-	{
-		Component* c = updatebleComponents[i];
-		c->PhysicUpdate();
-	}
-
-}
-
-void GameInstance::PreProcessDraw()
-{
-	SetThisCurrent();
-	size_t ln = updatebleComponents.Length();
-	for (size_t i = 0; i < ln; i++)
-	{
-		Component* c = updatebleComponents[i];
-		c->FrameUpdate();
-	}
 }
