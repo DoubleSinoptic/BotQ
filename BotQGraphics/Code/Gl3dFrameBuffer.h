@@ -28,7 +28,37 @@ public:
 	virtual unsigned int GetObject() const = 0;
 };
 
+enum class Gl3dSide : unsigned int
+{ 
+	Back = 0,
+	PosX = 1,
+	NegX = 2,
+	PosY = 3,
+	NegY = 4,
+	PosZ = 5,
+	NegZ = 6,
+};
 
+struct Gl3dFrameBufferDesc 
+{
+	int				depthLevel;
+	int				depthSide;
+	Gl3dTexture*	depthAttachment;
+
+	Gl3dTexture*	colorAttachment[24];
+	int				colorLevels[24];
+	Gl3dSide		colorSide[24];
+};
+
+class GL3DC_EXPORT Gl3dFrameBufferExt : public Gl3dFrameBufferBase
+{
+	unsigned int m_object;
+public:
+	Gl3dFrameBufferExt();
+	~Gl3dFrameBufferExt();
+	void Create(Gl3dFrameBufferDesc* desc);
+	virtual unsigned int GetObject() const override;
+};
 
 class Gl3dTexture;
 class Gl3dFrameBufferImpl;

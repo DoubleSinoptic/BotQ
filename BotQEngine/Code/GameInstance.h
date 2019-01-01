@@ -22,6 +22,8 @@ public:
 	virtual void Stop(GameInstance* instance) = 0;
 	virtual void Update(GameInstance* instance) = 0;
 	virtual void Draw(GameInstance* instance) = 0;
+
+
 };
 
 class SGE_EXPORT GameInstance
@@ -53,14 +55,10 @@ public:
 	double							tickRate;
 	double							renderTickRate;
 	
-
-	TimeSpan						lastTimePointTS;
-	TimeSpan						lastRenderTimePointTS;
-
-	double							epsilonTS;
-
 	double							delta;
 	double							renderDelta;
+
+	bool GameLoop();
 
 	void SetThisCurrent();
 	static GameInstance* GetCurrent();

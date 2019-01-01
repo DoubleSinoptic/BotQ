@@ -4,6 +4,10 @@ Debug
 Release
 x64
 
+CMakeFiles
+CMakeCache.txt
+bin
+
 zlib_static/Debug
 zlib_static/Release
 zlib_static/x64

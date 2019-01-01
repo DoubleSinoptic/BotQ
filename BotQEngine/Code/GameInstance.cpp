@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Time.hpp"
 
+#include <mutex>
+#include <condition_variable>
 
 #define PERFORM(x) {printf("%s\n",(x));}
 
@@ -21,9 +23,6 @@ double							fullTime;
 GameInstance::GameInstance(IRenderThreadInstance* threadInstance) :
 					tickRate(60.0),
 					renderTickRate(0.0),
-					lastTimePointTS(Time::GetTotalMicroseconds()),
-					lastRenderTimePointTS(Time::GetTotalMicroseconds()),
-					epsilonTS(0),
 					delta(0.0),
 					renderDelta(0.0),
 					renderThreadInstance(threadInstance),
@@ -40,6 +39,142 @@ GameInstance::GameInstance(IRenderThreadInstance* threadInstance) :
 }
 
 GameInstance* currentGameInstance = nullptr;
+
+
+
+constexpr TimeSpan MAX_FIXED_UPDATES_PER_FRAME = 16;
+class ITimingState
+{
+	bool mFirstFixedFrame = true;
+	TimeSpan mLastFixedUpdateTime;
+	TimeSpan mFixedStep = 16666;
+	TimeSpan mFrameStep = 16666;
+	TimeSpan mLastFrameTime;
+
+	
+public:
+	virtual ~ITimingState() {}
+
+	bool mIsFrameRenderingFinished = true;
+	std::mutex  mFrameRenderingFinishedMutex;
+	std::condition_variable mFrameRenderingFinishedCondition;
+
+	double FpsLock()
+	{
+		if (mFrameStep > 0)
+		{
+			TimeSpan currentTime = Time::GetTotalMicroseconds();
+			TimeSpan nextFrameTime = mLastFrameTime + mFrameStep;
+			while (nextFrameTime > currentTime)
+			{
+				uint32_t waitTime = (uint32_t)(nextFrameTime - currentTime);
+
+				if (waitTime >= 2000)
+				{
+					std::this_thread::sleep_for(std::chrono::microseconds(waitTime));
+					currentTime = Time::GetTotalMicroseconds();
+				}
+				else
+				{
+					while (nextFrameTime > currentTime)
+						currentTime = Time::GetTotalMicroseconds();
+				}
+			}
+			float delta = currentTime - mLastFrameTime;
+			mLastFrameTime = currentTime;
+			return delta;
+		}
+		return 0.0f;
+	}
+
+	void AdvanceFixedUpdate(TimeSpan ste)
+	{
+		mLastFixedUpdateTime += ste;
+	}
+
+	int64_t GetFixedUpdateStep(TimeSpan& step)
+	{
+		const TimeSpan currentTime = Time::GetTotalMicroseconds();
+
+		if (mFirstFixedFrame)
+		{
+			mLastFixedUpdateTime = currentTime;
+			mFirstFixedFrame = false;
+		}
+
+		const TimeSpan nextFrameTime = mLastFixedUpdateTime + mFixedStep;
+		if (nextFrameTime <= currentTime)
+		{
+			TimeSpan simulationAmount = Mathf::Max(currentTime - mLastFixedUpdateTime, mFixedStep);
+			auto numIterations = Mathf::DivideAndRoundUp(simulationAmount, mFixedStep);
+
+			TimeSpan stepus = mFixedStep;
+			if (numIterations > MAX_FIXED_UPDATES_PER_FRAME)
+			{
+				stepus = Mathf::DivideAndRoundUp(simulationAmount, (TimeSpan)MAX_FIXED_UPDATES_PER_FRAME);
+				numIterations = Mathf::DivideAndRoundUp(simulationAmount, stepus);
+			}
+			step = stepus;
+			return numIterations;
+		}
+
+		step = 0;
+		return 0;
+	}
+
+};
+
+ITimingState d;
+bool GameInstance::GameLoop()
+{
+	renderDelta = d.FpsLock();
+	{
+		TimeSpan step;
+		const int numIterations = d.GetFixedUpdateStep(step);
+
+		delta = step / 1000000.0;
+		for (int i = 0; i < numIterations; i++)
+		{
+			SetThisCurrent();
+
+			Internal_SimulatePhysicsContext(physics, delta, -1, -1);
+			for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
+			{
+				Component* c = updatebleComponents[i];
+				c->PhysicUpdate();
+				
+			}
+					
+			d.AdvanceFixedUpdate(step);
+		}
+	}
+	
+	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
+	{
+		Component* c = updatebleComponents[i];
+		c->FrameUpdate();
+	}
+	renderThreadInstance->Update(this);
+	renderThreadInstance->Draw(this);
+
+	{
+		std::unique_lock<std::mutex> lock(d.mFrameRenderingFinishedMutex);
+		while (!d.mIsFrameRenderingFinished)
+			d.mFrameRenderingFinishedCondition.wait(lock);
+		d.mIsFrameRenderingFinished = false;
+	}
+
+	renderThreadInstance->GetCommandQueue().QueueFunction([&]() 
+	{
+		std::unique_lock<std::mutex> lock(d.mFrameRenderingFinishedMutex);
+
+		d.mIsFrameRenderingFinished = true;
+		d.mFrameRenderingFinishedCondition.notify_one();
+	});
+
+
+	return !renderThreadInstance->GetCloseStatus();
+}
 
 void GameInstance::SetThisCurrent()
 {
@@ -61,34 +196,10 @@ GameInstance * GameInstance::GetCurrent()
 значительная погрешность и даже человек сможет заметить странную
 медленость симуляции.
 */
-static TimeSpan largeSpan = TimeSpamFromSeconds(2);
+
 bool GameInstance::Update()
 {
-	TimeSpan currentTime = Time::GetTotalMicroseconds();
-	bool updateFlag = false;
-	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / tickRate);
-	TimeSpan deltaTime = currentTime - lastTimePointTS;
-	if ((deltaTime + epsilonTS) >= frameStep)
-	{
-		delta = TimeSpawnToFloatSeconds(deltaTime);
-		lastTimePointTS = currentTime;
-	    epsilonTS += (deltaTime - frameStep);
-		if (epsilonTS > largeSpan)
-			epsilonTS = 0;
-		updateFlag = true;
-		SetThisCurrent();
-			
-		Internal_SimulatePhysicsContext(physics, TimeSpawnToFloatSeconds(deltaTime), -1, -1);
-		for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-		{
-			Component* c = updatebleComponents[i];
-			c->PhysicUpdate();
-		}
-
-		updateQueue.Playback();
-		renderThreadInstance->Update(this);
-	}
-	return updateFlag;
+	throw Exception("not supported exception");
 }
 
 /*
@@ -98,24 +209,7 @@ bool GameInstance::Update()
 */
 bool GameInstance::RenderUpdate()
 {
-	TimeSpan currentTime = Time::GetTotalMicroseconds();
-	bool render_flag = false;
-	TimeSpan frameStep = TimeSpamFromSeconds(1.0 / renderTickRate);
-	TimeSpan deltaTime = currentTime - lastRenderTimePointTS;
-	if ((renderTickRate > 0 && deltaTime >= frameStep))
-	{
-		renderDelta = TimeSpawnToFloatSeconds(deltaTime);
-		lastRenderTimePointTS = currentTime;
-		render_flag = true;
-		SetThisCurrent();
-		for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-		{
-			Component* c = updatebleComponents[i];
-			c->FrameUpdate();
-		}
-		renderThreadInstance->Draw(this);
-	}
-	return render_flag;
+	throw Exception("not supported exception");
 }
 
 bool GameInstance::FakeRenderUpdate()

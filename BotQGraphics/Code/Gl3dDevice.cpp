@@ -2,6 +2,7 @@
 #include "glad.h"
 #undef GetObject
 #include <stack>
+#include "Gl3dArray.h"
 
 bool invaertCullface = true;
 
@@ -23,6 +24,19 @@ void Gl3dDevice::MultiSampleTest(bool value)
 	else
 		glDisable(GL_MULTISAMPLE);
 	
+}
+
+unsigned int Gl3dDevice::CastFundamentalType(Gl3dFundamentalType t)
+{	
+	static const GLenum table[] =
+	{
+		GL_FLOAT,
+		GL_INT,
+		GL_UNSIGNED_INT,
+		GL_SHORT,
+		GL_UNSIGNED_SHORT
+	};
+	return table[(size_t)t];
 }
 
 void Gl3dDevice::GetMemory(long long & aviable, long long & total)
@@ -140,7 +154,7 @@ void Gl3dDevice::SkipErrors()
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
-		
+		printf("[glerror]: %d\n", err);
 	}
 }
 
@@ -194,4 +208,82 @@ void Gl3dDevice::FramebufferPop()
 void Gl3dDevice::FramebufferRestore()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffersStack.top());
+}
+
+
+Gl3dLayoutInstance::Gl3dLayoutInstance(Gl3dLayoutDesc* desc) :
+	m_object(0)
+{
+	Create(desc);
+}
+
+Gl3dLayoutInstance::Gl3dLayoutInstance() :
+	m_object(0)
+{}
+
+void Gl3dLayoutInstance::Create(Gl3dLayoutDesc* desc)
+{
+	if (m_object)
+	{
+		glDeleteVertexArrays(1, &m_object);
+		m_object = 0;
+	}
+
+	glGenVertexArrays(1, &m_object);
+	if (!m_object)
+		throw Gl3dCoreException("error of generate layout instance");
+
+	if (!desc)
+		throw Gl3dCoreException("invalid argument: desc = nullptr");
+
+	glBindVertexArray(m_object);
+	
+	if (desc->index)
+		glBindBuffer(desc->index->GetTarget(), desc->index->GetObject());
+	for (size_t i = 0; i < 40; i++)
+		if (desc->layouts[i].buffer)
+		{
+
+			glBindBuffer(desc->layouts[i].buffer->GetTarget(), desc->layouts[i].buffer->GetObject());
+			glEnableVertexAttribArray(i);
+			glVertexAttribPointer(i,
+				desc->layouts[i].elementsCount,
+				Gl3dDevice::CastFundamentalType(desc->layouts[i].type),
+				GL_FALSE,
+				desc->layouts[i].stride,
+				(void*)desc->layouts[i].offset);
+			if (desc->layouts[i].instanced)
+				glVertexAttribDivisor(i, 1);
+		}
+
+	//glBindVertexArray(0);
+
+
+}
+
+Gl3dLayoutInstance::~Gl3dLayoutInstance()
+{
+	if (m_object)
+	{
+		glDeleteVertexArrays(1, &m_object);
+		m_object = 0;
+	}	
+}
+
+void Gl3dLayoutInstance::DrawIndexed(Gl3dFundamentalType t, size_t count)
+{
+	glBindVertexArray(m_object);
+	glDrawElements(GL_TRIANGLES, count, Gl3dDevice::CastFundamentalType(t), nullptr);
+}
+
+void Gl3dLayoutInstance::DrawIndexedInstanced(Gl3dFundamentalType t, size_t count, size_t instCount)
+{
+	glBindVertexArray(m_object);
+	glDrawElementsInstanced(GL_TRIANGLES, count, Gl3dDevice::CastFundamentalType(t), nullptr, instCount);
+}
+
+void Gl3dLayoutInstance::Draw(size_t vertCount)
+{
+	glBindVertexArray(m_object);
+	glDrawArrays(GL_TRIANGLES, 0, vertCount);
 }

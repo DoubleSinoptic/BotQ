@@ -5,6 +5,47 @@
 #include <memory>
 #include "Gl3dTexture.h"
 
+
+Gl3dFrameBufferExt::Gl3dFrameBufferExt() :
+	m_object(0)
+{}
+
+Gl3dFrameBufferExt::~Gl3dFrameBufferExt()
+{
+	if (m_object)
+	{
+		glDeleteFramebuffers(1, &m_object);
+		m_object = 0;
+	}
+
+}
+
+void Gl3dFrameBufferExt::Create(Gl3dFrameBufferDesc* desc)
+{
+	if (m_object)
+	{
+		glDeleteFramebuffers(1, &m_object);
+		m_object = 0;
+	}
+
+	glGenFramebuffers(1, &m_object);
+	if (!m_object)
+		throw Gl3dCoreException("error of generate layout instance");
+	glBindFramebuffer(GL_FRAMEBUFFER, m_object);
+	if (desc->depthAttachment)
+	{
+
+		/*glFramebufferTexture(GL_);*/
+	}
+
+}
+
+unsigned int Gl3dFrameBufferExt::GetObject() const
+{
+	return m_object;
+}
+
+
 class Gl3dFrameBufferImpl 
 {
 public:
@@ -13,7 +54,6 @@ public:
 	std::vector<std::shared_ptr<Gl3dTexture>> mDepths;
 	Gl3dFrameBufferImpl()
 	{
-	
 		glGenFramebuffers(1, &mFraembuffer);
 		g3dlog("G3D$: struct framebuffer(%u)", mFraembuffer);
 	}
@@ -263,4 +303,16 @@ Gl3dFrameBuffer::~Gl3dFrameBuffer()
 //unsigned int Gl3dPrepareFrameBuffer::GetObject() const
 //{
 //	return mImpl->mFraembuffer;
+//}
+
+//Gl3dFrameBufferExt::Gl3dFrameBufferExt()
+//{
+//}
+//
+//Gl3dFrameBufferExt::~Gl3dFrameBufferExt()
+//{
+//}
+//
+//void Gl3dFrameBufferExt::Create(Gl3dFrameBufferDesc * desc)
+//{
 //}
