@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <cstdlib>
 #include <cstdint>
-
+#include <new>
 /*
 	Эту функциональную обёртку я написал для того чтобы отказаться
 	от отстойной std::function которая при любом удобном моменте
