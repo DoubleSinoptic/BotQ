@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(Sge)
-
+set(CMAKE_CXX_STANDARD 14)
 #clang skip
 IF (WIN32)
 	IF (MSVC)
