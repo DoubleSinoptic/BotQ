@@ -145,17 +145,17 @@ ts::socket_exception::socket_exception(const char * message)
 
 }
 
-const char * ts::socket_exception::what() const throw()
+const char * ts::socket_exception::what() const
 {
 	return _exceptionMessgeBuffer;
 }
 
-ts::socket_native_error_code ts::socket_exception::formated_error_code() const throw()
+ts::socket_native_error_code ts::socket_exception::formated_error_code() const
 {
 	return _code - _ssuberrorconst;
 }
 
-ts::socket_native_error_code ts::socket_exception::system_error_code() const throw()
+ts::socket_native_error_code ts::socket_exception::system_error_code() const
 {
 	return _code;
 }
@@ -404,7 +404,7 @@ void ts::socket::set_send_time_out(ms_time_out mssec)
 		throw socket_exception("error: socket: of set option to", get_socket_error_code());
 }
 
-void ts::socket::tcp_no_delay(bool enabled) throw(ts::socket_exception)
+void ts::socket::tcp_no_delay(bool enabled)
 {
 	int flag = enabled ? 1 : 0;
 	if (::setsockopt(_fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)))
@@ -425,25 +425,25 @@ void ts::socket::connect(const ip_end_point & _To)
 	_isConnected = true;
 }
 
-int ts::socket::send_some(const void * _Data, size_t _DataLen, socket_flags flags) throw()
+int ts::socket::send_some(const void * _Data, size_t _DataLen, socket_flags flags)
 {
 	totalBytesSended += _DataLen;
 	return ::send(_fd, (const char*)_Data, _DataLen, (int)flags);
 }
 
-int ts::socket::receive_some(void * _Data, size_t _DataLen, socket_flags flags) throw()
+int ts::socket::receive_some(void * _Data, size_t _DataLen, socket_flags flags)
 {
 	totalBytesReceived += _DataLen;
 	return ::recv(_fd, (char*)_Data, _DataLen, (int)flags);
 }
 
-int ts::socket::send_to_some(const void * _Data, size_t _DataLen, const ip_end_point & _To, socket_flags flags) throw()
+int ts::socket::send_to_some(const void * _Data, size_t _DataLen, const ip_end_point & _To, socket_flags flags)
 {
 	totalBytesSended += _DataLen;
 	return ::sendto(_fd, (const char*)_Data, _DataLen, (int)flags, (sockaddr*)_To.native_address(), _To.native_size());
 }
 
-int ts::socket::receive_from_some(void * _Data, size_t _DataLen, ip_end_point & _From, socket_flags flags) throw()
+int ts::socket::receive_from_some(void * _Data, size_t _DataLen, ip_end_point & _From, socket_flags flags)
 {
 	totalBytesReceived += _DataLen;
 	return ::recvfrom(_fd, (char*)_Data, _DataLen, (int)flags, (sockaddr*)_From.native_address(), (socklen_t*)&_From.native_size());

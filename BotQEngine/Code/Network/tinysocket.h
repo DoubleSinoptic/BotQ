@@ -30,11 +30,11 @@ namespace ts
 		socket_exception(const char* message, socket_native_error_code code);
 		socket_exception(const char* message);
 
-		virtual const char* what() const throw();
+		virtual const char* what() const;
 
-		socket_native_error_code formated_error_code() const throw();
+		socket_native_error_code formated_error_code() const;
 
-		socket_native_error_code system_error_code() const throw();
+		socket_native_error_code system_error_code() const;
 	};
 
 	typedef uint8_t ip_part;
@@ -301,13 +301,13 @@ namespace ts
 
 		size_t receive_from(void* _Data, size_t _DataLen, ip_end_point& _From, socket_flags _Flags = socket_flags::none);
 
-	    int send_some(const void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none) throw();
+	    int send_some(const void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none);
 
-		int receive_some(void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none) throw();
+		int receive_some(void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none);
 		
-		int send_to_some(const void* _Data, size_t _DataLen, const ip_end_point& _To, socket_flags _Flags = socket_flags::none) throw();
+		int send_to_some(const void* _Data, size_t _DataLen, const ip_end_point& _To, socket_flags _Flags = socket_flags::none);
 
-		int receive_from_some(void* _Data, size_t _DataLen, ip_end_point& _From, socket_flags _Flags = socket_flags::none) throw();
+		int receive_from_some(void* _Data, size_t _DataLen, ip_end_point& _From, socket_flags _Flags = socket_flags::none);
 
 		/**
 		*@brief Not working if compiller not supported move optimization, use accept_new
