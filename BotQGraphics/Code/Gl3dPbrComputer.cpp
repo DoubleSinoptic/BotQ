@@ -539,11 +539,9 @@ glm::vec3 ComputeSunIntensity(float _sunTheta, float _sunPhi, float _turbidity)
 		-0.49853, 0.041556, 1.057311);
 	//
 	float cosTheta = cos(_sunTheta);
-	float gamma = 0.f; //acos(dot(ToCartesian(_sunTheta,_sunPhi),dir));
+	float gamma = 0.f; 
 	float thetaS = _sunTheta;
 
-	// Check if direction is in the sun and clamp according to its distance
-	// Factor is in [1,5] : 5 in the sun, 1 outside with a smooth transition
 	float w = (gamma - SunRadius) / (SunFalloff - SunRadius);
 	cosTheta = gamma < SunFalloff ? cos(thetaS) : cosTheta;
 	gamma = gamma < SunFalloff ? 0 : gamma;
@@ -555,28 +553,23 @@ glm::vec3 ComputeSunIntensity(float _sunTheta, float _sunPhi, float _turbidity)
 	vec3  T = vec3(_turbidity*_turbidity, _turbidity, 1);
 	vec4  thetas = vec4(thetaS3, thetaS2, thetaS, 1);
 
-	// Compute zenith luminance and convert it from kcd/m^2 to cd/m^2  
 	float chi = (4.f / 9.0f - _turbidity / 120.f) * (3.14159265359 - 2.f * thetaS);
 	float zenith_Y = (4.0453f*_turbidity - 4.9710f) * tan(chi) - 0.2155f*_turbidity + 2.4192f;
 	zenith_Y *= 1000.f;
 
-	// Compute chromacity
 	float zenith_x = dot(T, Mx * thetas);
 	float zenith_y = dot(T, My * thetas);
 
-	// Compute variation according to the view direction
 	vec2 t = vec2(_turbidity, 1);
 	float x = PerezFunction(dot(t, A_x), dot(t, B_x), dot(t, C_x), dot(t, D_x), dot(t, E_x), cosTheta, gamma, thetaS, zenith_x);
 	float y = PerezFunction(dot(t, A_y), dot(t, B_y), dot(t, C_y), dot(t, D_y), dot(t, E_y), cosTheta, gamma, thetaS, zenith_y);
 
-	// Conversion from xyZ to XYZ
 	vec3 XYZ;
 	XYZ.y = abs(PerezFunction(dot(t, A_Y), dot(t, B_Y), dot(t, C_Y), dot(t, D_Y), dot(t, E_Y), cosTheta, gamma, thetaS, zenith_Y))*factor;
 	XYZ.x = (x / y) * XYZ.y;
 	XYZ.z = ((1.f - x - y) / y) * XYZ.y;
 
-	// Conversion from XYZ to RGB
-	//	FragColor = vec4( vec3(1.0) - exp(-(1.0/15000.0) * (XYZ2RGB * XYZ)), 1);
+
 	return XYZ2RGB * XYZ;
 }
 

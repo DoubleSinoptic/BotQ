@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Time.hpp"
 
+#include <thread>
 #include <mutex>
 #include <condition_variable>
 
@@ -42,29 +43,23 @@ GameInstance* currentGameInstance = nullptr;
 
 
 
-constexpr TimeSpan MAX_FIXED_UPDATES_PER_FRAME = 16;
-class ITimingState
+
+class TimeProcessor
 {
 	bool mFirstFixedFrame = true;
 	TimeSpan mLastFixedUpdateTime;
-	TimeSpan mFixedStep = 16666;
-	TimeSpan mFrameStep = 16666;
 	TimeSpan mLastFrameTime;
-
-	
 public:
-	virtual ~ITimingState() {}
-
 	bool mIsFrameRenderingFinished = true;
 	std::mutex  mFrameRenderingFinishedMutex;
 	std::condition_variable mFrameRenderingFinishedCondition;
 
 	double FpsLock()
-	{
-		if (mFrameStep > 0)
+	{		
+		if (Time::GetRenderStepSpan() > 0)
 		{
 			TimeSpan currentTime = Time::GetTotalMicroseconds();
-			TimeSpan nextFrameTime = mLastFrameTime + mFrameStep;
+			TimeSpan nextFrameTime = mLastFrameTime + Time::GetRenderStepSpan();
 			while (nextFrameTime > currentTime)
 			{
 				uint32_t waitTime = (uint32_t)(nextFrameTime - currentTime);
@@ -102,16 +97,16 @@ public:
 			mFirstFixedFrame = false;
 		}
 
-		const TimeSpan nextFrameTime = mLastFixedUpdateTime + mFixedStep;
+		const TimeSpan nextFrameTime = mLastFixedUpdateTime + Time::GetStepSpan();
 		if (nextFrameTime <= currentTime)
 		{
-			TimeSpan simulationAmount = Mathf::Max(currentTime - mLastFixedUpdateTime, mFixedStep);
-			auto numIterations = Mathf::DivideAndRoundUp(simulationAmount, mFixedStep);
+			TimeSpan simulationAmount = Mathf::Max(currentTime - mLastFixedUpdateTime, Time::GetStepSpan());
+			auto numIterations = Mathf::DivideAndRoundUp(simulationAmount, Time::GetStepSpan());
 
-			TimeSpan stepus = mFixedStep;
-			if (numIterations > MAX_FIXED_UPDATES_PER_FRAME)
+			TimeSpan stepus = Time::GetStepSpan();
+			if (numIterations > Time::GetMaxUpdatesPerFrame())
 			{
-				stepus = Mathf::DivideAndRoundUp(simulationAmount, (TimeSpan)MAX_FIXED_UPDATES_PER_FRAME);
+				stepus = Mathf::DivideAndRoundUp(simulationAmount, (TimeSpan)Time::GetMaxUpdatesPerFrame());
 				numIterations = Mathf::DivideAndRoundUp(simulationAmount, stepus);
 			}
 			step = stepus;
@@ -124,13 +119,13 @@ public:
 
 };
 
-ITimingState d;
+TimeProcessor defaultProcessor;
 bool GameInstance::GameLoop()
 {
-	renderDelta = d.FpsLock();
+	renderDelta = defaultProcessor.FpsLock();
 	{
 		TimeSpan step;
-		const int numIterations = d.GetFixedUpdateStep(step);
+		const int numIterations = defaultProcessor.GetFixedUpdateStep(step);
 
 		delta = step / 1000000.0;
 		for (int i = 0; i < numIterations; i++)
@@ -145,7 +140,7 @@ bool GameInstance::GameLoop()
 				
 			}
 					
-			d.AdvanceFixedUpdate(step);
+			defaultProcessor.AdvanceFixedUpdate(step);
 		}
 	}
 	
@@ -158,18 +153,18 @@ bool GameInstance::GameLoop()
 	renderThreadInstance->Draw(this);
 
 	{
-		std::unique_lock<std::mutex> lock(d.mFrameRenderingFinishedMutex);
-		while (!d.mIsFrameRenderingFinished)
-			d.mFrameRenderingFinishedCondition.wait(lock);
-		d.mIsFrameRenderingFinished = false;
+		std::unique_lock<std::mutex> lock(defaultProcessor.mFrameRenderingFinishedMutex);
+		while (!defaultProcessor.mIsFrameRenderingFinished)
+			defaultProcessor.mFrameRenderingFinishedCondition.wait(lock);
+		defaultProcessor.mIsFrameRenderingFinished = false;
 	}
 
 	renderThreadInstance->GetCommandQueue().QueueFunction([&]() 
 	{
-		std::unique_lock<std::mutex> lock(d.mFrameRenderingFinishedMutex);
+		std::unique_lock<std::mutex> lock(defaultProcessor.mFrameRenderingFinishedMutex);
 
-		d.mIsFrameRenderingFinished = true;
-		d.mFrameRenderingFinishedCondition.notify_one();
+		defaultProcessor.mIsFrameRenderingFinished = true;
+		defaultProcessor.mFrameRenderingFinishedCondition.notify_one();
 	});
 
 

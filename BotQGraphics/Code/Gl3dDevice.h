@@ -81,7 +81,7 @@ public:
 	static void CullFront();
 	/*static void DepthMask(bool val);
 	static void InsertDepthMod(bool isLess);*/
-	static void SkipErrors();
+	static void ThrowIfError();
 	static void ValidateContext();
 	static void ExecCommands();
 	static int* GetProfilerData();

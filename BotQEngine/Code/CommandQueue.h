@@ -77,7 +77,7 @@ public:
 		}
 	}
 
-	void Playback();
+	size_t Playback();
 	void Clear();
 	void Attach();
 	

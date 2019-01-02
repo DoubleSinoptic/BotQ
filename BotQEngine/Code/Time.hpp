@@ -39,4 +39,16 @@ public:
 	static TimeSpan GetTotalMicroseconds();
 	static double GetDeltaTime();
 	static double GetRenderDeltaTime();
+
+	static int GetMaxUpdatesPerFrame();
+	static void SetMaxUpdatesPerFrame(int s);
+
+	static TimeSpan GetRenderStepSpan();
+	static TimeSpan GetStepSpan();
+
+	static double GetRenderStep();
+	static double GetStep();
+
+	static void SetRenderStep(double);
+	static void SetStep(double);
 };

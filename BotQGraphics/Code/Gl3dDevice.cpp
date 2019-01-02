@@ -149,12 +149,13 @@ void Gl3dDevice::CullFront()
 //		glDepthFunc(GL_LEQUAL);
 //}
 
-void Gl3dDevice::SkipErrors()
+
+void Gl3dDevice::ThrowIfError()
 {
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
-		printf("[glerror]: %d\n", err);
+		throw Gl3dCoreException("error");
 	}
 }
 
@@ -256,9 +257,7 @@ void Gl3dLayoutInstance::Create(Gl3dLayoutDesc* desc)
 				glVertexAttribDivisor(i, 1);
 		}
 
-	//glBindVertexArray(0);
-
-
+	Gl3dDevice::ThrowIfError();
 }
 
 Gl3dLayoutInstance::~Gl3dLayoutInstance()

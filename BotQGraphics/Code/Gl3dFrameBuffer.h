@@ -42,20 +42,20 @@ enum class Gl3dSide : unsigned int
 struct Gl3dFrameBufferDesc 
 {
 	int				depthLevel;
-	int				depthSide;
+	Gl3dSide		depthSide;
 	Gl3dTexture*	depthAttachment;
 
-	Gl3dTexture*	colorAttachment[24];
+	Gl3dTexture*	colorAttachments[24];
 	int				colorLevels[24];
 	Gl3dSide		colorSide[24];
 };
 
-class GL3DC_EXPORT Gl3dFrameBufferExt : public Gl3dFrameBufferBase
+class GL3DC_EXPORT Gl3dFrameBufferInstance : public Gl3dFrameBufferBase
 {
 	unsigned int m_object;
 public:
-	Gl3dFrameBufferExt();
-	~Gl3dFrameBufferExt();
+	Gl3dFrameBufferInstance();
+	~Gl3dFrameBufferInstance();
 	void Create(Gl3dFrameBufferDesc* desc);
 	virtual unsigned int GetObject() const override;
 };

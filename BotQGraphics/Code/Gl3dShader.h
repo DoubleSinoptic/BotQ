@@ -23,6 +23,7 @@ public:
 	Gl3dShader();
 	~Gl3dShader();
 
+	void LoadFiles(const char* vertexPath, const char* fragmentPath, const char** defines, size_t sz);
 	void Build(const char* asciitext, ShaderType type);
 	void Relink();
 	unsigned int GetObject() const;

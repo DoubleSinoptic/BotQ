@@ -4,7 +4,6 @@
 Component::Component()/* :
 	mId(nullptr)*/
 {
-	
 }
 
 Component::~Component()

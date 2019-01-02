@@ -1,5 +1,8 @@
 #include <vector>
 #include <map>
+#include <string>
+#include <vector>
+#include <fstream>
 #include "Gl3dShader.h"
 #include "glad.h"
 #undef GetObject
@@ -67,6 +70,52 @@ public:
 Gl3dShader::Gl3dShader()
 	: mImpl(new ShaderImpl())
 {}
+
+template<typename... Args>
+static const char* cmfmt(const Args&... args) 
+{
+	static char buffer[1000];
+	snprintf(buffer, 1000, args...);
+	return buffer;
+}
+
+std::string PrepareMacroses(const std::string& str, const char** macroses, size_t szs)
+{
+	int pipeState = 0;
+	std::string rez;
+	for (int i = 0; i < str.size(); i++)
+	{
+		if (pipeState == 0 && str[i] == '#')
+			pipeState = 1;
+		if (pipeState == 1 && str[i] == '\n')
+			pipeState = 2;
+		rez.push_back(str[i]);
+
+		if (pipeState == 2)
+		{
+			for (size_t i = 0; i < szs; i++)
+				rez.append(cmfmt("#define %s\n", macroses[i]));
+			pipeState = 3;
+		}
+	}
+	return rez;
+}
+
+void Gl3dShader::LoadFiles(const char * vertexPath, const char * fragmentPath, const char ** defines, size_t sz)
+{
+	std::ifstream v(vertexPath, std::ios::binary); v.seekg(0, std::ios::end); size_t vs = v.tellg(); v.seekg(0, std::ios::beg);
+	std::ifstream f(fragmentPath, std::ios::binary); f.seekg(0, std::ios::end); size_t fs = f.tellg(); f.seekg(0, std::ios::beg);
+	std::string vc(vs, '@'); v.read((char*)vc.data(), vs);
+	std::string fc(fs, '@'); f.read((char*)fc.data(), fs);
+	Build(vc.c_str(), ShaderType::VertexShader);
+	Build(fc.c_str(), ShaderType::FragmentShader);
+	Relink();
+	mImpl->mTexturesInner.clear();
+	mImpl->extBindings.clear();
+	mImpl->mUniforms.clear();
+	mImpl->mTexturesIter = 1;
+
+}
 
 void Gl3dShader::Build(const char * asciitext, ShaderType type)
 {

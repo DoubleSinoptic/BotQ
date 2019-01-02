@@ -6,11 +6,11 @@
 #include "Gl3dTexture.h"
 
 
-Gl3dFrameBufferExt::Gl3dFrameBufferExt() :
+Gl3dFrameBufferInstance::Gl3dFrameBufferInstance() :
 	m_object(0)
 {}
 
-Gl3dFrameBufferExt::~Gl3dFrameBufferExt()
+Gl3dFrameBufferInstance::~Gl3dFrameBufferInstance()
 {
 	if (m_object)
 	{
@@ -20,7 +20,15 @@ Gl3dFrameBufferExt::~Gl3dFrameBufferExt()
 
 }
 
-void Gl3dFrameBufferExt::Create(Gl3dFrameBufferDesc* desc)
+GLenum toSide(Gl3dSide s) 
+{
+	if (s == Gl3dSide::Back)
+		return GL_TEXTURE_2D;
+	return GL_TEXTURE_CUBE_MAP_POSITIVE_X + ((int)s) - 1;
+}
+
+
+void Gl3dFrameBufferInstance::Create(Gl3dFrameBufferDesc* desc)
 {
 	if (m_object)
 	{
@@ -33,14 +41,46 @@ void Gl3dFrameBufferExt::Create(Gl3dFrameBufferDesc* desc)
 		throw Gl3dCoreException("error of generate layout instance");
 	glBindFramebuffer(GL_FRAMEBUFFER, m_object);
 	if (desc->depthAttachment)
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, toSide(desc->depthSide), desc->depthAttachment->GetObject(), desc->depthLevel);
+	
+	size_t bc = 0;
+	GLenum buffers[20];
+	for (size_t i = 0; i < 24; i++) 
 	{
-
-		/*glFramebufferTexture(GL_);*/
+		if (desc->colorAttachments[i])
+		{
+			bc++;
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, toSide(desc->colorSide[i]), desc->colorAttachments[i]->GetObject(), desc->colorLevels[i]);
+			buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+		}
 	}
+	glDrawBuffers(bc, buffers);
 
+	GLuint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (result != GL_FRAMEBUFFER_COMPLETE)
+	{
+		switch (result)
+		{
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			throw Gl3dCoreException("attachment point incomplete");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			throw Gl3dCoreException("missing attachment");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			throw Gl3dCoreException("draw buffer has missing color attachments");
+			break;
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+			throw Gl3dCoreException("read buffer has missing color attachments");
+			break;
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			throw Gl3dCoreException("unsupported attachment format");
+			break;
+		}
+	}
 }
 
-unsigned int Gl3dFrameBufferExt::GetObject() const
+unsigned int Gl3dFrameBufferInstance::GetObject() const
 {
 	return m_object;
 }

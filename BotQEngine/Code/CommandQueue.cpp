@@ -64,7 +64,7 @@ void CommandQueue::Queue(CommandBase* command, CompliteFlag* compliteFlag)
 	mImpl->current->Add({ command, compliteFlag });
 }
 
-void CommandQueue::Playback()
+size_t CommandQueue::Playback()
 {
 	DynamicArray<CommandDesc>* current;
 	{
@@ -84,8 +84,8 @@ void CommandQueue::Playback()
 		current = mImpl->current;
 		mImpl->current = nextArray;
 	}
-
-	for (int i = 0; i < current->Length(); i++)
+	size_t cl = current->Length();
+	for (size_t i = 0; i < cl; i++)
 	{	
 		CommandDesc& cmd = (*current)[i];
 		cmd.command->Execute();
@@ -95,6 +95,7 @@ void CommandQueue::Playback()
 	current->Clear();
 	LockGuard<SyncObject> spin(mImpl->feedlock);
 	mImpl->empty.Add(current);
+	return cl;
 }
 
 void CommandQueue::Clear()

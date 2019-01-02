@@ -22,6 +22,9 @@ TimeSpan Time::GetTotalMicroseconds()
 	return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
 }
 
+TimeSpan frameStep = 16666;
+TimeSpan step = 16666;
+int		 maxFramesPerUpdate = 32;
 double Time::GetDeltaTime()
 {
 	return GameInstance::GetCurrent()->delta;
@@ -30,4 +33,44 @@ double Time::GetDeltaTime()
 double Time::GetRenderDeltaTime()
 {
 	return GameInstance::GetCurrent()->renderDelta;
+}
+
+TimeSpan Time::GetRenderStepSpan() 
+{
+	return frameStep;
+}
+
+TimeSpan Time::GetStepSpan()
+{
+	return step;
+}
+
+double Time::GetRenderStep()
+{
+	return frameStep * 0.000001;
+}
+
+double Time::GetStep()
+{
+	return step * 0.000001;;
+}
+
+void Time::SetRenderStep(double t)
+{
+	frameStep = TimeSpan(t / 1000000.0);
+}
+
+void Time::SetStep(double t) 
+{
+	step = TimeSpan(t / 1000000.0);
+}
+
+int Time::GetMaxUpdatesPerFrame()
+{
+	return maxFramesPerUpdate;
+}
+
+void Time::SetMaxUpdatesPerFrame(int s)
+{
+	maxFramesPerUpdate = s;
 }

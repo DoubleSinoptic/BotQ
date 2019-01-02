@@ -1,11 +1,24 @@
 cmake_minimum_required(VERSION 3.1)
 project(Sge)
 
+#clang skip
+IF (WIN32)
+	IF (MSVC)
+		
+	ELSE()
+		
+	ENDIF()
+ELSE()
+  
+ENDIF()
+
 include_directories(./ThirdParty/include)
 include_directories(./BulletPhysics/Code)
 include_directories(./BotQEngine/Code)
 include_directories(./BotQGraphics/Code)
 include_directories(./BotQSystemTools/Code)
+include_directories(./zlib_static/Code)
+include_directories(./MinimalistStart/Code)
 
 file(GLOB_RECURSE ZLibC ./zlib_static/Code/*.c)
 file(GLOB_RECURSE ZLibH ./zlib_static/Code/*.h)
@@ -28,6 +41,12 @@ file(GLOB_RECURSE BotQEngineCpp ./BotQEngine/Code/*.cpp)
 file(GLOB_RECURSE BotQEngineH ./BotQEngine/Code/*.h)
 add_library(BotQEngine SHARED ${BotQEngineCpp} ${BotQEngineH})
 target_link_libraries(BotQEngine Physics BotQGraphics BotQSystemTools ZLib)
+
+file(GLOB_RECURSE MinimalistStartCpp ./MinimalistStart/*.cpp)
+file(GLOB_RECURSE MinimalistStartH ./MinimalistStart/*.h)
+add_executable(MinimalistStart ${MinimalistStartCpp} ${MinimalistStartH})
+target_link_libraries(MinimalistStart BotQEngine)
+
 
 
 

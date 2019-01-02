@@ -11,6 +11,7 @@
 class Display;
 class PhysicsInstance;
 class MeshRenderer;
+class GameInstance;
 
 class IRenderThreadInstance
 {
