@@ -111,7 +111,7 @@ void GuiInstance::InstallGui()
 		Ref<Label> fl = New<Label>();
 		
 		fl->EnableAutoSize(false);
-		fl->SetText(String::Format(u8"âêëþ÷åíèå ÷åãîòî: %d", i));
+		fl->SetText(String::Format(u8"Ð²ÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ðµ Ñ‡ÐµÐ³Ð¾Ñ‚Ð¾: %d", i));
 		fl->SetPosition({ 10 + 18 + 3, i + 4 });
 		fl->SetSize({ 218, 24 });
 		xxx->GetItems()->AddControl(fl);
