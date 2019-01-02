@@ -43,7 +43,7 @@ Ref<DynamicArray<Ref<Material>>> MakesMaterial(const aiScene* scene, const Strin
 					texture->SetFromBitmap(new Bitmap(e.GetData(), e.Length()));
 					new Resource(texture, txtureAdditionalPath + "/" + Path::FileName(Path::PathFix(texturePath.C_Str())));
 					material->albedo = (texture.GetPtr());
-					Log("texture imported: %s", Path::FileName(Path::PathFix(texturePath.C_Str())));
+					Log("texture imported: %s", *Path::FileName(Path::PathFix(texturePath.C_Str())));
 				}
 
 			}
@@ -66,7 +66,7 @@ Ref<DynamicArray<Ref<Material>>> MakesMaterial(const aiScene* scene, const Strin
 					texture->SetFromBitmap(new Bitmap(e.GetData(), e.Length()));
 					new Resource(texture, txtureAdditionalPath + "/" + Path::FileName(Path::PathFix(texturePath.C_Str())));
 					material->normals = (texture.GetPtr());
-					Log("texture imported: %s", Path::FileName(Path::PathFix(texturePath.C_Str())));
+					Log("texture imported: %s", *Path::FileName(Path::PathFix(texturePath.C_Str())));
 				}
 
 			}
