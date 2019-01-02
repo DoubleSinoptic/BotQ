@@ -300,7 +300,7 @@ std::size_t ts::socket::get_total_bytes_received()
 	return totalBytesReceived;
 }
 
-ts::socket::socket(ts::address_famaly _Famaly, ts::socket_type _SocketTpye, ts::protocol_type _ProtocolType)  throw(socket_exception)
+ts::socket::socket(ts::address_famaly _Famaly, ts::socket_type _SocketTpye, ts::protocol_type _ProtocolType) 
 	: _remoteEndpoint(ts::ip_end_point(ts::ip_address_none, 0)), _isConnected(false), _isListening(false)
 {
 	CHEK_SOCKET;
@@ -314,7 +314,7 @@ ts::socket::socket(ts::address_famaly _Famaly, ts::socket_type _SocketTpye, ts::
 		throw socket_exception("error: of create socket", get_socket_error_code());
 }
 
-ts::socket::socket(ts::protocol_type _ProtocolType) throw(socket_exception)
+ts::socket::socket(ts::protocol_type _ProtocolType)
 	: _remoteEndpoint(ts::ip_end_point(ts::ip_address_none, 0)), _isConnected(false), _isListening(false)
 {
 	CHEK_SOCKET;
@@ -348,7 +348,7 @@ ts::socket::socket(ts::protocol_type _ProtocolType) throw(socket_exception)
 		throw socket_exception("error: of create socket", get_socket_error_code());
 }
 
-ts::socket::socket(socket_native_fd _NativeFd, const ip_end_point& _RemoteAddres) throw(socket_exception)
+ts::socket::socket(socket_native_fd _NativeFd, const ip_end_point& _RemoteAddres)
 	: _remoteEndpoint(ts::ip_end_point(ts::ip_address_none, 0)), _isConnected(false), _isListening(false)
 {
 	_fd = _NativeFd;
@@ -360,7 +360,7 @@ ts::socket::~socket()
 	close();
 }
 
-void ts::socket::listen(int _maxconnections) throw(socket_exception)
+void ts::socket::listen(int _maxconnections)
 {
 	if (::listen(_fd, _maxconnections))
 	{
@@ -369,7 +369,7 @@ void ts::socket::listen(int _maxconnections) throw(socket_exception)
 	_isListening = true;
 }
 
-void ts::socket::bind(const ip_end_point & _EndPoint) throw(socket_exception)
+void ts::socket::bind(const ip_end_point & _EndPoint)
 {
 	if (::bind(_fd, (sockaddr*)_EndPoint.native_address(), _EndPoint.native_size()))
 	{
@@ -382,7 +382,7 @@ ts::socket_native_fd ts::socket::get_native_fd()
 	return _fd;
 }
 
-void ts::socket::set_receive_time_out(ms_time_out mssec) throw(socket_exception)
+void ts::socket::set_receive_time_out(ms_time_out mssec)
 {
 	struct timeval tv;
 
@@ -393,7 +393,7 @@ void ts::socket::set_receive_time_out(ms_time_out mssec) throw(socket_exception)
 		throw socket_exception("error: socket: of set option to", get_socket_error_code());
 }
 
-void ts::socket::set_send_time_out(ms_time_out mssec) throw(socket_exception)
+void ts::socket::set_send_time_out(ms_time_out mssec)
 {
 	struct timeval tv;
 
@@ -411,14 +411,14 @@ void ts::socket::tcp_no_delay(bool enabled) throw(ts::socket_exception)
 		throw socket_exception("error: socket: of set option to", get_socket_error_code());
 }
 
-void ts::socket::set_broadcast(bool value) throw(socket_exception)
+void ts::socket::set_broadcast(bool value)
 {
 	int broadcastEnable = value  ? 1 : 0;
 	if(setsockopt(_fd, SOL_SOCKET, SO_BROADCAST, (const char*)&broadcastEnable, sizeof(broadcastEnable)))
 		throw socket_exception("error: socket: of set option to", get_socket_error_code());
 }
 
-void ts::socket::connect(const ip_end_point & _To) throw(socket_exception)
+void ts::socket::connect(const ip_end_point & _To)
 {
 	if (::connect(_fd, (sockaddr*)_To.native_address(), _To.native_size()))
 		throw socket_exception("error: socket: of connect to", get_socket_error_code());	
@@ -449,7 +449,7 @@ int ts::socket::receive_from_some(void * _Data, size_t _DataLen, ip_end_point & 
 	return ::recvfrom(_fd, (char*)_Data, _DataLen, (int)flags, (sockaddr*)_From.native_address(), (socklen_t*)&_From.native_size());
 }
 
-size_t ts::socket::send(const void * _Data, size_t _DataLen, socket_flags flags) throw(socket_exception)
+size_t ts::socket::send(const void * _Data, size_t _DataLen, socket_flags flags)
 {
 	totalBytesSended += _DataLen;
 	int rret = ::send(_fd, (const char*)_Data, _DataLen, (int)flags);
@@ -458,7 +458,7 @@ size_t ts::socket::send(const void * _Data, size_t _DataLen, socket_flags flags)
 	return rret;
 }
 
-size_t ts::socket::receive(void * _Data, size_t _DataLen, socket_flags flags) throw(socket_exception)
+size_t ts::socket::receive(void * _Data, size_t _DataLen, socket_flags flags)
 {
 	totalBytesReceived += _DataLen;
 	int rret = ::recv(_fd, (char*)_Data, _DataLen, (int)flags);
@@ -467,7 +467,7 @@ size_t ts::socket::receive(void * _Data, size_t _DataLen, socket_flags flags) th
 	return rret;
 }
 
-size_t ts::socket::send_to(const void * _Data, size_t _DataLen, const ip_end_point & _To, socket_flags flags) throw(socket_exception)
+size_t ts::socket::send_to(const void * _Data, size_t _DataLen, const ip_end_point & _To, socket_flags flags)
 {
 	totalBytesSended += _DataLen;
 	int rret = ::sendto(_fd, (const char*)_Data, _DataLen, (int)flags, (sockaddr*)_To.native_address(), _To.native_size());
@@ -476,7 +476,7 @@ size_t ts::socket::send_to(const void * _Data, size_t _DataLen, const ip_end_poi
 	return rret;
 }
 
-size_t ts::socket::receive_from(void * _Data, size_t _DataLen, ip_end_point & _From, socket_flags flags) throw(socket_exception)
+size_t ts::socket::receive_from(void * _Data, size_t _DataLen, ip_end_point & _From, socket_flags flags)
 {
 	totalBytesReceived += _DataLen;
 
@@ -486,7 +486,7 @@ size_t ts::socket::receive_from(void * _Data, size_t _DataLen, ip_end_point & _F
 	return rret;
 }
 
-ts::socket ts::socket::accept() throw(socket_exception)
+ts::socket ts::socket::accept()
 {
 	ip_end_point a;
 	int e = ::accept(_fd, (sockaddr*)a.native_address(), (socklen_t*)&a.native_size());
@@ -495,7 +495,7 @@ ts::socket ts::socket::accept() throw(socket_exception)
 	return socket(e, a);
 }
 
-ts::socket * ts::socket::accept_new() throw(socket_exception)
+ts::socket * ts::socket::accept_new()
 {
 	ip_end_point a(ip_address_none, 0);
 	ts::socket_native_fd e = ::accept(_fd, (sockaddr*)a.native_address(), (socklen_t*)&a.native_size());
@@ -514,7 +514,7 @@ void ts::socket::close()
 	_fd = 0;
 }
 
-void ts::socket::shutdown(socket_shutdown _O) throw(socket_exception)
+void ts::socket::shutdown(socket_shutdown _O)
 {
 	if(::shutdown(_fd, static_cast<int>(_O)))
 		throw socket_exception("error: of shutdown socket", get_socket_error_code());
@@ -525,14 +525,14 @@ ts::ip_end_point ts::socket::remote_endpoint()
 	return _remoteEndpoint;
 }
 
-void  ts::socket::set_noblocking(bool _Enabled)  throw(socket_exception)
+void  ts::socket::set_noblocking(bool _Enabled) 
 {
         unsigned long opt = _Enabled ? 1 : 0;
         if(::_sioct(_fd, FIONBIO,&opt))
 		throw socket_exception("error: of set noblocking socket (ioctl)", get_socket_error_code());	
 }
 
-size_t ts::socket::bytes_available() throw(socket_exception)
+size_t ts::socket::bytes_available()
 {
 	unsigned long bytes_available = 0;
 	if(::_sioct(_fd, FIONREAD,&bytes_available))

@@ -260,7 +260,7 @@ namespace ts
 
 	class TS_EXPORT socket
 	{
-		explicit socket(socket_native_fd _NativeFd, const ip_end_point& _RemoteAddres) throw(socket_exception);
+		explicit socket(socket_native_fd _NativeFd, const ip_end_point& _RemoteAddres);
 	public:
 
 		static std::size_t get_total_bytes_sended();
@@ -269,37 +269,37 @@ namespace ts
 
 		typedef int ms_time_out;
 
-		explicit socket(ts::address_famaly _Famaly, ts::socket_type _SocketTpye, ts::protocol_type _ProtocolType) throw(socket_exception);
+		explicit socket(ts::address_famaly _Famaly, ts::socket_type _SocketTpye, ts::protocol_type _ProtocolType);
 
-		explicit socket(ts::protocol_type _ProtocolType) throw(socket_exception);
+		explicit socket(ts::protocol_type _ProtocolType);
 
 		~socket();
 
-		void listen(int _MaxConnections) throw(socket_exception);
+		void listen(int _MaxConnections);
 
-		void bind(const ip_end_point& _EndPoint) throw(socket_exception);
+		void bind(const ip_end_point& _EndPoint);
 
 		socket_native_fd get_native_fd();
 
-		void set_receive_time_out(ms_time_out _Msec) throw(socket_exception);
+		void set_receive_time_out(ms_time_out _Msec);
 
-		void set_send_time_out(ms_time_out _Msec) throw(socket_exception);
+		void set_send_time_out(ms_time_out _Msec);
 
 		/*void set_option(int _OptionName, int _OptionLevel, base_option* option);
 
 		base_option* get_option(int _OptionName, int _OptionLevel);*/
 
-		void set_broadcast(bool value)  throw(socket_exception);
+		void set_broadcast(bool value) ;
 
-		void connect(const ip_end_point& _To) throw(socket_exception);
+		void connect(const ip_end_point& _To);
 
-		size_t send(const void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none) throw(socket_exception);
+		size_t send(const void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none);
 
-		size_t receive(void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none) throw(socket_exception);
+		size_t receive(void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none);
 		
-		size_t send_to(const void* _Data, size_t _DataLen, const ip_end_point& _To, socket_flags _Flags = socket_flags::none) throw(socket_exception);
+		size_t send_to(const void* _Data, size_t _DataLen, const ip_end_point& _To, socket_flags _Flags = socket_flags::none);
 
-		size_t receive_from(void* _Data, size_t _DataLen, ip_end_point& _From, socket_flags _Flags = socket_flags::none) throw(socket_exception);
+		size_t receive_from(void* _Data, size_t _DataLen, ip_end_point& _From, socket_flags _Flags = socket_flags::none);
 
 	    int send_some(const void* _Data, size_t _DataLen, socket_flags _Flags = socket_flags::none) throw();
 
@@ -312,21 +312,21 @@ namespace ts
 		/**
 		*@brief Not working if compiller not supported move optimization, use accept_new
 		**/
-		socket accept() throw(socket_exception);
+		socket accept();
 
-		socket* accept_new() throw(socket_exception);
+		socket* accept_new();
 
-		void tcp_no_delay(bool _Enabled)  throw(socket_exception);	
+		void tcp_no_delay(bool _Enabled) ;	
 
 		void close();
 
-		void shutdown(socket_shutdown _O) throw(socket_exception);
+		void shutdown(socket_shutdown _O);
 
 		ts::ip_end_point remote_endpoint();
 		
-		void set_noblocking(bool _Enabled) throw(socket_exception);
+		void set_noblocking(bool _Enabled);
 		
-		size_t bytes_available() throw(socket_exception);
+		size_t bytes_available();
 
 		bool is_connected() const;
 
