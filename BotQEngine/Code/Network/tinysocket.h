@@ -30,7 +30,7 @@ namespace ts
 		socket_exception(const char* message, socket_native_error_code code);
 		socket_exception(const char* message);
 
-		virtual const char* what() const;
+		virtual const char* what() const noexcept;
 
 		socket_native_error_code formated_error_code() const;
 

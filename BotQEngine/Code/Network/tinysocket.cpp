@@ -145,7 +145,7 @@ ts::socket_exception::socket_exception(const char * message)
 
 }
 
-const char * ts::socket_exception::what() const
+const char * ts::socket_exception::what() const noexcept
 {
 	return _exceptionMessgeBuffer;
 }
