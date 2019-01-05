@@ -48,19 +48,39 @@ Gl3dTexture::~Gl3dTexture()
 		delete mImpl;
 }
 
-GLenum fragers[] =
-{
-	GL_LINEAR,
-	GL_NEAREST,
-	GL_NEAREST_MIPMAP_NEAREST,
-	GL_LINEAR_MIPMAP_LINEAR
-};
 
-void Gl3dTexture::SetMagMinFilters(Filter mag, Filter min)
+
+void Gl3dTexture::SetMagMinFilters(Gl3dFilter mag, Gl3dFilter min)
 {
+	static GLenum fragers[] =
+	{
+		GL_LINEAR,
+		GL_NEAREST,
+		GL_NEAREST_MIPMAP_NEAREST,
+		GL_LINEAR_MIPMAP_LINEAR
+	};
+
 	glBindTexture(mImpl->mType, mImpl->mTexture);
 	glTexParameteri(mImpl->mType, GL_TEXTURE_MAG_FILTER, fragers[(unsigned int)mag]);
 	glTexParameteri(mImpl->mType, GL_TEXTURE_MIN_FILTER, fragers[(unsigned int)min]);
+}
+
+
+
+void Gl3dTexture::SetWrapMode(Gl3dWrapMode s, Gl3dWrapMode t, Gl3dWrapMode r)
+{
+	static GLenum wrapmodes[] =
+	{
+		GL_CLAMP_TO_EDGE,
+		GL_REPEAT,
+		GL_MIRRORED_REPEAT,
+		GL_CLAMP_TO_BORDER
+	};
+
+	glBindTexture(mImpl->mType, mImpl->mTexture);
+	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_S, wrapmodes[(unsigned int)s]);
+	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_T, wrapmodes[(unsigned int)t]);
+	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_R, wrapmodes[(unsigned int)r]);
 }
 
 GLenum currentChangels[] =
@@ -76,59 +96,54 @@ GLenum currentChangels[] =
 	GL_DEPTH_COMPONENT32
 };
 
-GLenum normalasedChangels[] =
+GLenum changelsCount[] =
 {
-	GL_RGB,
-	GL_RGBA,
-	GL_RGB,
-	GL_RGBA,
-	GL_RGB,
-	GL_RGBA,
-	GL_DEPTH_COMPONENT,
-	GL_DEPTH_COMPONENT,
-	GL_DEPTH_COMPONENT
+	GL_R,
+	GL_RG,
+	GL_RGB,	
+	GL_RGBA
 };
 
-void Gl3dTexture::SetDataMultisample(int width, int height, PixelFormat format)
+void Gl3dTexture::SetData(Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image)
 {
-	mImpl->mType = GL_TEXTURE_2D_MULTISAMPLE;
 	glBindTexture(mImpl->mType, mImpl->mTexture);
+	glTexImage2D(Gl3dDevice::CastSideType(Gl3dSide::Back), 0, currentChangels[(unsigned)internalFormat],
+		image->width, image->height, 0, changelsCount[(unsigned)image->changelsCount], 
+		Gl3dDevice::CastFundamentalType(image->type), image->data);
+	SetWrapMode(Gl3dWrapMode::Repeat, Gl3dWrapMode::Repeat, Gl3dWrapMode::Repeat);
+	SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
 
-	glTexImage2DMultisample(mImpl->mType, 4, currentChangels[(unsigned)format], width, height, GL_TRUE);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
+	Gl3dDevice::ThrowIfError();
 }
 
-void Gl3dTexture::SetData(int width, int height, PixelFormat format, const void * data)
+void Gl3dTexture::SetData(Gl3dSide side, Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image)
 {
-	mImpl->mType = GL_TEXTURE_2D;
 	glBindTexture(mImpl->mType, mImpl->mTexture);
-	
-    glTexImage2D(mImpl->mType, 0, currentChangels[(unsigned)format], width, height, 0, normalasedChangels[(unsigned)format], GL_UNSIGNED_BYTE, data);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	
-	SetMagMinFilters(Filter::NEAREST, Filter::LINEAR);
-	
-	
-	/* glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);*/
+	glTexImage2D(Gl3dDevice::CastSideType(side), 0, currentChangels[(unsigned)internalFormat],
+		image->width, image->height, 0, changelsCount[(unsigned)image->changelsCount],
+		Gl3dDevice::CastFundamentalType(image->type), image->data);
+
+	SetWrapMode(Gl3dWrapMode::Repeat, Gl3dWrapMode::Repeat, Gl3dWrapMode::Repeat);
+	SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
+	Gl3dDevice::ThrowIfError();
 }
 
-void Gl3dTexture::SetDataF(int width, int height, PixelFormat format, const float * data)
+void Gl3dTexture::AllocateData(int w, int h, Gl3dPixelFormat internalFormat)
 {
-	mImpl->mType = GL_TEXTURE_2D;
-	glBindTexture(mImpl->mType, mImpl->mTexture);
+	Gl3dSubImageDesc nullDesc = {};
+	nullDesc.height = h;
+	nullDesc.width = w;
+	nullDesc.type = Gl3dFundamentalType::UByte;
+	SetData(internalFormat, &nullDesc);
+}
 
-	glTexImage2D(mImpl->mType, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	SetMagMinFilters(Filter::NEAREST, Filter::LINEAR);
-
+void Gl3dTexture::AllocateData(Gl3dSide side, int w, int h, Gl3dPixelFormat internalFormat)
+{
+	Gl3dSubImageDesc nullDesc = {};
+	nullDesc.height = h;
+	nullDesc.width = w;
+	nullDesc.type = Gl3dFundamentalType::UByte;
+	SetData(side, internalFormat, &nullDesc);
 }
 
 int Gl3dTexture::GetWidth() const
@@ -151,27 +166,6 @@ unsigned int Gl3dTexture::GetInternalType() const
 	return mImpl->mType;
 }
 
-void Gl3dTexture::DisableClamp()
-{
-	glBindTexture(mImpl->mType, mImpl->mTexture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-}
-
-void Gl3dTexture::SetDataCube(int id, int width, int height, PixelFormat format, const void * data)
-{
-	mImpl->mType = GL_TEXTURE_CUBE_MAP;
-	glBindTexture(mImpl->mType, mImpl->mTexture);
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + id, 0, currentChangels[(unsigned)format], width, height, 0, normalasedChangels[(unsigned)format], GL_UNSIGNED_BYTE, data);
-
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(mImpl->mType, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-
-	SetMagMinFilters(Filter::NEAREST, Filter::LINEAR);
-	glBindTexture(mImpl->mType, 0);
-}
 
 void Gl3dTexture::GenMipmaps()
 {
@@ -184,17 +178,8 @@ unsigned int Gl3dTexture::GetObject() const
 	return mImpl->mTexture;
 }
 
-std::chrono::high_resolution_clock::time_point clockX = std::chrono::high_resolution_clock::now();
-
-double GetTotalTime()
-{
-	std::chrono::high_resolution_clock::duration delta = std::chrono::high_resolution_clock::now() - clockX;
-	return double(std::chrono::duration_cast<std::chrono::microseconds>(delta).count()) * 0.000001;
-}
-
 void Gl3dTexture::Activate(int id, Gl3dTexture * texture)
 {
 	glActiveTexture(GL_TEXTURE0 + id);
 	glBindTexture(texture->mImpl->mType, texture->mImpl->mTexture);
-	GL3D_COUNTER_INCREMENT(GL3D_PROFILE_ACTIVETE_CALLS);
 }

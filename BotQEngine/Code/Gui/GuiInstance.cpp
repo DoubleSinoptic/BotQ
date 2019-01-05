@@ -235,102 +235,102 @@ void SDASDASExportShader(Gl3dShader* tlg, const String& filename)
 //layout(location = 2) in vec4 color;
 void GuiInstance::DrawGpu()
 {
-	if (!shader)
-	{
-		shader = new Gl3dShader();
-		SDASDASExportShader(shader.GetPtr(), "./Shaders/Gui.glsl");
+	//if (!shader)
+	//{
+	//	shader = new Gl3dShader();
+	//	SDASDASExportShader(shader.GetPtr(), "./Shaders/Gui.glsl");
 
-		rgbSplit = new Gl3dShader();
-		SDASDASExportShader(rgbSplit.GetPtr(), "./Shaders/RgbSplit.glsl");
-		guiVertexArray = new Gl3dVertexArrayBase();
-		guiVertexes = new Gl3dArray<GuiVertex>(Gl3dArrayTarget::Array);
-		guiVertexArray->Attach(0, { Gl3dDataSplitType::Float2, Gl3dDataSplitType::Float2 , Gl3dDataSplitType::Float4 }, guiVertexes.GetPtr());
+	//	rgbSplit = new Gl3dShader();
+	//	SDASDASExportShader(rgbSplit.GetPtr(), "./Shaders/RgbSplit.glsl");
+	//	guiVertexArray = new Gl3dVertexArrayBase();
+	//	guiVertexes = new Gl3dArray<GuiVertex>(Gl3dArrayTarget::Array);
+	//	guiVertexArray->Attach(0, { Gl3dDataSplitType::Float2, Gl3dDataSplitType::Float2 , Gl3dDataSplitType::Float4 }, guiVertexes.GetPtr());
 
-	}
+	//}
 
-	Size sz = Display::GetCurrent()->GetSize();
-	Gl3dDevice::Viewport(sz.width, sz.height);
-	{
-		Gl3dDevice::CullTest(false);
-		Gl3dDevice::DepthTest(false);
-		Gl3dDevice::AlphaTest(true);
-		Gl3dRenderPas pass(shader.GetPtr(), nullptr);
-		//Gl3dDevice::Clear();
-		const Matrix4 ortho = Matrix4::Ortho(0.0f, sz.width, sz.height, 0.0f, -1.0, 1.0);
-		pass.Uniform("ortho", ortho);
-		pass.Uniform("time", (float)Time::GetTotalTime());
-		pass.Uniform("useEffectA", useEffectA ? 1 : 0);
-		pass.Uniform("useEffectB", useEffectB ? 1 : 0);
-		GuiInstance::CursorState state{};
-		Point g = Input::GetMausePosition();
-		state.x = g.x;
-		state.y = g.y;
-		state.buttonLeft = Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_LEFT);
-		state.buttonMidleAxel = 0;
-		state.buttonRight = Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_RIGHT);
+	//Size sz = Display::GetCurrent()->GetSize();
+	//Gl3dDevice::Viewport(sz.width, sz.height);
+	//{
+	//	Gl3dDevice::CullTest(false);
+	//	Gl3dDevice::DepthTest(false);
+	//	Gl3dDevice::AlphaTest(true);
+	//	Gl3dRenderPas pass(shader.GetPtr(), nullptr);
+	//	//Gl3dDevice::Clear();
+	//	const Matrix4 ortho = Matrix4::Ortho(0.0f, sz.width, sz.height, 0.0f, -1.0, 1.0);
+	//	pass.Uniform("ortho", ortho);
+	//	pass.Uniform("time", (float)Time::GetTotalTime());
+	//	pass.Uniform("useEffectA", useEffectA ? 1 : 0);
+	//	pass.Uniform("useEffectB", useEffectB ? 1 : 0);
+	//	GuiInstance::CursorState state{};
+	//	Point g = Input::GetMausePosition();
+	//	state.x = g.x;
+	//	state.y = g.y;
+	//	state.buttonLeft = Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_LEFT);
+	//	state.buttonMidleAxel = 0;
+	//	state.buttonRight = Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_RIGHT);
 
-		if (!host)
-		{
-			host = new Control();
-			host->SetSize({ sz.width, sz.height });
-			InstallGui();
-		}
-		host->SetSize({ sz.width, sz.height });
-		AllProcess(sz.width, sz.height, state);
+	//	if (!host)
+	//	{
+	//		host = new Control();
+	//		host->SetSize({ sz.width, sz.height });
+	//		InstallGui();
+	//	}
+	//	host->SetSize({ sz.width, sz.height });
+	//	AllProcess(sz.width, sz.height, state);
 
-		Draw(sz.width, sz.height);
+	//	Draw(sz.width, sz.height);
 
-		auto& faces = renderData.faces;
-		auto& clips = renderData.clips;
-		auto& lines = renderData.lines;
-		auto& quads = renderData.quads;
+	//	auto& faces = renderData.faces;
+	//	auto& clips = renderData.clips;
+	//	auto& lines = renderData.lines;
+	//	auto& quads = renderData.quads;
 
-		Gl3dTexture* current = nullptr;
+	//	Gl3dTexture* current = nullptr;
 
-		for (auto& x : quads)
-		{
-			if (x.texture != nullptr)
-			{
-				if (current != static_cast<Gl3dTexture*>(x.texture->GetTextureObject()))
-				{
-					current = static_cast<Gl3dTexture*>(x.texture->GetTextureObject());
-					pass.Uniform("map", current);
-					pass.Uniform("mapEnabled", true);
-				}
-				
-			}
-			else
-				pass.Uniform("mapEnabled", false);
+	//	for (auto& x : quads)
+	//	{
+	//		if (x.texture != nullptr)
+	//		{
+	//			if (current != static_cast<Gl3dTexture*>(x.texture->GetTextureObject()))
+	//			{
+	//				current = static_cast<Gl3dTexture*>(x.texture->GetTextureObject());
+	//				pass.Uniform("map", current);
+	//				pass.Uniform("mapEnabled", true);
+	//			}
+	//			
+	//		}
+	//		else
+	//			pass.Uniform("mapEnabled", false);
 
 
-			pass.Uniform("clipLU", Vector2(clips[x.cullid].left, clips[x.cullid].top));
-			pass.Uniform("clipRB", Vector2(clips[x.cullid].right, clips[x.cullid].bottom));
+	//		pass.Uniform("clipLU", Vector2(clips[x.cullid].left, clips[x.cullid].top));
+	//		pass.Uniform("clipRB", Vector2(clips[x.cullid].right, clips[x.cullid].bottom));
 
-			guiVertexes->Clear();
-			guiVertexes->Add({ x.p2,	x.tc2,	x.c2.ToVector4() });
-			guiVertexes->Add({ x.p1,	x.tc1,	x.c1.ToVector4() });
-			guiVertexes->Add({ x.p0,	x.tc0,	x.c0.ToVector4() });
+	//		guiVertexes->Clear();
+	//		guiVertexes->Add({ x.p2,	x.tc2,	x.c2.ToVector4() });
+	//		guiVertexes->Add({ x.p1,	x.tc1,	x.c1.ToVector4() });
+	//		guiVertexes->Add({ x.p0,	x.tc0,	x.c0.ToVector4() });
 
-			guiVertexes->Add({ x.p2,	x.tc2,	x.c2.ToVector4() });
-			guiVertexes->Add({ x.p0,	x.tc0,	x.c0.ToVector4() });
-			guiVertexes->Add({ x.p3,	x.tc3,	x.c3.ToVector4() });
-			guiVertexArray->Draw(Gl3dDrawPrimitive::Triangles, 6);
-		}
-		for (auto& x : lines)
-		{
-			pass.Uniform("mapEnabled", false);
+	//		guiVertexes->Add({ x.p2,	x.tc2,	x.c2.ToVector4() });
+	//		guiVertexes->Add({ x.p0,	x.tc0,	x.c0.ToVector4() });
+	//		guiVertexes->Add({ x.p3,	x.tc3,	x.c3.ToVector4() });
+	//		guiVertexArray->Draw(Gl3dDrawPrimitive::Triangles, 6);
+	//	}
+	//	for (auto& x : lines)
+	//	{
+	//		pass.Uniform("mapEnabled", false);
 
-			pass.Uniform("clipLU", Vector2(clips[x.cullid].left, clips[x.cullid].top));
-			pass.Uniform("clipRB", Vector2(clips[x.cullid].right, clips[x.cullid].bottom));
+	//		pass.Uniform("clipLU", Vector2(clips[x.cullid].left, clips[x.cullid].top));
+	//		pass.Uniform("clipRB", Vector2(clips[x.cullid].right, clips[x.cullid].bottom));
 
-			guiVertexes->Clear();
-			guiVertexes->Add({ x.p0,	Vector2(),	x.c0.ToVector4() });
-			guiVertexes->Add({ x.p1,	Vector2(),	x.c1.ToVector4() });
-			guiVertexArray->Draw(Gl3dDrawPrimitive::Lines, 2);
-		}
+	//		guiVertexes->Clear();
+	//		guiVertexes->Add({ x.p0,	Vector2(),	x.c0.ToVector4() });
+	//		guiVertexes->Add({ x.p1,	Vector2(),	x.c1.ToVector4() });
+	//		guiVertexArray->Draw(Gl3dDrawPrimitive::Lines, 2);
+	//	}
 
-		Gl3dDevice::AlphaTest(false);
-	}
+	//	Gl3dDevice::AlphaTest(false);
+	//}
 
 
 }

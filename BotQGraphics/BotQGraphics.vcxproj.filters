@@ -39,12 +39,6 @@
     <ClCompile Include="Code\Gl3dTexture.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Gl3dVertexArray_3x1.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Gl3dVertexArrayBase.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="Code\glad.c">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -80,16 +74,13 @@
     <ClInclude Include="Code\Gl3dTexture.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Code\Gl3dVertexArray_3x1.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\Gl3dVertexArrayBase.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="Code\glad.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Code\khrplatform.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Gl3dManagedInt.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

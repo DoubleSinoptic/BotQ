@@ -4,48 +4,24 @@
 #include <vector>
 #include <fstream>
 #include "Gl3dShader.h"
+#include "Gl3dManagedInt.h"
 #include "glad.h"
 #undef GetObject
 
+
 thread_local Gl3dShader* currentShader = nullptr;
 
-class const_string 
-{
-	const char* const mStr;
-public:
-	constexpr const_string(const char* const str) :
-		mStr(str)
-	{}
-	constexpr const char* const c_str() const 
-	{
-		return mStr;
-	}
-};
-
-inline bool operator==(const_string A, const_string B)
-{
-	return strcmp(A.c_str(), B.c_str()) == 0;
-}
-inline bool operator<(const_string A, const_string B)
-{
-	return strcmp(A.c_str(), B.c_str()) == -1;
-}
-inline bool operator>(const_string A, const_string B)
-{
-	return strcmp(A.c_str(), B.c_str()) == 1;
-}
 
 class ShaderImpl 
 {
 public:
-
 	GLuint mProgram = 0;
 	std::vector<GLuint> mShaders;
-	std::map<std::string, int> mTexturesInner;
+	std::map<std::string, ManagedInt<int, -1>> mTexturesInner;
 	int mTexturesIter = 1;
-	std::map<std::string, int> mUniforms;
+	std::map<std::string, ManagedInt<int, -1>> mUniforms;
 
-	std::vector<int> extBindings;
+	std::vector<ManagedInt<int, -1>> extBindings;
 
 	ShaderImpl() :
 		extBindings(100, 0)
@@ -107,8 +83,8 @@ void Gl3dShader::LoadFiles(const char * vertexPath, const char * fragmentPath, c
 	std::ifstream f(fragmentPath, std::ios::binary); f.seekg(0, std::ios::end); size_t fs = f.tellg(); f.seekg(0, std::ios::beg);
 	std::string vc(vs, '@'); v.read((char*)vc.data(), vs);
 	std::string fc(fs, '@'); f.read((char*)fc.data(), fs);
-	Build(vc.c_str(), ShaderType::VertexShader);
-	Build(fc.c_str(), ShaderType::FragmentShader);
+	Build(PrepareMacroses(vc, defines, sz).c_str(), ShaderType::VertexShader);
+	Build(PrepareMacroses(fc, defines, sz).c_str(), ShaderType::FragmentShader);
 	Relink();
 	mImpl->mTexturesInner.clear();
 	mImpl->extBindings.clear();
@@ -180,24 +156,24 @@ unsigned int Gl3dShader::GetObject() const
 
 int Gl3dShader::UniformLocation(const char * ifName) const
 {
-	int& a = mImpl->mUniforms[ifName];
-	if (a == 0)
+	auto& a = mImpl->mUniforms[ifName];
+	if (a == -1)
 		a = glGetUniformLocation(mImpl->mProgram, ifName);
 	return a;
 }
 
 int Gl3dShader::UniformLocationExt(const char * ifName, int id) const
 {
-	int& a = mImpl->extBindings[id];
-	if (a == 0)
+	auto& a = mImpl->extBindings[id];
+	if (a == -1)
 		a = glGetUniformLocation(mImpl->mProgram, ifName);
 	return a;
 }
 
 int Gl3dShader::MapLocation(const char * ifName, int id) const
 {
-	int& a = mImpl->mTexturesInner[ifName];
-	if (a == 0)
+	auto& a = mImpl->mTexturesInner[ifName];
+	if (a == -1)
 		a = mImpl->mTexturesIter++;
 	return a;
 }

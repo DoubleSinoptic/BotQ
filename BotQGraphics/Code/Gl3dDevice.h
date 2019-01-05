@@ -2,13 +2,26 @@
 
 #include "Gl3dCore.h"
 
+enum class Gl3dSide 
+{
+	Back = 0,
+	PosX = 1,
+	NegX = 2,
+	PosY = 3,
+	NegY = 4,
+	PosZ = 5,
+	NegZ = 6,
+};
+
 enum class Gl3dFundamentalType 
 {
 	Float = 0,
 	Integer = 1,
 	UInteger = 2,
 	Short = 3,
-	UShort = 4
+	UShort = 4,
+	Byte = 5,
+	UByte = 6
 };
 
 struct Gl3dVertexLatoutAttrib 
@@ -27,6 +40,13 @@ struct Gl3dLayoutDesc
 	Gl3dArrayImpl*		   index;
 };
 
+enum class Gl3dPrimitive 
+{
+	Triangles = 0,
+	Lines = 1,
+	Points = 2 
+};
+
 class GL3DC_EXPORT Gl3dLayoutInstance
 {
 	unsigned int m_object;
@@ -37,59 +57,23 @@ public:
 	Gl3dLayoutInstance(const Gl3dLayoutInstance&) = delete;
 	Gl3dLayoutInstance& operator=(const Gl3dLayoutInstance&) = delete;
 	~Gl3dLayoutInstance();
-	void DrawIndexed(Gl3dFundamentalType t, size_t count);
-	void DrawIndexedInstanced(Gl3dFundamentalType t, size_t count, size_t instCount);
-	void Draw(size_t vertCount);
-};
-
-
-enum class ConfigurateFlags
-{
-	None,
-	HinInstance,
-	D3dBase,
-	D3dBaseIfHinInstance
+	void DrawIndexed(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count);
+	void DrawIndexedInstanced(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count, size_t instCount);
+	void Draw(Gl3dPrimitive prim, size_t vertCount);
 };
 
 typedef void* (*Gl3dDeviceLinker)(const char *name);
-
-enum 
-{
-	GL3D_PROFILE_ACTIVETE_CALLS = 0,
-	GL3D_PROFILE_UNIFORM_CALLS = 1,
-	GL3D_PROFILE_CLEAR_CALLS = 2
-};
-
-#define GL3D_COUNTER (Gl3dDevice::GetProfilerData())
-#define GL3D_COUNTER_INCREMENT(i) (Gl3dDevice::GetProfilerData()[(i)]++)
 
 class GL3DC_EXPORT Gl3dDevice
 {
 public:
 	static unsigned int CastFundamentalType(Gl3dFundamentalType t);
+	static unsigned int CastPrimitiveType(Gl3dPrimitive t);
+	static unsigned int CastSideType(Gl3dSide s);
+
 	static void GetMemory(long long& aviable, long long& total);
-	static void AlphaTest(bool value);
-    static void DepthTest(bool value);
-    static void CullTest(bool value);
-	static void SrTest(bool value);
-	static void MultiSampleTest(bool value);
 	static void LinkAddresses(Gl3dDeviceLinker lnk);
-	static void Clear();
-	static void Viewport(int i, int itox);
-	static void Configurate();
-	static void CullBack();
-	static void CullFront();
-	/*static void DepthMask(bool val);
-	static void InsertDepthMod(bool isLess);*/
 	static void ThrowIfError();
-	static void ValidateContext();
-	static void ExecCommands();
-	static int* GetProfilerData();
-	static void ResetProfiler();
-	static void SwapToRGB8BPP(void* pixelBuffer, int w, int h);
-    static void FramebufferPush();
-    static void FramebufferPop();
-    static void FramebufferRestore();
 };
 
 

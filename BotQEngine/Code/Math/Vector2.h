@@ -32,6 +32,20 @@ public:
 		return sqrtf(x * x + y * y);
 	}
 
+	FORCEINLINE Vector2& operator +=(const Vector2& val)
+	{
+		x += val.x;
+		y += val.y;
+		return *this;
+	}
+
+	FORCEINLINE Vector2& operator /=(float val)
+	{
+		x /= val;
+		y /= val;
+		return *this;
+	}
+
 	static FORCEINLINE Vector2 Zero() 
 	{
 		return Vector2(0, 0);
@@ -61,4 +75,10 @@ FORCEINLINE Vector2 operator /(const Vector2& a, const Vector2& v)
 FORCEINLINE Vector2 operator *(float v, const Vector2& a)
 {
 	return Vector2(a.x * v, a.y * v);
+}
+
+FORCEINLINE	bool operator==(const Vector2& a, const Vector2& b) 
+{
+	return (a.x == b.x) &&
+		(a.y == b.y);
 }

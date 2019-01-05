@@ -380,7 +380,7 @@ RenderBeast::RenderBeast()
 
 	noiseTexture = new Gl3dTexture();
 	noiseTexture->SetData(4, 4, PixelFormat::RGB_32F, SSAO::SSAONoise().GetData());
-	noiseTexture->SetMagMinFilters(Filter::NEAREST, Filter::NEAREST);
+	noiseTexture->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
 	{
 		Gl3dRenderPas unif(ssao.GetPtr(), nullptr);
 
@@ -511,7 +511,7 @@ void RenderBeast::Draw()
 			PixelFormat::RGBA_16F
 			},
 			{ PixelFormat::DEPTH_32 }, true);
-		albedoPasMSAA->GetColorTexture(0)->SetMagMinFilters(Filter::NEAREST, Filter::NEAREST);
+		albedoPasMSAA->GetColorTexture(0)->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
 		albedoPas = new Gl3dFrameBuffer(s.width, s.height, {
 			PixelFormat::RGBA_32F,
 			PixelFormat::RGBA_16F,
@@ -521,7 +521,7 @@ void RenderBeast::Draw()
 			PixelFormat::RGBA_16F
 			},
 			{ PixelFormat::DEPTH_32 });
-		albedoPas->GetColorTexture(0)->SetMagMinFilters(Filter::NEAREST, Filter::NEAREST);
+		albedoPas->GetColorTexture(0)->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
 		renderPas = new Gl3dFrameBuffer(s.width, s.height, 
 			{ 
 			PixelFormat::RGBA_16F,

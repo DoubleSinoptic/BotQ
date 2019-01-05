@@ -96,7 +96,7 @@ public:
 		m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
 		return m;
 	}
-	static const bool leftHanded = true;
+	static const bool leftHanded = false;
 	static Matrix4 Ortho(float left, float right, float bottom, float top, float zNear, float zFar)
 	{
 		if (leftHanded)

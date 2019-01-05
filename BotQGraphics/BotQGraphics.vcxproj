@@ -27,8 +27,6 @@
     <ClCompile Include="Code\Gl3dRenderPas.cpp" />
     <ClCompile Include="Code\Gl3dShader.cpp" />
     <ClCompile Include="Code\Gl3dTexture.cpp" />
-    <ClCompile Include="Code\Gl3dVertexArrayBase.cpp" />
-    <ClCompile Include="Code\Gl3dVertexArray_3x1.cpp" />
     <ClCompile Include="Code\glad.c" />
     <ClCompile Include="Code\SharedInfo.cpp" />
   </ItemGroup>
@@ -37,13 +35,12 @@
     <ClInclude Include="Code\Gl3dCore.h" />
     <ClInclude Include="Code\Gl3dDevice.h" />
     <ClInclude Include="Code\Gl3dFrameBuffer.h" />
+    <ClInclude Include="Code\Gl3dManagedInt.h" />
     <ClInclude Include="Code\Gl3dPbrComputer.h" />
     <ClInclude Include="Code\Gl3dRenderBeast.h" />
     <ClInclude Include="Code\Gl3dRenderPas.h" />
     <ClInclude Include="Code\Gl3dShader.h" />
     <ClInclude Include="Code\Gl3dTexture.h" />
-    <ClInclude Include="Code\Gl3dVertexArrayBase.h" />
-    <ClInclude Include="Code\Gl3dVertexArray_3x1.h" />
     <ClInclude Include="Code\glad.h" />
     <ClInclude Include="Code\khrplatform.h" />
   </ItemGroup>

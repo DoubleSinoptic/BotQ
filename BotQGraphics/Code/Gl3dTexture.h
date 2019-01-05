@@ -1,7 +1,9 @@
 #pragma once
 #include "Gl3dCore.h"
+#include "Gl3dDevice.h"
 
-enum class PixelFormat
+
+enum class Gl3dPixelFormat
 {
 	RGB_8 = 0,
 	RGBA_8 = 1,
@@ -14,12 +16,29 @@ enum class PixelFormat
 	DEPTH_32 = 8
 };
 
-enum class Filter 
+enum class Gl3dFilter 
 {
 	NEAREST = 0,
 	LINEAR = 1,
 	MIPMAP_NEAREST,
 	MIPMAP_LINEAR
+};
+
+enum class Gl3dWrapMode 
+{
+	ClampToEdge,
+	Repeat,
+	MirroredRepeat,
+	ClampToBorder
+};
+
+struct Gl3dSubImageDesc
+{
+	int					width;
+	int					height;
+	Gl3dFundamentalType type;
+	int					changelsCount;
+	void*				data;
 };
 
 class Gl3dTextureImpl;
@@ -30,27 +49,21 @@ public:
 	Gl3dTexture(unsigned int object, unsigned int type);
 	Gl3dTexture();
 	~Gl3dTexture();
-	void SetDataMultisample(int width, int height, PixelFormat format);
-	void SetData(int width, int height, PixelFormat format, const void* data);
-	void SetDataF(int width, int height, PixelFormat format, const float* data);
-	void DisableClamp();
+
+	void SetData(Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image);
+	void SetData(Gl3dSide side, Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image);
+
+	void AllocateData(int w, int h, Gl3dPixelFormat internalFormat);
+	void AllocateData(Gl3dSide side, int w, int h, Gl3dPixelFormat internalFormat);
+
 	int GetWidth() const;
 	int GetHeight() const;
 	unsigned int GetInternalType() const;
-	/*
-	Порядок обмотки такой
-	right - 0
-	left - 1
-	top - 2
-	bottom - 3
-	back - 4
-	front - 5
-	*/
-	void SetDataCube(int id, int width, int height, PixelFormat format, const void* data);
-
-	void SetMagMinFilters(Filter mag, Filter min);
-	//void SetWrapType();
+	
 	void GenMipmaps();
+	void SetMagMinFilters(Gl3dFilter mag, Gl3dFilter min);
+	void SetWrapMode(Gl3dWrapMode s = Gl3dWrapMode::Repeat, Gl3dWrapMode t = Gl3dWrapMode::Repeat, Gl3dWrapMode r = Gl3dWrapMode::Repeat);
+	
 	unsigned int GetObject() const;
 	static void Activate(int id, Gl3dTexture* texture);
 };

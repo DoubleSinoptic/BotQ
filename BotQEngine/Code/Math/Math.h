@@ -15,9 +15,16 @@ public:
 		return  std::log(a) / std::log(b);
 	}
 
+	static float Random();
 	static Vector3 Sin(const Vector3& a);
 	static Vector3 Cos(const Vector3& a);
 	static void SinCos(const Vector3& a, Vector3& s, Vector3& c);
+
+	template<class T, class A, class B>
+	static constexpr T Lerp(T a, A b, B f)
+	{
+		return a + T(f) * (T(b) - T(a));
+	}
 
 	static constexpr bool Equal(float a, float b, float epsilon = 0.000001)
 	{

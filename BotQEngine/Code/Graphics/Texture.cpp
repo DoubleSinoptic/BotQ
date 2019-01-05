@@ -40,8 +40,7 @@ void Texture::SetFromBitmap(const Ref<Bitmap>& bitmap)
 		Gl3dTexture* gt = new Gl3dTexture();
 		handle.Set(gt);
 		gt->SetData(bitmap->GetWidth(), bitmap->GetHeight(), PixelFormat::RGBA_8, bitmap->GetBits());
-		/*gt->SetMagMinFilters(Filter::LINEAR, Filter::LINEAR);*/
-		gt->SetMagMinFilters(Filter::NEAREST, Filter::MIPMAP_LINEAR);
+		gt->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::MIPMAP_LINEAR);
 		gt->GenMipmaps();
 	});
 	isCubeMap = false;
@@ -86,9 +85,9 @@ void Texture::EnableFiltration(bool value)
 	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([=]()
 	{
 		if(value)
-			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Filter::NEAREST, Filter::LINEAR);
+			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::LINEAR);
 		else
-			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Filter::NEAREST, Filter::NEAREST);
+			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
 	});
 }
 
