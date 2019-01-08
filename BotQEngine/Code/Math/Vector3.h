@@ -98,9 +98,10 @@ public:
 	FORCEINLINE Vector3 Cross(const Vector3& v) const
 	{
 		return Vector3(
-			floats[1] * v.floats[2] - floats[2] * v.floats[1],
-			floats[2] * v.floats[0] - floats[0] * v.floats[2],
-			floats[0] * v.floats[1] - floats[1] * v.floats[0]);
+			y * v.z - v.y * z,
+			z * v.x - v.z * x,
+			x * v.y - v.x * y);
+		
 	}
 
 	FORCEINLINE Vector3 Lerp(const Vector3& v, const float& t) const

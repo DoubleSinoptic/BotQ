@@ -2,18 +2,27 @@
 #include "Gl3dCore.h"
 #include "Gl3dDevice.h"
 
-
 enum class Gl3dPixelFormat
 {
-	RGB_8 = 0,
-	RGBA_8 = 1,
-	RGB_16F = 2,
-	RGBA_16F = 3,
-	RGB_32F = 4,
-	RGBA_32F = 5,
-	DEPTH_8 = 6,
-	DEPTH_16 = 7,
-	DEPTH_32 = 8
+	R_8,
+	R_16F,
+	R_32F,
+
+	RG_8,
+	RG_16F,
+	RG_32F,
+
+	RGB_8,
+	RGB_16F,
+	RGB_32F,
+
+	RGBA_8,
+	RGBA_16F,
+	RGBA_32F,
+
+	DEPTH_8,
+	DEPTH_16,
+	DEPTH_32
 };
 
 enum class Gl3dFilter 
@@ -49,12 +58,15 @@ public:
 	Gl3dTexture(unsigned int object, unsigned int type);
 	Gl3dTexture();
 	~Gl3dTexture();
+	
+	void SetData(const Gl3dSubImageDesc* image, int level = 0);
+	void SetData(Gl3dSide side, const Gl3dSubImageDesc* image, int level = 0);
 
-	void SetData(Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image);
-	void SetData(Gl3dSide side, Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image);
+	void SetData(Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image, int level = 0);
+	void SetData(Gl3dSide side, Gl3dPixelFormat internalFormat, const Gl3dSubImageDesc* image, int level = 0);
 
-	void AllocateData(int w, int h, Gl3dPixelFormat internalFormat);
-	void AllocateData(Gl3dSide side, int w, int h, Gl3dPixelFormat internalFormat);
+	void AllocateData(int w, int h, Gl3dPixelFormat internalFormat, int level = 0);
+	void AllocateData(Gl3dSide side, int w, int h, Gl3dPixelFormat internalFormat, int level = 0);
 
 	int GetWidth() const;
 	int GetHeight() const;

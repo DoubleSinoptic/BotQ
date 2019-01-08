@@ -46,7 +46,7 @@ void Gl3dFrameBufferInstance::Create(Gl3dFrameBufferDesc* desc)
 		}
 	}
 	glDrawBuffers(bc, buffers);
-
+	
 	GLuint result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	if (result != GL_FRAMEBUFFER_COMPLETE)
 	{

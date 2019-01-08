@@ -6,8 +6,12 @@ class Vector4
 {
 public:
 	FORCEINLINE Vector4() {}
-
-	float x; float y; float z; float w;
+	union 
+	{
+		struct { float x; float y; float z; float w; };
+		float array[4];
+	};
+	
 	FORCEINLINE Vector4(const Vector3& vec, float _w)
 		: x(vec.x), y(vec.y), z(vec.z), w(_w)
 	{}
@@ -28,12 +32,12 @@ public:
 	FORCEINLINE float operator [](int id) const
 	{
 		//It's bad cast! xyzw not array!
-		return (&x)[id];
+		return array[id];
 	}
 
 	FORCEINLINE float& operator [](int id)
 	{//It's bad cast! xyzw not array!
-		return (&x)[id];
+		return array[id];
 	}
 
 	FORCEINLINE float Dot(const Vector4& v) const

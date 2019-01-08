@@ -4,6 +4,17 @@
 #include <stack>
 #include "Gl3dArray.h"
 
+//enum class Gl3dFundamentalType
+//{
+//	Float = 0,
+//	Integer = 1,
+//	UInteger = 2,
+//	Short = 3,
+//	UShort = 4,
+//	Byte = 5,
+//	UByte = 6
+//};
+
 unsigned int Gl3dDevice::CastFundamentalType(Gl3dFundamentalType t)
 {	
 	static const GLenum table[] =
@@ -121,9 +132,6 @@ Gl3dLayoutInstance::~Gl3dLayoutInstance()
 		m_object = 0;
 	}	
 }
-
-
-
 
 void Gl3dLayoutInstance::DrawIndexed(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count)
 {

@@ -30,6 +30,32 @@ void* Texture::GetTextureObject() const
 	return handle.Get<void*>();
 }
 
+static Gl3dWrapMode addModes[] =
+{
+	Gl3dWrapMode::Repeat,
+	Gl3dWrapMode::MirroredRepeat,
+	Gl3dWrapMode::ClampToEdge,
+	Gl3dWrapMode::ClampToBorder
+};
+
+static Gl3dFilter filterModes[]
+{
+	Gl3dFilter::NEAREST,
+	Gl3dFilter::LINEAR,
+	Gl3dFilter::MIPMAP_LINEAR,
+	Gl3dFilter::MIPMAP_NEAREST
+};
+
+void Texture::SetSampler(const SamplerStateDesc & state)
+{
+	GameInstance::GetCurrent()->renderThreadQueue.QueueFunction([=]()
+	{
+		Gl3dTexture* c = handle.Get<Gl3dTexture*>();
+		c->SetMagMinFilters(filterModes[(size_t)state.mag], filterModes[(size_t)state.min]);
+		c->SetWrapMode(addModes[(size_t)state.addressModeU], addModes[(size_t)state.addressModeV], addModes[(size_t)state.addressModeW]);
+	});
+}
+
 void Texture::SetFromBitmap(const Ref<Bitmap>& bitmap)
 {
 	Assert(!bitmap.IsNull());
@@ -39,7 +65,15 @@ void Texture::SetFromBitmap(const Ref<Bitmap>& bitmap)
 	{
 		Gl3dTexture* gt = new Gl3dTexture();
 		handle.Set(gt);
-		gt->SetData(bitmap->GetWidth(), bitmap->GetHeight(), PixelFormat::RGBA_8, bitmap->GetBits());
+
+		Gl3dSubImageDesc desc;
+		desc.data = bitmap->GetBits();
+		desc.type = Gl3dFundamentalType::UByte;
+		desc.changelsCount = 4;
+		desc.width = bitmap->GetWidth();
+		desc.height = bitmap->GetHeight();
+
+		gt->SetData(Gl3dPixelFormat::RGBA_8, &desc);
 		gt->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::MIPMAP_LINEAR);
 		gt->GenMipmaps();
 	});
@@ -60,12 +94,13 @@ void Texture::SetFromCubeBitmap(const Ref<Bitmap>& left, const Ref<Bitmap>& righ
 	{
 		Gl3dTexture* gt = new Gl3dTexture();
 		handle.Set(gt);
-		gt->SetDataCube(0, left->GetWidth(), left->GetHeight(), PixelFormat::RGBA_8, left->GetBits());
-		gt->SetDataCube(1, right->GetWidth(), right->GetHeight(), PixelFormat::RGBA_8, right->GetBits());
-		gt->SetDataCube(2, top->GetWidth(), top->GetHeight(), PixelFormat::RGBA_8, top->GetBits());
-		gt->SetDataCube(3, bottom->GetWidth(), bottom->GetHeight(), PixelFormat::RGBA_8, bottom->GetBits());
-		gt->SetDataCube(4, back->GetWidth(), back->GetHeight(), PixelFormat::RGBA_8, back->GetBits());
-		gt->SetDataCube(5, front->GetWidth(), front->GetHeight(), PixelFormat::RGBA_8, front->GetBits());
+	
+		gt->SetData(Gl3dSide::PosX, Gl3dPixelFormat::RGBA_8, left->FormatDesc());
+		gt->SetData(Gl3dSide(int(Gl3dSide::PosX) + 1), Gl3dPixelFormat::RGBA_8, right->FormatDesc());
+		gt->SetData(Gl3dSide(int(Gl3dSide::PosX) + 2), Gl3dPixelFormat::RGBA_8, top->FormatDesc());
+		gt->SetData(Gl3dSide(int(Gl3dSide::PosX) + 3), Gl3dPixelFormat::RGBA_8, bottom->FormatDesc());
+		gt->SetData(Gl3dSide(int(Gl3dSide::PosX) + 4), Gl3dPixelFormat::RGBA_8, back->FormatDesc());
+		gt->SetData(Gl3dSide(int(Gl3dSide::PosX) + 5), Gl3dPixelFormat::RGBA_8, front->FormatDesc());
 	});
 
 }
@@ -80,16 +115,7 @@ int Texture::GetHeight() const
 	return h;
 }
 
-void Texture::EnableFiltration(bool value)
-{
-	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([=]()
-	{
-		if(value)
-			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::LINEAR);
-		else
-			handle.Get<Gl3dTexture*>()->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::NEAREST);
-	});
-}
+
 
 void Texture::GenMipmaps()
 {

@@ -253,7 +253,7 @@ void Gl3dPbrComputer::RenderMaps(Gl3dTexture * hdrSphereMap)
 
 	pass1.Uniform("equirectangularMap", hdrSphereMap);
 	pass1.Uniform("projection", captureProjection);
-	Gl3dDevice::ValidateContext();
+	
 
 	for (unsigned int i = 0; i < 6; ++i)
 	{
@@ -263,7 +263,7 @@ void Gl3dPbrComputer::RenderMaps(Gl3dTexture * hdrSphereMap)
 		GLuint status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE)
 			g3dlog("framebuffer not attached: %d", status);
-		Gl3dDevice::ValidateContext();
+
 		glViewport(0, 0, 1024, 1024);
 		glClearColor(0.0, 0.0, 1.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -271,7 +271,7 @@ void Gl3dPbrComputer::RenderMaps(Gl3dTexture * hdrSphereMap)
 		renderCube();
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	Gl3dDevice::ValidateContext();
+
 	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubemap);
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 	EnvaromentSkybox = new Gl3dTexture(envCubemap, GL_TEXTURE_CUBE_MAP);

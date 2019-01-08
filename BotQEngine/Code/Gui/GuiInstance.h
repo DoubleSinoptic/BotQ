@@ -3,7 +3,6 @@
 
 #include "Control.h"
 #include "Gl3dShader.h"
-#include "Gl3dVertexArrayBase.h"
 #include "Gl3dFrameBuffer.h"
 #include "Gl3dArray.h"
 class SGE_EXPORT GuiInstance
@@ -51,7 +50,7 @@ private:
 		Vector2 tex;
 		Vector4 color;		
 	};
-	Ref<Gl3dVertexArrayBase> guiVertexArray;
+	Ref<Gl3dLayoutInstance> guiVertexArray;
 	Ref<Gl3dArray<GuiVertex>> guiVertexes;
 	Ref<Gl3dShader> shader;
 	Ref<Gl3dShader> rgbSplit;

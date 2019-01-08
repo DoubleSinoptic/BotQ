@@ -5,6 +5,7 @@
 #include "../Bits/stb_image_write.h"
 
 #include "../Common/TinyFile.h"
+#include "Gl3dTexture.h"
 int Bitmap::GetWidth() const 
 {
 	Validate();
@@ -197,6 +198,17 @@ void Bitmap::Replace(const Color& from, const Color& to)
 		for (int j = 0; j < (mWidth / 2); j++)
 			if(GetPixel(Point(j, i)) == from)
 				SetPixel(Point(j, i), to);
+}
+
+Gl3dSubImageDesc * Bitmap::FormatDesc() const
+{
+	static Gl3dSubImageDesc desc;
+	desc.data = (void*)mPixels.GetPtr();
+	desc.type = Gl3dFundamentalType::UByte;
+	desc.width = mWidth;
+	desc.height = mHeight;
+	desc.changelsCount = 4;
+	return &desc;
 }
 
 void Bitmap::RotateHorizontal()

@@ -17,13 +17,11 @@
 #include <Graphics/Texture.h>
 
 
-#include "Gl3dVertexArray_3x1.h"
 #include "Gl3dShader.h"
 #include "Gl3dDevice.h"
 #include "Gl3dFrameBuffer.h"
 #include "Gl3dTexture.h"
 #include "Gl3dRenderPas.h"
-#include "Gl3dVertexArrayBase.h"
 #include "Gl3dPbrComputer.h"
 
 #include <thread>

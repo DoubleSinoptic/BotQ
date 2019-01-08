@@ -23,7 +23,7 @@ public:
 		/*mSplat->Save("./file.png", Bitmap::TargetFormat::Png);*/
 		mSplatTexture = new Texture();
 		mSplatTexture->SetFromBitmap(mSplat);
-		mSplatTexture->EnableFiltration(false);
+		
 	}
 
 	~FontImpl()

@@ -9,6 +9,10 @@
 Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuffer, Gl3dRenderPassDesc* desc)
 	: mShader(shader), mFramebuffer(framebuffer)
 {
+
+	Gl3dDevice::ThrowIfError();
+
+
 	if (!framebuffer)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -19,6 +23,9 @@ Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuf
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->GetObject());
 		glUseProgram(shader->GetObject());
 	}
+
+	Gl3dDevice::ThrowIfError();
+
 
 
 	if (!desc)
@@ -41,6 +48,10 @@ Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuf
 			break;
 		}
 	}
+
+
+	Gl3dDevice::ThrowIfError();
+
 
 	glViewport(desc->viewport.x, desc->viewport.y, desc->viewport.w, desc->viewport.h);
 
@@ -66,19 +77,26 @@ Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuf
 		}
 	}
 		
+	Gl3dDevice::ThrowIfError();
+
+
 	if (desc->cullFace == Gl3dCullFace::Disable)
 		glDisable(GL_CULL_FACE);
 	else
 	{
 		glEnable(GL_CULL_FACE);
 		glFrontFace(GL_CCW);
-		glDepthFunc(desc->cullFace == Gl3dCullFace::Front ? GL_FRONT : GL_BACK);
+		glCullFace(desc->cullFace == Gl3dCullFace::Front ? GL_FRONT : GL_BACK);
 	}
 
 	if (desc->blending == Gl3dBlending::Disable)
 		glDisable(GL_BLEND);
 	else 
 	{}
+
+	Gl3dDevice::ThrowIfError();
+
+
 }
 
 Gl3dRenderPas::~Gl3dRenderPas()
@@ -86,6 +104,8 @@ Gl3dRenderPas::~Gl3dRenderPas()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glUseProgram(0);
 }
+
+
 
 void Gl3dRenderPas::Uniform(const char* uniform, Gl3dTexture* texture) const
 {
@@ -135,6 +155,9 @@ void Gl3dRenderPas::Uniform2f(const char* uniform, const float* s) const
 	g3dlogD("G3D$:: uniform val 3f: %s\n", uniform);
 	glUniform2fv(mShader->UniformLocation(uniform), 1, s);
 }
+
+
+
 
 void Gl3dRenderPas::OUniform(int ca, const char* uniform, Gl3dTexture* texture) const
 {

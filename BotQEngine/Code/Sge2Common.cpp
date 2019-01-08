@@ -8,19 +8,25 @@ MeshVariant::MeshVariant(Mesh * varic) :
 {
 	GameInstance::GetCurrent()->renderThreadQueue.QueueFunctionWait([&]()
 	{
-		m_vertex_array = new Gl3dVertexArrayBase();
+		m_vertex_array = new Gl3dLayoutInstance();
+
+		Gl3dLayoutDesc desc;
+		desc.index = m_mesh->indeces_buffer.Get<Gl3dArray<unsigned int>*>();
+		desc.layouts[0] = { m_mesh->vertices_buffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
+		desc.layouts[1] = { m_mesh->normals_buffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
+		desc.layouts[2] = { m_mesh->texcoords_buffer.Get<Gl3dArray<Vector2>*>(), 2, Gl3dFundamentalType::Float, sizeof(Vector2), 0, false };
+		desc.layouts[3] = { m_mesh->tangets_buffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
 	
-		m_vertex_array->Attach(0, m_mesh->vertices_buffer.Get<Gl3dArray<Vector3>*>());
-		m_vertex_array->Attach(1, m_mesh->normals_buffer.Get<Gl3dArray<Vector3>*>());
-		m_vertex_array->Attach(2, m_mesh->texcoords_buffer.Get<Gl3dArray<Vector2>*>());
-		m_vertex_array->Attach(3, m_mesh->tangets_buffer.Get<Gl3dArray<Vector3>*>());
 #ifdef USE_INSTANCING
 		m_transofrms_nva = new Gl3dArray<Matrix4>(Gl3dArrayTarget::Array);
-		m_vertex_array->AttachInstnacedImpl(4, m_transofrms_nva, sizeof(Vector4), 4);
+		desc.layouts[4] = { m_transofrms_nva, 4, Gl3dFundamentalType::Float, sizeof(Vector4) * 4, sizeof(Vector4) * 0, true };
+		desc.layouts[5] = { m_transofrms_nva, 4, Gl3dFundamentalType::Float, sizeof(Vector4) * 4, sizeof(Vector4) * 1, true };
+		desc.layouts[6] = { m_transofrms_nva, 4, Gl3dFundamentalType::Float, sizeof(Vector4) * 4, sizeof(Vector4) * 2, true };
+		desc.layouts[7] = { m_transofrms_nva, 4, Gl3dFundamentalType::Float, sizeof(Vector4) * 4, sizeof(Vector4) * 3, true };
 #else
 		m_transofrms_nva = new DynamicArray<Matrix4>();
-#endif
-		m_vertex_array->Attach(0, m_mesh->indeces_buffer.Get<Gl3dArray<unsigned int>*>());
+#endif	
+		m_vertex_array->Create(&desc);
 	});
 	
 }
@@ -188,18 +194,3 @@ void MeshRenderer::SetMesh(Mesh * msh)
 	SetMaterial(safe);
 }
 
-void MeshRenderer::UpdateCommand::Execute()
-{
-#ifdef USE_INSTANCING
-	m_renderer->m_variant->m_transofrms_nva->Set(m_renderer->id, m_transform * Matrix4::Scale(m_renderer->scale));
-#else
-	m_renderer->m_variant->m_transofrms_nva->operator[](m_renderer->id) = (m_transform * Matrix4::Scale(m_renderer->scale));
-#endif
-}
-void MeshRenderer::RemoveCommand::Execute()
-{
-
-}
-void MeshRenderer::AddCommand::Execute()
-{
-}

@@ -44,6 +44,8 @@ public:
 
 	void Replace(const Color& from, const Color& to);
 
+	class Gl3dSubImageDesc* FormatDesc() const;
+
 	int GetWidth() const;
 	int GetHeight() const;
 

@@ -10,20 +10,20 @@ public:
 	Vector4 M[4];
 	FORCEINLINE Matrix4() {}
 
-	FORCEINLINE Matrix4(float diagValue)
+	FORCEINLINE Matrix4(float x)
 	{
-		M[0][0] = diagValue; M[0][1] = 0.0f; M[0][2] = 0.0f; M[0][3] = 0.0f;
-		M[1][0] = 0.0f; M[1][1] = diagValue; M[1][2] = 0.0f; M[1][3] = 0.0f;
-		M[2][0] = 0.0f; M[2][1] = 0.0f; M[2][2] = diagValue; M[2][3] = 0.0f;
-		M[3][0] = 0.0f; M[3][1] = 0.0f; M[3][2] = 0.0f; M[3][3] = diagValue;
+		M[0] = Vector4(x, 0.0, 0.0, 0.0);
+		M[1] = Vector4(0.0, x, 0.0, 0.0);
+		M[2] = Vector4(0.0, 0.0, x, 0.0);
+		M[3] = Vector4(0.0, 0.0, 0.0, x);
 	}
 
 	FORCEINLINE void FillZero() 
 	{
-		M[0][0] = 0.0f; M[0][1] = 0.0f; M[0][2] = 0.0f; M[0][3] = 0.0f;
-		M[1][0] = 0.0f; M[1][1] = 0.0f; M[1][2] = 0.0f; M[1][3] = 0.0f;
-		M[2][0] = 0.0f; M[2][1] = 0.0f; M[2][2] = 0.0f; M[2][3] = 0.0f;
-		M[3][0] = 0.0f; M[3][1] = 0.0f; M[3][2] = 0.0f; M[3][3] = 0.0f;		
+		M[0] = Vector4(0., 0.0, 0.0, 0.0);
+		M[1] = Vector4(0.0, 0., 0.0, 0.0);
+		M[2] = Vector4(0.0, 0.0, 0., 0.0);
+		M[3] = Vector4(0.0, 0.0, 0.0, 0.);
 	}
 
 	Matrix4 Transpose() const 
@@ -89,11 +89,11 @@ public:
 
 	static Matrix4 Scale(const Vector3& v)
 	{
-		Matrix4 m = Matrix4::Identity();
-		m[0][0] = v.x; m[0][1] = 0.0f; m[0][2] = 0.0f; m[0][3] = 0.0f;
-		m[1][0] = 0.0f; m[1][1] = v.y; m[1][2] = 0.0f; m[1][3] = 0.0f;
-		m[2][0] = 0.0f; m[2][1] = 0.0f; m[2][2] = v.z; m[2][3] = 0.0f;
-		m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
+		Matrix4 m;
+		m.M[0] = Vector4(v.x, 0.0, 0.0, 0.0);
+		m.M[1] = Vector4(0.0, v.y, 0.0, 0.0);
+		m.M[2] = Vector4(0.0, 0.0, v.z, 0.0);
+		m.M[3] = Vector4(0.0, 0.0, 0.0, 1.0);
 		return m;
 	}
 	static const bool leftHanded = false;
@@ -133,7 +133,7 @@ public:
 		{
 			Vector3 const f = ((center - eye).Normalized());
 			Vector3 const s = ((up.Cross(f)).Normalized());
-			Vector3 const u = (f.Cross(s)).Normalized();
+			Vector3 const u = f.Cross(s);
 
 			Matrix4 Result(1.0);
 			Result[0][0] = s.x;
@@ -152,32 +152,24 @@ public:
 		}
 		else 
 		{
-			Matrix4 Matrix;
-			Vector3 X, Y, Z;
-			Z = eye - center;
-			Z.Normalize();
-			Y = up;
-			X = Y.Cross(Z);
-			Y = Z.Cross(X);
-			X.Normalize();
-			Y.Normalize();
-			Matrix[0][0] = X.x;
-			Matrix[1][0] = X.y;
-			Matrix[2][0] = X.z;
-			Matrix[3][0] = -X.Dot(eye);
-			Matrix[0][1] = Y.x;
-			Matrix[1][1] = Y.y;
-			Matrix[2][1] = Y.z;
-			Matrix[3][1] = -Y.Dot(eye);
-			Matrix[0][2] = Z.x;
-			Matrix[1][2] = Z.y;
-			Matrix[2][2] = Z.z;
-			Matrix[3][2] = -Z.Dot(eye);
-			Matrix[0][3] = 0;
-			Matrix[1][3] = 0;
-			Matrix[2][3] = 0;
-			Matrix[3][3] = 1.0f;
-			return Matrix;
+			Vector3 const f = ((center - eye).Normalized());
+			Vector3 const s = ((f.Cross(up)).Normalized());
+			Vector3 const u = s.Cross(f);
+
+			Matrix4 Result(1.0);
+			Result[0][0] = s.x;
+			Result[1][0] = s.y;
+			Result[2][0] = s.z;
+			Result[0][1] = u.x;
+			Result[1][1] = u.y;
+			Result[2][1] = u.z;
+			Result[0][2] = -f.x;
+			Result[1][2] = -f.y;
+			Result[2][2] = -f.z;
+			Result[3][0] = -s.Dot(eye);
+			Result[3][1] = -u.Dot(eye);
+			Result[3][2] = f.Dot(eye);
+			return Result;
 		}
 	}
 

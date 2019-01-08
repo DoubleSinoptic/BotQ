@@ -247,6 +247,6 @@ void main()
         Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));
 
     FragColor = vec4(pow(final , vec3(1.0/2.2)), 1.0);
-	//FragColor = vec4(vec3(occolusion), 1.0);
+	//FragColor = vec4(vec3(normalV), 1.0);
 	
 }

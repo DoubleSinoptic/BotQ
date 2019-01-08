@@ -3,7 +3,7 @@
 #ifndef SGE_2_COMMON_H
 #define SGE_2_COMMON_H
 
-#include "Gl3dVertexArrayBase.h"
+#include "Gl3dDevice.h"
 #include "Gl3dCore.h"
 #include "Gl3dArray.h"
 
@@ -34,7 +34,7 @@ class SGE_EXPORT MeshVariant
 	DynamicArray<Matrix4>* m_transofrms_nva;
 #endif
 	Mesh * m_mesh;
-	Gl3dVertexArrayBase* m_vertex_array;
+	Gl3dLayoutInstance* m_vertex_array;
 
 	friend class Material;
 	friend class Mesh;
@@ -112,24 +112,6 @@ class SGE_EXPORT MeshRenderer : public Component
 	Vector3 scale;
 	friend class MeshVariant;
 
-	struct SGE_EXPORT UpdateCommand : public CommandBase
-	{
-		Matrix4       m_transform;
-		MeshRenderer* m_renderer;
-		virtual void Execute() override;
-	} updateCommand;
-
-	struct SGE_EXPORT AddCommand : public CommandBase
-	{
-		MeshRenderer* m_renderer;
-		virtual void Execute() override;
-	} addCommand;
-
-	struct SGE_EXPORT RemoveCommand : public CommandBase
-	{
-		MeshRenderer* m_renderer;
-		virtual void Execute() override;
-	} removeCommand;
 public:
 	
 	Mesh * GetMesh() const;
@@ -144,10 +126,6 @@ public:
 
 	virtual void Awake() override
 	{
-		updateCommand.m_renderer = this;
-		addCommand.m_renderer =  this;
-		removeCommand.m_renderer = this;
-
 		SetEnabled(false);
 		scale = Vector3(1.0, 1.0, 1.0);
 	/*	mTransformChanged = new EventHandler<>([=]()
