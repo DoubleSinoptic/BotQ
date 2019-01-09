@@ -110,6 +110,8 @@ DynamicArray<char> FileStream::AllBytes()
 
 unsigned long long FileStream::LongLength()
 {
-	
-	return 0;
+	Seek(0, SeekDir::End);
+	unsigned long long d = Tell();
+	Seek(0, SeekDir::Beg);
+	return d;
 }

@@ -7,6 +7,7 @@
 class SGE_EXPORT ResourceLoader
 {
 public:
+	static void LoadResourcesFromDir(const String& path);
 	static void LoadResourcesPk(const String& path);
 	static void LoadResourcesPk2(const String& path);
 	static void LoadStaticAssets(const String& apth);

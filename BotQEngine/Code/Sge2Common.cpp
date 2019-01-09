@@ -1,3 +1,4 @@
+#include "..\MeshRenderer.h"
 #include "Sge2Common.h"
 #include "GameInstance.h"
 
@@ -11,11 +12,11 @@ MeshVariant::MeshVariant(Mesh * varic) :
 		m_vertex_array = new Gl3dLayoutInstance();
 
 		Gl3dLayoutDesc desc;
-		desc.index = m_mesh->indeces_buffer.Get<Gl3dArray<unsigned int>*>();
-		desc.layouts[0] = { m_mesh->vertices_buffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
-		desc.layouts[1] = { m_mesh->normals_buffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
-		desc.layouts[2] = { m_mesh->texcoords_buffer.Get<Gl3dArray<Vector2>*>(), 2, Gl3dFundamentalType::Float, sizeof(Vector2), 0, false };
-		desc.layouts[3] = { m_mesh->tangets_buffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
+		desc.index = m_mesh->GetMeshInfo().indecesBuffer.Get<Gl3dArray<unsigned int>*>();
+		desc.layouts[0] = { m_mesh->GetMeshInfo().verticesBuffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
+		desc.layouts[1] = { m_mesh->GetMeshInfo().normalsBuffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
+		desc.layouts[2] = { m_mesh->GetMeshInfo().texcoordsBuffer.Get<Gl3dArray<Vector2>*>(), 2, Gl3dFundamentalType::Float, sizeof(Vector2), 0, false };
+		desc.layouts[3] = { m_mesh->GetMeshInfo().tangetsBuffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
 	
 #ifdef USE_INSTANCING
 		m_transofrms_nva = new Gl3dArray<Matrix4>(Gl3dArrayTarget::Array);
@@ -184,6 +185,10 @@ Ref<MeshVariant> Material::GetOrAddVariant(Mesh * msh)
 Mesh * MeshRenderer::GetMesh() const
 {
 	return m_mesh;
+}
+
+void MeshRenderer::EnableInstancing(bool value)
+{
 }
 
 void MeshRenderer::SetMesh(Mesh * msh)

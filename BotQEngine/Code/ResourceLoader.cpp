@@ -12,7 +12,7 @@
 #include "Audio/AudioSource.h"
 //#include "Common/ArrayStreamIterator.h"
 using namespace std::experimental;
-
+namespace fs = std::experimental::filesystem;
 #pragma pack(push, 1)
 struct PK_Header
 {
@@ -168,6 +168,46 @@ void ResourceLoader::LoadResourcesPk2(const String & path)
 
 }
 
+template<typename T>
+void loadFromDir(const T& x, const fs::path& path, const String& startSeg) 
+{
+	for (auto i : fs::directory_iterator(path))
+	{
+		if (fs::is_directory(i))
+		{
+			loadFromDir(x, i.path(), startSeg + "/" + i.path().filename().string().c_str());
+		}
+		else
+		{
+			x(String(i.path().string().c_str()), startSeg + "/" +i.path().filename().string().c_str());
+		}
+	}
+}
+
+void ResourceLoader::LoadResourcesFromDir(const String & path)
+{
+	DynamicArray < Def > coruntune;
+
+	loadFromDir([&](const String& file, const String& fileName)
+	{
+		printf("asdasd\n");
+		FileStream f(file, OpenMode::Read);
+
+		String fpath = Path::PathFix(fileName);
+		String ext = Path::FileExt(fileName);
+
+		Ref<DynamicArray<char>> digital = New<DynamicArray<char>>();
+		digital->Initialize(f.LongLength());
+		f.Read(digital->GetData(), digital->Length());
+	
+		InstantResource(coruntune, fpath, digital);
+	}, path.c_str(), "/");
+
+	for (auto i : coruntune)
+	{
+		MeshImporter::ImportRW(i.path, i.data->GetData(), i.data->Length());
+	}
+}
 
 void ResourceLoader::LoadResourcesPk(const String & path)
 {

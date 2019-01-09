@@ -112,12 +112,13 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 		mconstructor->m_meshs.Add(pair);
 		mconstructor->m_materials = mt;
 
-		game_mesh->vertices.UnsafeRTIIAddRange((const Vector3*)asmesh->mVertices, ((const Vector3*)asmesh->mVertices) + asmesh->mNumVertices);
+		game_mesh->SetVertexes((const Vector3*)asmesh->mVertices, asmesh->mNumVertices);
+		
 		if (asmesh->HasNormals())
-			game_mesh->normals.UnsafeRTIIAddRange((const Vector3*)asmesh->mNormals, ((const Vector3*)asmesh->mNormals) + asmesh->mNumVertices);
+			game_mesh->SetNormals((const Vector3*)asmesh->mNormals, asmesh->mNumVertices);
 		if (asmesh->HasTangentsAndBitangents())
-			game_mesh->tangets.UnsafeRTIIAddRange((const Vector3*)asmesh->mTangents, ((const Vector3*)asmesh->mTangents) + asmesh->mNumVertices);
-			
+			game_mesh->SetTangents((const Vector3*)asmesh->mTangents, asmesh->mNumVertices);
+		
 		if (asmesh->HasTextureCoords(0))
 		{
 			DynamicArray<Vector2> v;
@@ -126,13 +127,13 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 			{
 				v.Add(Vector2(asmesh->mTextureCoords[0][i].x, asmesh->mTextureCoords[0][i].y));
 			}
-			game_mesh->texcoords.UnsafeRTIIAddRange(v.GetData(), v.GetData() + asmesh->mNumVertices);
+			game_mesh->SetTexcoords(v.GetData(), asmesh->mNumVertices);
 
 		}
 			
 
-	
-		game_mesh->indeces.EnsureCapacity(asmesh->mNumFaces);
+		DynamicArray<unsigned int> arr;
+		arr.EnsureCapacity(asmesh->mNumFaces);
 		for (unsigned int t = 0; t < asmesh->mNumFaces; ++t)
 		{
 			aiFace* face = &asmesh->mFaces[t];
@@ -141,17 +142,17 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 				unsigned int ix0 = face->mIndices[0];
 				unsigned int ix1 = face->mIndices[1];
 				unsigned int ix2 = face->mIndices[2];
-				game_mesh->indeces.Add(ix0);
-				game_mesh->indeces.Add(ix1);
-				game_mesh->indeces.Add(ix2);
+				arr.Add(ix0);
+				arr.Add(ix1);
+				arr.Add(ix2);
 			}
 			else if (face->mNumIndices == 2)
 			{
 				unsigned int ix0 = face->mIndices[0];
 				unsigned int ix2 = face->mIndices[1];
-				game_mesh->indeces.Add(ix0);
-				game_mesh->indeces.Add(ix2);
-				game_mesh->indeces.Add(ix0);
+				arr.Add(ix0);
+				arr.Add(ix2);
+				arr.Add(ix0);
 	
 			}
 			else if (face->mNumIndices == 4)
@@ -160,18 +161,18 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 				unsigned int ix1 = face->mIndices[1];
 				unsigned int ix2 = face->mIndices[2];
 				unsigned int ix3 = face->mIndices[3];
-				game_mesh->indeces.Add(ix0);
-				game_mesh->indeces.Add(ix1);
-				game_mesh->indeces.Add(ix2);
-				game_mesh->indeces.Add(ix0);
-				game_mesh->indeces.Add(ix2);
-				game_mesh->indeces.Add(ix3);
+				arr.Add(ix0);
+				arr.Add(ix1);
+				arr.Add(ix2);
+				arr.Add(ix0);
+				arr.Add(ix2);
+				arr.Add(ix3);
 			}
 			else
 				Error("index error");
 		
 		}
-		game_mesh->applay_data();
+		game_mesh->SetIndeces(arr.GetData(), arr.Length());
 	}
 
 	

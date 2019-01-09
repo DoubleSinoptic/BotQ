@@ -68,7 +68,7 @@ void TrianglesCollider::AddTriangles(const Vector3 * vertexes, const unsigned in
 void TrianglesCollider::AttachMeshData(Mesh * mesh)
 {
 	Assert(mesh != nullptr);
-	AddTriangles(mesh->vertices.GetData(), mesh->indeces.GetData(), mesh->indeces.Length());
+	AddTriangles(mesh->GetVertexes(), mesh->GetIncdeces(), mesh->GetIncdecesSize());
 }
 
 void TrianglesCollider::AttachMeshesData(Mesh ** meshes, int count)
@@ -78,9 +78,9 @@ void TrianglesCollider::AttachMeshesData(Mesh ** meshes, int count)
 	btTriangleMesh* u = new btTriangleMesh();
 	for (int i = 0; i < count; i++) 
 	{
-		const Vector3 * vertexes = meshes[i]->vertices.GetData();
-		const unsigned int * indeces = meshes[i]->indeces.GetData();
-		int indecesCount = meshes[i]->indeces.Length();
+		const Vector3 * vertexes = meshes[i]->GetVertexes();
+		const unsigned int * indeces = meshes[i]->GetIncdeces();
+		int indecesCount = meshes[i]->GetIncdecesSize();
 		Assert(meshes[i] != nullptr);
 		for (int i = 0; i < (indecesCount / 3); i++)
 		{
@@ -110,9 +110,9 @@ void RecurseveAddMeshes(btTriangleMesh* messh, GameObject* obj, const Vector3& s
 		for (auto iv : c)
 		{
 			Assert(iv->GetMesh() != nullptr);
-			const Vector3 * vertexes = iv->GetMesh()->vertices.GetData();
-			const unsigned int * indeces = iv->GetMesh()->indeces.GetData();
-			int indecesCount = iv->GetMesh()->indeces.Length();
+			const Vector3 * vertexes = iv->GetMesh()->GetVertexes();
+			const unsigned int * indeces = iv->GetMesh()->GetIncdeces();
+			int indecesCount = iv->GetMesh()->GetIncdecesSize();
 
 			for (int i = 0; i < (indecesCount / 3); i++)
 			{

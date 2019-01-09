@@ -42,7 +42,8 @@ public:
 	DynamicArray<GameObject*>		sceneobjects;
 	DynamicArray<Component*>		updatebleComponents;
 	DynamicArray<Resource*>			resources;
-	DynamicArray<class Material*>	materials;
+	
+	DynamicArray<Material*>			materials;
 
 	CommandQueue&					renderQueue;
 	CommandQueue					updateQueue;
@@ -72,3 +73,4 @@ public:
 #define renderThreadQueue GameInstance::GetCurrent()->renderQueue
 #define updateQueue GameInstance::GetCurrent()->updateQueue
 #define currentDisplay GameInstance::GetCurrent()->display
+#define renderMaterials GameInstance::GetCurrent()->materials

@@ -7,7 +7,7 @@
 #include "Gl3dCore.h"
 #include "Gl3dArray.h"
 
-
+#include "Mesh.h"
 #include "Component.h"
 #include "GameObject.h"
 #include "DigitalContainer.h"
@@ -191,35 +191,6 @@ public:
 };
 
 
-struct SGE_EXPORT Mesh 
-{
-	bool _deletedFlag;
-	DynamicArray<Vector3> vertices;
-	DynamicArray<Vector3> normals;
-	DynamicArray<Vector2> texcoords;
-	DynamicArray<Vector3> tangets;
-	DynamicArray<unsigned int> indeces;
-
-
-	DigitalContainer vertices_buffer;
-	DigitalContainer normals_buffer;
-	DigitalContainer texcoords_buffer;
-	DigitalContainer indeces_buffer;
-	DigitalContainer tangets_buffer;
-
-	void calculate_uvs() 
-	{}
-
-	void calculate_tangets() 
-	{}
-
-	void calculate_normals() 
-	{}
-
-	Mesh();
-	~Mesh();
-	void applay_data();
-};
 
 #endif
 

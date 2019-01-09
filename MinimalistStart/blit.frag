@@ -217,7 +217,7 @@ void main()
     vec3 positionV =  texture(position, texCoords).xyz;
 	vec3 normalV =    texture(normal, texCoords).xyz;
 	vec3 occolusion = texture(ssao, texCoords).xyz;
-	vec3 colorV =     pow(texture(color, texCoords).xyz , vec3(2.2)) * occolusion;
+	vec3 colorV =     pow(texture(color, texCoords).xyz , vec3(2.2));
 	
 	vec3 Lo = vec3(0.0);
 	if(normalV != vec3(0.0))
@@ -247,6 +247,6 @@ void main()
         Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));
 
     FragColor = vec4(pow(final , vec3(1.0/2.2)), 1.0);
-	//FragColor = vec4(vec3(normalV), 1.0);
+	FragColor = vec4(vec3(occolusion), 1.0);
 	
 }

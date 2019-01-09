@@ -49,7 +49,7 @@ Gl3dTexture::~Gl3dTexture()
 
 void Gl3dTexture::SetMagMinFilters(Gl3dFilter mag, Gl3dFilter min)
 {
-	if (min == Gl3dFilter::MIPMAP_NEAREST || min == Gl3dFilter::MIPMAP_LINEAR)
+	if (mag == Gl3dFilter::MIPMAP_NEAREST || mag == Gl3dFilter::MIPMAP_LINEAR)
 		throw Gl3dCoreException("invalid filter target");
 
 	static GLenum fragers[] =

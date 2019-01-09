@@ -14,9 +14,9 @@ uniform mat4 view;
 void main()
 {
 #ifdef SKYBOX
-	gl_Position = projection * view * model * vec4(inPosition, 1.0); 
-	var_normal = -(mat3(model) * inNormal);
-	var_position = mat3(model) * inPosition;
+	gl_Position = projection * vec4(mat3(view) * inPosition , 1.0); 
+	var_normal = mat3(view) * inNormal;
+	var_position = mat3(view) * inPosition * 10000;
 #else
 	gl_Position = projection * view * model * vec4(inPosition, 1.0); 
 	var_normal = mat3(model) * inNormal;
