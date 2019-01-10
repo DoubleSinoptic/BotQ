@@ -133,19 +133,19 @@ Gl3dLayoutInstance::~Gl3dLayoutInstance()
 	}	
 }
 
-void Gl3dLayoutInstance::DrawIndexed(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count)
+void Gl3dLayoutInstance::DrawIndexed(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count) const
 {
 	glBindVertexArray(m_object);
 	glDrawElements(Gl3dDevice::CastPrimitiveType(prim), count, Gl3dDevice::CastFundamentalType(t), nullptr);
 }
 
-void Gl3dLayoutInstance::DrawIndexedInstanced(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count, size_t instCount)
+void Gl3dLayoutInstance::DrawIndexedInstanced(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count, size_t instCount) const
 {
 	glBindVertexArray(m_object);
 	glDrawElementsInstanced(Gl3dDevice::CastPrimitiveType(prim), count, Gl3dDevice::CastFundamentalType(t), nullptr, instCount);
 }
 
-void Gl3dLayoutInstance::Draw(Gl3dPrimitive prim, size_t vertCount)
+void Gl3dLayoutInstance::Draw(Gl3dPrimitive prim, size_t vertCount) const
 {
 	glBindVertexArray(m_object);
 	glDrawArrays(Gl3dDevice::CastPrimitiveType(prim), 0, vertCount);

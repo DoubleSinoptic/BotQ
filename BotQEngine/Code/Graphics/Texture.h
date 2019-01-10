@@ -38,7 +38,7 @@ public:
 	Texture();
 	
 	void* GetTextureObject() const;
-	
+
 	void SetSampler(const SamplerStateDesc& state);
 	void SetFromBitmap(const Ref<Bitmap>& bitmap);
 	void SetFromCubeBitmap(const Ref<Bitmap>& left, const Ref<Bitmap>& right, const Ref<Bitmap>& top, const Ref<Bitmap>& bottom, const Ref<Bitmap>& back, const Ref<Bitmap>& front);

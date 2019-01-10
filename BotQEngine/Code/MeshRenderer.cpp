@@ -97,7 +97,7 @@ MeshRenderer::MeshRenderer() :
 		m_id(0),
 		m_material(nullptr),
 		m_mesh(nullptr),
-		m_instancing(false),
+		m_instancing(true),
 		m_source(nullptr)
 {}
 
@@ -131,3 +131,11 @@ MeshRenderer::~MeshRenderer()
 	UpdateStates(nullptr, nullptr, m_instancing);
 }
 
+void MeshRenderer::CloneTo(TypedObject * obj) const
+{
+	MeshRenderer* e = dynamic_cast<MeshRenderer*>(obj);
+	if (!obj)
+		Error("Ivalid clone to covesion from MeshRenderer");
+	e->m_scale = m_scale;
+	e->UpdateStates(m_material, m_mesh, m_instancing);
+}

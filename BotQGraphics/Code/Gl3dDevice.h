@@ -57,9 +57,9 @@ public:
 	Gl3dLayoutInstance(const Gl3dLayoutInstance&) = delete;
 	Gl3dLayoutInstance& operator=(const Gl3dLayoutInstance&) = delete;
 	~Gl3dLayoutInstance();
-	void DrawIndexed(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count);
-	void DrawIndexedInstanced(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count, size_t instCount);
-	void Draw(Gl3dPrimitive prim, size_t vertCount);
+	void DrawIndexed(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count) const;
+	void DrawIndexedInstanced(Gl3dPrimitive prim, Gl3dFundamentalType t, size_t count, size_t instCount) const;
+	void Draw(Gl3dPrimitive prim, size_t vertCount) const;
 };
 
 typedef void* (*Gl3dDeviceLinker)(const char *name);

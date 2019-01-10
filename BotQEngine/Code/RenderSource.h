@@ -25,8 +25,8 @@ class SGE_EXPORT RenderSource
 	ONLY_RENDER_THREAD_ACCESS Gl3dLayoutInstance*			m_instancedLayout;
 	ONLY_RENDER_THREAD_ACCESS Gl3dLayoutInstance*			m_layout;
 public:
-	ONLY_RENDER_THREAD_ACCESS void Draw(MeshStateUpdater* updater, RenderThreadTag);
-	ONLY_RENDER_THREAD_ACCESS void DrawInstanced(RenderThreadTag);
+	ONLY_RENDER_THREAD_ACCESS void Draw(MeshStateUpdater* updater, RenderThreadTag) const;
+	ONLY_RENDER_THREAD_ACCESS void DrawInstanced(RenderThreadTag) const;
 
 	Mesh* GetMesh() const;
 	bool IsEmpty() const;

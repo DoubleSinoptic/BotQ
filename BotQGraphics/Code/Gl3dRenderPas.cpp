@@ -85,7 +85,7 @@ Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuf
 	else
 	{
 		glEnable(GL_CULL_FACE);
-		glFrontFace(GL_CCW);
+		glFrontFace(GL_CW);
 		glCullFace(desc->cullFace == Gl3dCullFace::Front ? GL_FRONT : GL_BACK);
 	}
 

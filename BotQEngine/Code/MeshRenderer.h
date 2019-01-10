@@ -42,5 +42,6 @@ public:
 
 	void EnableInstancing(bool value = true);
 
+	void CloneTo(TypedObject* obj) const override;
 };
 

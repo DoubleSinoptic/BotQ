@@ -1,7 +1,7 @@
 #include "RenderSource.h"
 #include "MeshRenderer.h"
 
-void RenderSource::Draw(MeshStateUpdater* updater, RenderThreadTag)
+void RenderSource::Draw(MeshStateUpdater* updater, RenderThreadTag) const
 {
 	for (size_t i = 0; i < m_dynamicRenderes.LengthReference; i++)
 	{
@@ -14,7 +14,7 @@ void RenderSource::Draw(MeshStateUpdater* updater, RenderThreadTag)
 	}
 }
 
-void RenderSource::DrawInstanced(RenderThreadTag)
+void RenderSource::DrawInstanced(RenderThreadTag) const
 {
 	m_instancedLayout->DrawIndexedInstanced(
 		Gl3dPrimitive::Triangles, 
@@ -71,7 +71,7 @@ void RenderSource::AddInstanced(MeshRenderer* r, const Matrix4& transform)
 
 void RenderSource::RemoveInstanced(MeshRenderer* r)
 {
-	renderThreadQueue.QueueFunction([&]()
+	renderThreadQueue.QueueFunction([=]()
 	{
 		unsigned int id = r->GetDataId();
 		m_instancedRenderes.RemoveAt(id);
@@ -84,7 +84,7 @@ void RenderSource::RemoveInstanced(MeshRenderer* r)
 RenderSource::RenderSource(Mesh* m) :
 	m_mesh(m)
 {
-	renderThreadQueue.QueueFunction([&]()
+	renderThreadQueue.QueueFunction([=]()
 	{
 		m_instancedData = new Gl3dArray<Matrix4>(Gl3dArrayTarget::Array);
 		m_instancedLayout = new Gl3dLayoutInstance();
@@ -113,7 +113,7 @@ RenderSource::RenderSource(Mesh* m) :
 
 RenderSource::~RenderSource()
 {
-	renderThreadQueue.QueueFunctionWait([&]()
+	renderThreadQueue.QueueFunctionWait([=]()
 	{
 		delete m_layout;
 		delete m_instancedLayout;

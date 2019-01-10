@@ -51,11 +51,13 @@ void main()
            
         float sampleDepth = (view * vec4(texture(position, offset.xy).xyz, 1.0)).z;
         
-        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
+		float rangeCheck= abs(fragPos.z - sampleDepth) < radius ? 1.0 : 0.0;
+       // float rangeCheck = smoothstep(0.0, 2.1, radius / abs(fragPos.z - sampleDepth));
         occlusion += (sampleDepth >= sample.z + bias ? 1.0 : 0.0) * rangeCheck;           
+        
     }
     occlusion = 1.0 - (occlusion / float(sampleCount));
-    occlusion = pow(occlusion, 3.0);
+    occlusion = pow(occlusion,3.0);
 
     FragColor = vec4(vec3(occlusion), 1.0);
 }
