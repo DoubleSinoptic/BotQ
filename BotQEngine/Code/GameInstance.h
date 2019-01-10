@@ -12,7 +12,7 @@ class Display;
 class PhysicsInstance;
 class MeshRenderer;
 class GameInstance;
-
+class Material;
 class IRenderThreadInstance
 {
 public:
@@ -69,6 +69,9 @@ public:
 	bool RenderUpdate();
 	bool FakeRenderUpdate();
 };
+
+#define ONLY_RENDER_THREAD_ACCESS
+#define ONLY_CORE_THREAD_ACCESS
 
 #define renderThreadQueue GameInstance::GetCurrent()->renderQueue
 #define updateQueue GameInstance::GetCurrent()->updateQueue

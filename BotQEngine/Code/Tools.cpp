@@ -1,10 +1,11 @@
 #include "Tools.h"
 #include "GameObject.h"
 #include "Graphics/Texture.h"
-#include "Sge2Common.h"
 #include "Time.hpp"
 #include "Input.h"
 #include "Audio/AudioSource.h"
+#include "MeshRenderer.h"
+#include "Material.h"
 
 void Tools::SetMaterial(GameObject *cube, Material* m)
 {

@@ -4,11 +4,11 @@
 #include "Component.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "MeshRenderer.h"
 #include "GameInstance.h"
 #include "Gl3dArray.h"
 #include "Gl3dDevice.h"
 
+class MeshRenderer;
 struct MeshStateUpdater 
 {
 	virtual ~MeshStateUpdater() {}
@@ -16,27 +16,30 @@ struct MeshStateUpdater
 };
 
 struct RenderThreadTag {};
-class RenderSource
+class SGE_EXPORT RenderSource
 {
-	Mesh*						m_mesh;
-	DynamicArray<MeshRenderer*> m_dynamicRenderes;
-	DynamicArray<MeshRenderer*> m_instancedRenderes;
-	Gl3dArray<Matrix4>*			m_instancedData;
-	Gl3dLayoutInstance*			m_instancedLayout;
-	Gl3dLayoutInstance*			m_layout;
+	ONLY_RENDER_THREAD_ACCESS Mesh*							m_mesh;
+	ONLY_RENDER_THREAD_ACCESS DynamicArray<MeshRenderer*>	m_dynamicRenderes;
+	ONLY_RENDER_THREAD_ACCESS DynamicArray<MeshRenderer*>	m_instancedRenderes;
+	ONLY_RENDER_THREAD_ACCESS Gl3dArray<Matrix4>*			m_instancedData;
+	ONLY_RENDER_THREAD_ACCESS Gl3dLayoutInstance*			m_instancedLayout;
+	ONLY_RENDER_THREAD_ACCESS Gl3dLayoutInstance*			m_layout;
 public:
-	void Draw(MeshStateUpdater* updater, RenderThreadTag);
-	void DrawInstanced(RenderThreadTag);
+	ONLY_RENDER_THREAD_ACCESS void Draw(MeshStateUpdater* updater, RenderThreadTag);
+	ONLY_RENDER_THREAD_ACCESS void DrawInstanced(RenderThreadTag);
 
-	void Add(MeshRenderer* r);
-	void Remove(MeshRenderer* r);
+	Mesh* GetMesh() const;
+	bool IsEmpty() const;
 
-	void ChangeInstanced(unsigned int id, const Matrix4& transform);
-	void AddInstanced(MeshRenderer* r, const Matrix4& transform);
+	ONLY_CORE_THREAD_ACCESS void Add(MeshRenderer* r);
+	ONLY_CORE_THREAD_ACCESS void Remove(MeshRenderer* r);
 
-	void RemoveInstanced(MeshRenderer* r);
-	RenderSource(Mesh* m);
+	ONLY_CORE_THREAD_ACCESS void ChangeInstanced(unsigned int id, const Matrix4& transform);
+	ONLY_CORE_THREAD_ACCESS void AddInstanced(MeshRenderer* r, const Matrix4& transform);
 
-	~RenderSource();
+	ONLY_CORE_THREAD_ACCESS void RemoveInstanced(MeshRenderer* r);
+	ONLY_CORE_THREAD_ACCESS RenderSource(Mesh* m);
+
+	ONLY_CORE_THREAD_ACCESS ~RenderSource();
 };
 

@@ -2,7 +2,9 @@
 
 #include "Core.h"
 #include "GameObject.h"
-#include "Sge2Common.h"
+#include "Mesh.h"
+#include "Material.h"
+#include "MeshRenderer.h"
 
 struct SGE_EXPORT mesh_pair 
 {

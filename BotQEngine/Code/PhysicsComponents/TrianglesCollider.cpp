@@ -1,7 +1,7 @@
 #include "TrianglesCollider.h"
 #include "btBulletCollisionCommon.h"
 #include "../GameObject.h"
-#include "../Sge2Common.h"
+#include "../MeshRenderer.h"
 
 class TrianglesColliderImpl 
 {

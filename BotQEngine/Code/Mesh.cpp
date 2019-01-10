@@ -152,3 +152,4 @@ Mesh::~Mesh()
 		if (!duplicate.indecesBuffer.IsNull())
 			delete duplicate.indecesBuffer.Get<Gl3dArray<Vector3>*>();
 	});
+}

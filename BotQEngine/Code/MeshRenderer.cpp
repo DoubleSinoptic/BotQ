@@ -2,25 +2,80 @@
 #include "RenderSource.h"
 #include "GameInstance.h"
 
+void MeshRenderer::Awake()  
+{
+	m_scale = Matrix4::Scale(Vector3(1.0f, 1.0f, 1.0f));
+	SetEnabled(true);
+	m_transformChanged = EventHandler<>([&]()
+	{
+		if (m_instancing && m_source)
+		{
+			Matrix4 fl;
+			GetGameObject()->FillMatrix4x4((float*)&fl);
+			m_source->ChangeInstanced(m_id, fl * m_scale);
+		}
+	}, false);
+	GetGameObject()->GetHandlers()->OnTransformChanged += &m_transformChanged;
+}
+
+void MeshRenderer::Destroy() 
+{
+	GetGameObject()->GetHandlers()->OnTransformChanged -= &m_transformChanged;
+}
+
+void MeshRenderer::FrameUpdate()
+{
+	Matrix4 fl;
+	GetGameObject()->FillMatrix4x4((float*)&fl);
+	m_transform = fl * m_scale;
+}
+
+const Matrix4& MeshRenderer::GetScale() const
+{
+	return m_scale;
+}
+
+void MeshRenderer::SetScale(const Vector3& scale)
+{
+	m_scale = Matrix4::Scale(scale);
+}
+
 void MeshRenderer::UpdateStates(Material * material, Mesh * mesh, bool instancing)
 {
 	if (m_source)
 	{
-		m_material->NotifyLeaveSource(mesh);
+		if (m_instancing)
+			m_source->RemoveInstanced(this);
+		else
+			m_source->Remove(this);
+		m_material->NotifyLeaveSource(m_source);
 		m_source = nullptr;
 		m_material = nullptr;
 		m_mesh = nullptr;
 	}
 
-	if (material != nullptr && mesh != nullptr)
+	m_material = material;
+	m_mesh = mesh;
+	m_instancing = instancing;
+
+	if (m_material != nullptr && m_mesh != nullptr)
+		m_source = m_material->QuerySource(mesh);	
+
+	if (m_source)
 	{
-		m_source = m_material->QuerySource(mesh);
-		if (m_source != nullptr)
+		if (m_instancing)
 		{
-			m_material = material;
-			m_mesh = mesh;
+			Matrix4 fl;
+			GetGameObject()->FillMatrix4x4((float*)&fl);
+			m_transform = fl * m_scale;
+			m_source->AddInstanced(this, m_transform);
+		}
+		else
+		{
+			m_source->Add(this);
 		}
 	}
+	
 }
 
 const Matrix4 & MeshRenderer::GetTransform() const
@@ -66,7 +121,7 @@ Mesh* MeshRenderer::GetMesh() const
 	return m_mesh;
 }
 
-void MeshRenderer::EnableInstancing(bool value = true)
+void MeshRenderer::EnableInstancing(bool value)
 {
 	UpdateStates(m_material, m_mesh, value);
 }

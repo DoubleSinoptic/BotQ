@@ -1,4 +1,5 @@
 #include "RenderSource.h"
+#include "MeshRenderer.h"
 
 void RenderSource::Draw(MeshStateUpdater* updater, RenderThreadTag)
 {
@@ -22,10 +23,21 @@ void RenderSource::DrawInstanced(RenderThreadTag)
 		m_instancedData->Length());
 }
 
+Mesh * RenderSource::GetMesh() const
+{
+	return m_mesh;
+}
+
+bool RenderSource::IsEmpty() const
+{
+	return m_instancedData->Length() == 0 && m_dynamicRenderes.Length() == 0;
+}
+
 void RenderSource::Add(MeshRenderer* r)
 {
 	renderThreadQueue.QueueFunction([=]()
 	{
+		Log("Added mesh renderer: %p to %p", r, this);
 		m_dynamicRenderes.Add(r);
 	});
 }
@@ -35,6 +47,7 @@ void RenderSource::Remove(MeshRenderer* r)
 	renderThreadQueue.QueueFunction([=]()
 	{
 		m_dynamicRenderes.Remove(r);
+		Log("Removed mesh renderer: %p to %p", r, this);
 	});
 }
 
@@ -50,6 +63,7 @@ void RenderSource::AddInstanced(MeshRenderer* r, const Matrix4& transform)
 {
 	renderThreadQueue.QueueFunction([=]()
 	{
+		Log("Added mesh renderer: %p to %p", r, this);
 		r->SetDataId(m_instancedRenderes.Add(r));
 		m_instancedData->Add(transform);
 	});
@@ -63,6 +77,7 @@ void RenderSource::RemoveInstanced(MeshRenderer* r)
 		m_instancedRenderes.RemoveAt(id);
 		m_instancedData->RemoveAt(id);
 		m_instancedRenderes[id]->SetDataId(id);
+		Log("Removed mesh renderer: %p to %p", r, this);
 	});
 }
 
@@ -75,7 +90,7 @@ RenderSource::RenderSource(Mesh* m) :
 		m_instancedLayout = new Gl3dLayoutInstance();
 		m_layout = new Gl3dLayoutInstance();
 
-		Gl3dLayoutDesc desc;
+		Gl3dLayoutDesc desc = {};
 		desc.index = m_mesh->GetMeshInfo().indecesBuffer.Get<Gl3dArray<unsigned int>*>();
 		desc.layouts[0] = { m_mesh->GetMeshInfo().verticesBuffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
 		desc.layouts[1] = { m_mesh->GetMeshInfo().normalsBuffer.Get<Gl3dArray<Vector3>*>(), 3, Gl3dFundamentalType::Float, sizeof(Vector3), 0, false };
@@ -90,9 +105,10 @@ RenderSource::RenderSource(Mesh* m) :
 		desc.layouts[7] = { m_instancedData, 4, Gl3dFundamentalType::Float, sizeof(Vector4) * 4, sizeof(Vector4) * 3, true };
 
 		m_instancedLayout->Create(&desc);
+		Log("RenderSource created render part: %p", m_mesh);
 	});
 
-	Log("RenderSource created: %p", m_mesh);
+	Log("RenderSource created core part: %p", m_mesh);
 }
 
 RenderSource::~RenderSource()
@@ -102,7 +118,8 @@ RenderSource::~RenderSource()
 		delete m_layout;
 		delete m_instancedLayout;
 		delete m_instancedData;
+		Log("RenderSource destroyed render part: %p", m_mesh);
 	});
 
-	Log("RenderSource destroyed: %p", m_mesh);
+	Log("RenderSource destroyed core part: %p", m_mesh);
 }

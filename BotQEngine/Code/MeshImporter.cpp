@@ -8,8 +8,6 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Sge2Common.h"
-
 Ref<DynamicArray<Ref<Material>>> MakesMaterial(const aiScene* scene, const String& txtureAdditionalPath)
 {
 	Ref<DynamicArray<Ref<Material>>> mats = new DynamicArray<Ref<Material>>();
