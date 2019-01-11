@@ -3,16 +3,20 @@
 #include "Resource.h"
 #include "Graphics/Texture.h"
 #include "MeshImporter.h"
-#include <experimental/filesystem>
+
 #include "Common/TinyFile.h"
 #include "Graphics/Texture.h"
 #include "Graphics/Bitmap.h"
 #include "Common/PathHelper.h"
 #include "../../zlib_static/Code/zlib.h"
 #include "Audio/AudioSource.h"
-//#include "Common/ArrayStreamIterator.h"
+
+#ifdef __EXPERENMENTAL_FS
+#include <experimental/filesystem>
 using namespace std::experimental;
 namespace fs = std::experimental::filesystem;
+#endif
+
 #pragma pack(push, 1)
 struct PK_Header
 {
@@ -167,7 +171,7 @@ void ResourceLoader::LoadResourcesPk2(const String & path)
 	}
 
 }
-
+#ifdef __EXPERENMENTAL_FS
 template<typename T>
 void loadFromDir(const T& x, const fs::path& path, const String& startSeg) 
 {
@@ -183,9 +187,10 @@ void loadFromDir(const T& x, const fs::path& path, const String& startSeg)
 		}
 	}
 }
-
+#endif
 void ResourceLoader::LoadResourcesFromDir(const String & path)
 {
+#ifdef __EXPERENMENTAL_FS
 	DynamicArray < Def > coruntune;
 
 	loadFromDir([&](const String& file, const String& fileName)
@@ -199,7 +204,7 @@ void ResourceLoader::LoadResourcesFromDir(const String & path)
 		Ref<DynamicArray<char>> digital = New<DynamicArray<char>>();
 		digital->Initialize(f.LongLength());
 		f.Read(digital->GetData(), digital->Length());
-	
+
 		InstantResource(coruntune, fpath, digital);
 	}, path.c_str(), "/");
 
@@ -207,6 +212,9 @@ void ResourceLoader::LoadResourcesFromDir(const String & path)
 	{
 		MeshImporter::ImportRW(i.path, i.data->GetData(), i.data->Length());
 	}
+#else
+	throw - 1;
+#endif
 }
 
 void ResourceLoader::LoadResourcesPk(const String & path)
@@ -215,10 +223,11 @@ void ResourceLoader::LoadResourcesPk(const String & path)
 	return;
 }
 
-#include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
+
+
 void ResourceLoader::LoadStaticAssets(const String& apth)
 {
+#ifdef __EXPERENMENTAL_FS
 	for (auto i : fs::directory_iterator(apth.c_str()))
 	{
 		const fs::path& pf = i.path();
@@ -230,6 +239,8 @@ void ResourceLoader::LoadStaticAssets(const String& apth)
 				Log("loaded resource file: %s", *Path::FileName(Path::PathFix(pf.u8string().c_str())));
 			}
 		}
-	}
-
+}
+#else
+	throw - 1;
+#endif
 }
