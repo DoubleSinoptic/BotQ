@@ -767,34 +767,25 @@ hello
 //
 class GameViewManager2 : public IRenderThreadInstance
 {
+
+public:
+
 	Renderer* m_renderer;
 	Window* m_window;
 	CommandQueue m_queue;
 	std::atomic_bool m_closeFlag;
-	std::atomic_bool m_destroyFlag;
-	std::thread m_renderThread;
-public:
+
 	GameViewManager2() :
-		m_destroyFlag(false),
 		m_closeFlag(false),
 		m_renderer(nullptr),
-		m_window(nullptr),
-		m_renderThread([&]()
+		m_window(nullptr)		
 	{
 		m_queue.Attach();
-		while (!m_destroyFlag.load())
-		{
-			m_queue.Playback();
-		}
-	})
-	{
-		
 	}
 
 	~GameViewManager2()
 	{
-		m_destroyFlag.store(true);
-		m_renderThread.join();
+		
 	}
 
 	virtual CommandQueue & GetCommandQueue() override
@@ -898,15 +889,15 @@ public:
 
 int main()
 {
-
-
-	{
+	GameViewManager2 mag;
+	std::thread core_thread([&]()
+	{	
 		Guard g([]()
 		{
 			Network::UnboundDisconent();
 		});
 
-		GameViewManager2 mag;
+	
 		GameInstance instnace(&mag);
 
 		instnace.renderTickRate = 60;
@@ -918,15 +909,15 @@ int main()
 		Display::GetCurrent()->SetCamera(camera);
 
 
-	/*	for(int i = 0; i < 10; i++)
-			for (int j = 0; j < 10; j++)
-			{
-				GameObject* lookObject = new GameObject();
-				lookObject->SetPosition(Vector3(i - 5, -1, j + 5));
-				lookObject->AddComponent<FixedRotation>();
-				lookObject->AddComponent<SampleSyzaRender>();
-			}
-		*/
+		/*	for(int i = 0; i < 10; i++)
+				for (int j = 0; j < 10; j++)
+				{
+					GameObject* lookObject = new GameObject();
+					lookObject->SetPosition(Vector3(i - 5, -1, j + 5));
+					lookObject->AddComponent<FixedRotation>();
+					lookObject->AddComponent<SampleSyzaRender>();
+				}
+			*/
 		{
 			GameObject* lookObject = new GameObject();
 			lookObject->SetPosition(Vector3(0, -3, 0));
@@ -946,7 +937,7 @@ int main()
 				lookObject->AddComponent<BoxCollider>()->SetSize(Vector3(1.0f, 1.0f, 1.0f));
 				lookObject->AddComponent<SampleSyzaRender>()->m_isCube = true;
 			}*/
-		
+
 		GameObject* d = new GameObject();
 		d->AddComponent<Comp>();
 		camera->AddComponent<DebugFlyCamera>();
@@ -993,17 +984,29 @@ int main()
 			}
 		}
 
-	/*	ResourceLoader::LoadResourcesFromDir("./assets");
-		GameObject* dx = MeshImporter::Import("/fe/barrel_low.fbx")->construct();
-*/
-	
+		/*	ResourceLoader::LoadResourcesFromDir("./assets");
+			GameObject* dx = MeshImporter::Import("/fe/barrel_low.fbx")->construct();
+	*/
+
 		while (instnace.GameLoop())
 		{
-			
+
 		}
 
 
+		
+	});
+
+
+
+	while (true)
+	{
+		mag.m_queue.Playback();
 	}
+
+	core_thread.join();
+
+	
 
 
 
