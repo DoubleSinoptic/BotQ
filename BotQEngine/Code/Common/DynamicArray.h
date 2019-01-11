@@ -315,9 +315,10 @@ public:
 		return begin() + _length;
 	}
 	//------------------------------------------------------
-	size_t LengthReference;
 private:
 	Ref<T[]> _data;
 	size_t _length;
 	size_t _capacity;
+public:
+	size_t LengthReference;
 };

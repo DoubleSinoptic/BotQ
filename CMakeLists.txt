@@ -7,16 +7,11 @@ find_package(glfw3 REQUIRED)
 set(CMAKE_CXX_STANDARD 14)
 #clang skip
 IF (WIN32)
-	IF (MSVC)
-		
-	ELSE()
-		
-	ENDIF()
+
 ELSE()
-  
+	link_directories(/usr/local/lib/) 
+	include_directories(/usr/local/include/)
 ENDIF()
-link_directories(/usr/local/lib/) 
-include_directories(/usr/local/include/)
 
 include_directories(./ThirdParty/include)
 include_directories(./BulletPhysics/Code)

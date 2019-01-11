@@ -1,4 +1,4 @@
-#version 130
+#version 400
 #extension GL_ARB_explicit_attrib_location : enable
 
 #ifndef TANGETNS_AND_TEXCOORDS

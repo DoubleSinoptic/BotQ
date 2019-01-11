@@ -22,6 +22,7 @@ static void cursor_position_callback(GLFWwindow* window, double xpos, double ypo
 	reinterpret_cast<GameInstance*>(glfwGetWindowUserPointer(window))->display->SetMausePosition({ int(xpos), int(ypos) });
 }
 
+
 class GlfwProxy
 {
 public:

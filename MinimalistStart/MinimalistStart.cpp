@@ -524,6 +524,7 @@ public:
 		desc.layouts[0] = { _quadVertexes.GetPtr(), 2, Gl3dFundamentalType::Float, 2 * sizeof(float), 0, false };
 		desc.layouts[1] = {};
 		_quad.Create(&desc);
+
 	}
 
 

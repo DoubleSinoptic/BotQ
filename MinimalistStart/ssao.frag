@@ -1,4 +1,4 @@
-#version 130 
+#version 400 
 #extension GL_ARB_explicit_attrib_location : enable
 
 out vec4 FragColor;
@@ -41,10 +41,10 @@ void main()
     float occlusion = 0.0;
     for(int i = 0; i < sampleCount; ++i)
     {    
-		vec3 sample = TBN * kernel[i]; 
-        sample = fragPos + sample * radius; 
+		vec3 sampl4e = TBN * kernel[i]; 
+        sampl4e = fragPos + sampl4e * radius; 
             
-        vec4 offset = vec4(sample, 1.0);
+        vec4 offset = vec4(sampl4e, 1.0);
         offset = projection * offset; 
         offset.xyz /= offset.w; 
         offset.xyz = offset.xyz * 0.5 + 0.5; 
@@ -53,7 +53,7 @@ void main()
         
 		float rangeCheck= abs(fragPos.z - sampleDepth) < radius ? 1.0 : 0.0;
        // float rangeCheck = smoothstep(0.0, 2.1, radius / abs(fragPos.z - sampleDepth));
-        occlusion += (sampleDepth >= sample.z + bias ? 1.0 : 0.0) * rangeCheck;           
+        occlusion += (sampleDepth >= sampl4e.z + bias ? 1.0 : 0.0) * rangeCheck;           
         
     }
     occlusion = 1.0 - (occlusion / float(sampleCount));
