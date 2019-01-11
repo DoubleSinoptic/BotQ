@@ -34,7 +34,7 @@ public:
 
 
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);  // yes, 3 and 2!!!
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_SAMPLES, 4);
@@ -61,7 +61,7 @@ Window::Window()
 
 	window = glfwCreateWindow(mode->width, mode->height, "[BotQ.exe Survival (build 10025) (-D3D12,-BTPHYS,ACODEK)]", monitor, NULL);
 #else
-	window = glfwCreateWindow(1280, 768, "[BotQ.exe Survival (build 10025) (-W_GL45,-BTPHYS,ACODEK,FMPEG)]", NULL, NULL);
+	window = glfwCreateWindow(1280, 768, "[BotQ.exe Survival (build 10025) (-W_GL41,-BTPHYS,ACODEK,FMPEG)]", NULL, NULL);
 #endif
 
 
