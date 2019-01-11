@@ -4,6 +4,7 @@ Debug
 Release
 x64
 
+.DS_Store
 CMakeFiles
 CMakeCache.txt
 bin

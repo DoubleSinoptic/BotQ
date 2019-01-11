@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 project(Sge)
+
+find_package(OpenAL REQUIRED)
+find_package(glfw3 REQUIRED)
+
 set(CMAKE_CXX_STANDARD 14)
 #clang skip
 IF (WIN32)
@@ -11,6 +15,8 @@ IF (WIN32)
 ELSE()
   
 ENDIF()
+link_directories(/usr/local/lib/) 
+include_directories(/usr/local/include/)
 
 include_directories(./ThirdParty/include)
 include_directories(./BulletPhysics/Code)
@@ -40,12 +46,12 @@ add_library(BotQSystemTools SHARED ${BotQSystemToolsCpp} ${BotQSystemToolsH})
 file(GLOB_RECURSE BotQEngineCpp ./BotQEngine/Code/*.cpp)
 file(GLOB_RECURSE BotQEngineH ./BotQEngine/Code/*.h)
 add_library(BotQEngine SHARED ${BotQEngineCpp} ${BotQEngineH})
-target_link_libraries(BotQEngine Physics BotQGraphics BotQSystemTools ZLib)
+target_link_libraries(BotQEngine Physics BotQGraphics BotQSystemTools ZLib ${OPENAL_LIBRARY} assimp)
 
 file(GLOB_RECURSE MinimalistStartCpp ./MinimalistStart/*.cpp)
 file(GLOB_RECURSE MinimalistStartH ./MinimalistStart/*.h)
 add_executable(MinimalistStart ${MinimalistStartCpp} ${MinimalistStartH})
-target_link_libraries(MinimalistStart BotQEngine)
+target_link_libraries(MinimalistStart BotQEngine glfw)
 
 
 
