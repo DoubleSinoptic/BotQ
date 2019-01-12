@@ -1,5 +1,5 @@
 
-#version 130
+#version 400
 #extension GL_ARB_explicit_attrib_location : enable
 layout ( location = 0 ) out vec4 OutFragColor1;
 layout ( location = 1 ) out vec3 OutPosition1;
