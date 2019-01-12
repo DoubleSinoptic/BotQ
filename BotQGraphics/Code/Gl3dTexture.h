@@ -29,8 +29,8 @@ enum class Gl3dFilter
 {
 	NEAREST = 0,
 	LINEAR = 1,
-	MIPMAP_NEAREST,
-	MIPMAP_LINEAR
+	MIPMAP_NEAREST = 2,
+	MIPMAP_LINEAR = 3
 };
 
 enum class Gl3dWrapMode 

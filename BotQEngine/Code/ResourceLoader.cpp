@@ -98,6 +98,13 @@ void InstantResource(DynamicArray <Def>& coruntune, const String& fpath, Ref<Dyn
 	{
 		Ref<Texture> texture = new Texture();
 		texture->SetFromBitmap(new Bitmap(dt->GetData(), dt->Length()));
+		SamplerStateDesc s = {};
+		s.addressModeU = TextureAddressMode::Repeat;
+		s.addressModeV = TextureAddressMode::Repeat;
+		s.addressModeW = TextureAddressMode::Repeat;
+		s.mag = FilterMode::Linear;
+		s.min = FilterMode::MipLinear;
+		texture->SetSampler(s);
 		new Resource(texture, fpath);
 	}
 

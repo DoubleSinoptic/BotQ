@@ -57,7 +57,7 @@ void main()
         
     }
     occlusion = 1.0 - (occlusion / float(sampleCount));
-    occlusion = pow(occlusion,3.0);
+    occlusion = pow(occlusion,5.0);
 
     FragColor = vec4(vec3(occlusion), 1.0);
 }

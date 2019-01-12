@@ -1,22 +1,22 @@
 #include "SyncObject.h"
 #include <thread>
 
-SyncObject::SyncObject() 
+SyncObject::SyncObject() noexcept
 	: _lock(false)
 {
 }
 
-SyncObject::~SyncObject()
+SyncObject::~SyncObject() noexcept
 {
 }
 
-bool SyncObject::TryLock() 
+bool SyncObject::TryLock() noexcept
 {
 	bool false_bool = false;
 	return _lock.compare_exchange_strong(false_bool, true);
 }
 
-void SyncObject::Lock() 
+void SyncObject::Lock() noexcept
 {
 	int spinCount = 1000;
 	while (!TryLock())
@@ -27,19 +27,19 @@ void SyncObject::Lock()
 }
 
 
-void SyncObject::Unlock() 
+void SyncObject::Unlock() noexcept
 {
 	_lock.store(false);
-}
+ }
 
 
-bool SyncObject::SwapSignal()
+bool SyncObject::SwapSignal() noexcept
 {
 	bool true_bool = true;
 	return _lock.compare_exchange_strong(true_bool, false);
 }
 
-void SyncObject::Wait()
+void SyncObject::Wait() noexcept
 {
 	int spinCount = 1000;
 	while (!SwapSignal())
@@ -49,7 +49,7 @@ void SyncObject::Wait()
 		std::this_thread::yield();	
 }
 
-void SyncObject::Notify()
+void SyncObject::Notify() noexcept
 {
 	_lock.store(true);
 }

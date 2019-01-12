@@ -211,40 +211,48 @@ vec3 Uncharted2Tonemap(vec3 x)
    return ((x*(A*x+C*B)+D*E)/(x*(A*x+B)+D*F))-E/F;
 }
 
+float cTonemapExposureBias = 6.0f;
+float cTonemapMaxWhite = 11.0f;
 
 void main()
 {
     vec3 positionV =  texture(position, texCoords).xyz;
 	vec3 normalV =    texture(normal, texCoords).xyz;
 	vec3 occolusion = texture(ssao, texCoords).xyz;
-	vec3 colorV =     pow(texture(color, texCoords).xyz , vec3(2.2));
+	vec3 colorV =     pow(texture(color, texCoords).xyz, vec3(2.2));
 	vec3 rmo3 =        texture(rmo, texCoords).xyz;
-	vec3 Lo = vec3(0.0);
-	if(normalV != vec3(0.0))
+
+	if(normalV == vec3(0.0))
 	{
-		vec3 V = normalize(lookPosition - positionV);
-		vec3 N = normalV;
+		vec3 final = 
+	    Uncharted2Tonemap(max(colorV * cTonemapExposureBias, 0.0)) / 
+        Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));
+
+		FragColor = vec4(pow(final , vec3(1.0/2.2)), 1.0);
+		return;
+	}
+
+	vec3 Lo = vec3(0.0);
+	
+	vec3 V = normalize(lookPosition - positionV);
+	vec3 N = normalV;
 	
 
-		ULight light;
-		light.color = pow(vec3(1.0, 0.95, 0.83), vec3(2.2)) * 16;
-		light.dir = normalize(-vec3(1.0, 1.0, -1.0));
-		USurfaceSettings surf;
-		surf.rougness = rmo3.x;
-		surf.metalic = rmo3.y;
-		surf.normal = N;
-		surf.albedo = colorV;
-		Lo += ue_brdf_base(light, surf, -V)  * rmo3.z;  
-	}
-	else
-		Lo = colorV;
+	ULight light;
+	light.color = pow(vec3(1.0, 0.95, 0.83), vec3(2.2)) * 29;
+	light.dir = normalize(-vec3(-1.0, 1.0, -1.0));
+	USurfaceSettings surf;
+	surf.rougness = rmo3.x;
+	surf.metalic = rmo3.y;
+	surf.normal = N;
+	surf.albedo = colorV;
+	Lo += ue_brdf_base(light, surf, -V)  * rmo3.z;  
+	
 
-	vec3 ambient = vec3(0.33) * colorV ;
-	vec3 rezult = ambient + Lo ;
+	vec3 ambient = vec3(0.33) * colorV * occolusion;
+	vec3 rezult = ambient + Lo * occolusion;
 
-	float cTonemapExposureBias = 6.0f;
-	float cTonemapMaxWhite = 5.0f;
-
+	
 	 vec3 final = 
 	    Uncharted2Tonemap(max(rezult * cTonemapExposureBias, 0.0)) / 
         Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));

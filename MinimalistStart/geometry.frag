@@ -1,6 +1,6 @@
 #version 400
 #extension GL_ARB_explicit_attrib_location : enable
-layout ( location = 0 ) out vec3 OutFragColor;
+layout ( location = 0 ) out vec4 OutFragColor;
 layout ( location = 1 ) out vec3 OutPosition;
 layout ( location = 2 ) out vec3 OutNormal;
 layout ( location = 3 ) out vec3 OutMaterial;
@@ -17,7 +17,7 @@ uniform bool is_ao;
 uniform bool is_albedo;
 uniform bool is_normal;
 
-uniform vec3		static_albedo;
+uniform vec4		static_albedo;
 uniform sampler2D	map_roughness;
 uniform sampler2D	map_metalic;
 uniform sampler2D	map_ao;
@@ -26,6 +26,14 @@ uniform sampler2D	map_normal;
 
 void main()
 {
+
+	if(is_albedo)
+		OutFragColor = texture(map_albedo, var_texcoord).rgba;	
+	else	
+		OutFragColor = static_albedo;	
+	if(OutFragColor.a < 0.1)
+		discard;
+
 	vec3 material = var_material;
 	
 	if(is_roughness)
@@ -45,9 +53,5 @@ void main()
 	else
 		OutNormal = normalize(var_normal);
 
-	if(is_albedo)
-		OutFragColor = texture(map_albedo, var_texcoord).rgb;	
-	else	
-		OutFragColor = static_albedo;	
 	OutPosition = var_position; 	
 }

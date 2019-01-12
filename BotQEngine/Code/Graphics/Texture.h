@@ -15,8 +15,8 @@ enum class FilterMode
 {
 	Nearest = 0,
 	Linear = 1,
-	MipLinear = 2,
-	MipNearest = 3
+	MipNearest = 2,
+	MipLinear = 3
 };
 
 struct SamplerStateDesc 

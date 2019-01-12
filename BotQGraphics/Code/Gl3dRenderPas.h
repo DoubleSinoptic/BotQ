@@ -30,7 +30,9 @@ enum class Gl3dCullFace
 
 enum class Gl3dBlending
 {
-	Disable = 0
+	Disable = 0,
+	OneMinusSrcAlpha = 1,
+	One = 2
 };
 
 struct Gl3dViewport

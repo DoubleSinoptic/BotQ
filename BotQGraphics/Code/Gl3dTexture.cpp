@@ -54,13 +54,17 @@ void Gl3dTexture::SetMagMinFilters(Gl3dFilter mag, Gl3dFilter min)
 
 	static GLenum fragers[] =
 	{
-		GL_LINEAR,
 		GL_NEAREST,
+		GL_LINEAR,
 		GL_NEAREST_MIPMAP_NEAREST,
 		GL_NEAREST_MIPMAP_LINEAR
 	};
 
 	glBindTexture(mImpl->mType, mImpl->mTexture);
+
+	if (min == Gl3dFilter::MIPMAP_NEAREST || min == Gl3dFilter::MIPMAP_LINEAR)
+		glGenerateMipmap(mImpl->mType);
+
 	glTexParameteri(mImpl->mType, GL_TEXTURE_MAG_FILTER, fragers[(size_t)mag]);
 	glTexParameteri(mImpl->mType, GL_TEXTURE_MIN_FILTER, fragers[(size_t)min]);
 }

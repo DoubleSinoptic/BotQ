@@ -121,11 +121,11 @@ void DebugFlyCamera::PhysicUpdate()
 	}
 	if (Input::IsKeyDown(SGE_KEY_A))
 	{
-		acum -= right;
+		acum -= right * Matrix4::RightSign();
 	}
 	if (Input::IsKeyDown(SGE_KEY_D))
 	{
-		acum += right;
+		acum += right * Matrix4::RightSign();
 	}
 
 	Vector3 e = acum.Normalized() * 12.9f * Time::GetDeltaTime();
@@ -142,7 +142,7 @@ void DebugFlyCamera::PhysicUpdate()
 
 			GetGameObject()->SetLocalRotation(Quaternion(
 				GetGameObject()->GetLocalRotation().GetEuler()
-				+ Vector3(dy * 0.1f, dx * 0.1f, 0)));
+				+ Vector3(dy * 0.1f, dx * 0.1f  * Matrix4::RightSign(), 0)));
 			float a = slesh;
 			float b = dx;
 			slesh = (a + (b - a) * 0.1);

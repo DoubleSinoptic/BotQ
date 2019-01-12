@@ -85,14 +85,25 @@ Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuf
 	else
 	{
 		glEnable(GL_CULL_FACE);
-		glFrontFace(GL_CW);
+		glFrontFace(GL_CCW);
 		glCullFace(desc->cullFace == Gl3dCullFace::Front ? GL_FRONT : GL_BACK);
 	}
 
 	if (desc->blending == Gl3dBlending::Disable)
 		glDisable(GL_BLEND);
 	else 
-	{}
+	{
+		glEnable(GL_BLEND);
+	
+		static GLenum blendTable[] = 
+		{
+			GL_NONE,
+			GL_ONE_MINUS_SRC_ALPHA,
+			GL_ONE
+		};
+	
+		glBlendFunc(GL_SRC_ALPHA, blendTable[(size_t)desc->blending]);
+	}
 
 	Gl3dDevice::ThrowIfError();
 

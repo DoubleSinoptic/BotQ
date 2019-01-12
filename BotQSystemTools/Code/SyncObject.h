@@ -13,16 +13,16 @@ class KH_EXPORT SyncObject
 {
 	std::atomic_bool _lock;
 public:
-	SyncObject();
-	~SyncObject();
+	SyncObject() noexcept;
+	~SyncObject() noexcept;
 
-	bool TryLock();
-	void Lock();
-	void Unlock();
+	bool TryLock() noexcept;
+	void Lock() noexcept;
+	void Unlock() noexcept;
 
-	bool SwapSignal();
-	void Wait();
-	void Notify();
+	bool SwapSignal() noexcept;
+	void Wait() noexcept;
+	void Notify() noexcept;
 };
 
 class KH_EXPORT SignalAccamulator

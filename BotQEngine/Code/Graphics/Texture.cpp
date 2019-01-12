@@ -42,8 +42,8 @@ static Gl3dFilter filterModes[]
 {
 	Gl3dFilter::NEAREST,
 	Gl3dFilter::LINEAR,
-	Gl3dFilter::MIPMAP_LINEAR,
-	Gl3dFilter::MIPMAP_NEAREST
+	Gl3dFilter::MIPMAP_NEAREST,
+	Gl3dFilter::MIPMAP_LINEAR
 };
 
 void Texture::SetSampler(const SamplerStateDesc & state)
@@ -74,8 +74,7 @@ void Texture::SetFromBitmap(const Ref<Bitmap>& bitmap)
 		desc.height = bitmap->GetHeight();
 
 		gt->SetData(Gl3dPixelFormat::RGBA_8, &desc);
-		gt->SetMagMinFilters(Gl3dFilter::NEAREST, Gl3dFilter::MIPMAP_LINEAR);
-		gt->GenMipmaps();
+	
 	});
 	isCubeMap = false;
 }

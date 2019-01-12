@@ -459,6 +459,10 @@ public:
 	Gl3dTexture					_pipe[2];
 	Gl3dFrameBufferInstance     _pipeFrame[2];
 
+	Gl3dLayoutInstance			_sphere;
+	Ref<Gl3dArray<Vector3>>		_sphere_vertexes;
+	Ref<Gl3dArray<int>>		_sphere_indeces;
+
 	Gl3dLayoutInstance			_cube;
 	Ref<Gl3dArray<Vector3>>		_cube_vertexes;
 	Ref<Gl3dArray<Vector3>>		_cube_normals;
@@ -514,6 +518,16 @@ public:
 		_cube_vertexes->Add((Vector3*)model_cube::vertexes, model_cube::vertexesCount);
 		_cube_indeces->Add((int*)model_cube::indeces, model_cube::indecesCount);
 		_cube_normals->Add((Vector3*)model_cube::normals, model_cube::vertexesCount);
+
+		_sphere_vertexes = new Gl3dArray<Vector3>(Gl3dArrayTarget::Array);
+		_sphere_indeces = new Gl3dArray<int>(Gl3dArrayTarget::Element);
+		_sphere_vertexes->Add((Vector3*)model_sphere::vertexes, model_sphere::vertexesCount);
+		_sphere_indeces->Add((int*)model_sphere::indeces, model_sphere::indecesCount);
+
+		Gl3dLayoutDesc sphereDesc = {};
+		sphereDesc.index = _sphere_indeces.GetPtr();
+		sphereDesc.layouts[0] = { _sphere_vertexes.GetPtr(), 3, Gl3dFundamentalType::Float, 3 * sizeof(float), 0, false };
+		_sphere.Create(&sphereDesc);
 
 		Gl3dLayoutDesc desc = {};
 		desc.index = _cube_indeces.GetPtr();
@@ -596,7 +610,7 @@ public:
 
 	void UpdateFrameBuffers(Size viewSize)
 	{
-		_color.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGB_16F);
+		_color.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGBA_16F);
 		_normal.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGB_32F);
 		_position.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGB_32F);
 		_rmo.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGB_16F);
@@ -671,7 +685,7 @@ public:
 
 			pass.Uniform("projection", projection);
 			pass.Uniform("view", view);		
-			_cube.DrawIndexed(Gl3dPrimitive::Triangles, Gl3dFundamentalType::UInteger, _cube_indeces->Length());
+			_sphere.DrawIndexed(Gl3dPrimitive::Triangles, Gl3dFundamentalType::UInteger, _sphere_indeces->Length());
 				
 		}
 
@@ -700,7 +714,7 @@ public:
 					{
 						ObjectMaterial* o = dynamic_cast<ObjectMaterial*>(x);
 
-						pass.Uniform("static_albedo", o->albedo_static.ToVector3());
+						pass.Uniform("static_albedo", o->albedo_static);
 
 						if (o->roughness)
 						{
@@ -763,7 +777,7 @@ public:
 					if (x->GetRenderSources().Length())
 					{
 						ObjectMaterial* o = dynamic_cast<ObjectMaterial*>(x);
-						pass.Uniform("static_albedo", o->albedo_static.ToVector3());
+						pass.Uniform("static_albedo", o->albedo_static);
 
 						if (o->roughness)
 						{
@@ -987,125 +1001,112 @@ public:
 int main()
 {
 	GameViewManager2 mag;
-	std::thread core_thread([&]()
+
+	std::atomic_bool core_thread_finished(false);
+	std::thread([&]()
 	{	
-		Guard g([]()
+		try
 		{
-			Network::UnboundDisconent();
-		});
-
-	
-		GameInstance instnace(&mag);
-
-		instnace.renderTickRate = 60;
-		instnace.SetThisCurrent();
+			Guard g([]()
+			{
+				Network::UnboundDisconent();
+			});
 
 
-		GameObject* camera = new GameObject("Camera");
-		camera->SetTransform(Vector3(-7, 7, -7), Quaternion(-45.0f, 45.0f, 0.0f));
-		Display::GetCurrent()->SetCamera(camera);
+			GameInstance instnace(&mag);
+
+			instnace.renderTickRate = 60;
+			instnace.SetThisCurrent();
 
 
-		/*	for(int i = 0; i < 10; i++)
-				for (int j = 0; j < 10; j++)
-				{
-					GameObject* lookObject = new GameObject();
-					lookObject->SetPosition(Vector3(i - 5, -1, j + 5));
-					lookObject->AddComponent<FixedRotation>();
-					lookObject->AddComponent<SampleSyzaRender>();
-				}
-			*/
-		{
-			GameObject* lookObject = new GameObject();
-			lookObject->SetPosition(Vector3(0, -3, 0));
-			lookObject->AddComponent<RigidBody>()->SetMass(0.0f);
-			lookObject->AddComponent<BoxCollider>()->SetSize(Vector3(62.0f, 1.0f, 62.0f));
-			lookObject->AddComponent<SampleSyzaRender>()->m_isCube = true;
-			lookObject->GetComponent<SampleSyzaRender>()->m_scale = Matrix4::Scale(Vector3(62.0f, 1.0f, 62.0f));
-		}
-		/*
-		for (int i = 0; i < 10; i++)
-			for (int j = 0; j < 10; j++)
+			GameObject* camera = new GameObject("Camera");
+			camera->SetTransform(Vector3(-7, 7, -7), Quaternion(-45.0f, 45.0f, 0.0f));
+			Display::GetCurrent()->SetCamera(camera);
+
+
+			/*	for(int i = 0; i < 10; i++)
+					for (int j = 0; j < 10; j++)
+					{
+						GameObject* lookObject = new GameObject();
+						lookObject->SetPosition(Vector3(i - 5, -1, j + 5));
+						lookObject->AddComponent<FixedRotation>();
+						lookObject->AddComponent<SampleSyzaRender>();
+					}
+				*/
 			{
 				GameObject* lookObject = new GameObject();
-				lookObject->SetPosition(Vector3(i - 5, 3, j + 5));
-				lookObject->SetRotation(Quaternion(0.5, 0.1, 0.3));
-				lookObject->AddComponent<RigidBody>()->SetMass(1.0f);
-				lookObject->AddComponent<BoxCollider>()->SetSize(Vector3(1.0f, 1.0f, 1.0f));
+				lookObject->SetPosition(Vector3(0, -3, 0));
+				lookObject->AddComponent<RigidBody>()->SetMass(0.0f);
+				lookObject->AddComponent<BoxCollider>()->SetSize(Vector3(62.0f, 1.0f, 62.0f));
 				lookObject->AddComponent<SampleSyzaRender>()->m_isCube = true;
-			}*/
-
-		GameObject* d = new GameObject();
-		d->AddComponent<Comp>();
-		camera->AddComponent<DebugFlyCamera>();
+				lookObject->GetComponent<SampleSyzaRender>()->m_scale = Matrix4::Scale(Vector3(62.0f, 1.0f, 62.0f));
+			}
 
 
+			GameObject* d = new GameObject();
+			d->AddComponent<Comp>();
+			camera->AddComponent<DebugFlyCamera>();
 
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{6a3a4afd-bb960a17-53512721}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{7d122e3d-a1d3f317-5674f320}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{9fbb0595-80ae7301-842e2393}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{21b3bd3d-c8c41717-42e3a324}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{89dfd3ac-9d23e51f-a9ea946b}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{369bd9fd-d281ee17-47c67725}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{446a837d-8f1df817-591a8f23}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{5342e6bd-95580117-5c3f5b11}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/{5342e7bd-95580117-5c3f5b22}.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/v0.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/v1.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/v2.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/v4.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/v5.indent");
-		ResourceLoader::LoadResourcesPk2("../BotQ/Data/v6.indent");
 
-		LoadDefaultPrefabs();
 
-		GameObject::SpawnPrefab("/NT_Barrils.prefab", "", Vector3::Zero(), Quaternion::Identity());
-		GameObject::SpawnPrefab("/NT_PbrSpheres.prefab", "", Vector3::Zero(), Quaternion::Identity());
-		GameObject::SpawnPrefab("/Terrain.prefab", "", Vector3::Zero(), Quaternion::Identity());
-		GameObject::SpawnPrefab("/Doom.prefab", "", Vector3(-36, -3.1, -13), Quaternion(0, (Mathf::Pi() / 3.5f) * RAD_TO_DEG, 0));
-		GameObject::SpawnPrefab("/Palms.prefab", "", Vector3::Zero(), Quaternion::Identity());
-		GameObject::SpawnPrefab("/SandHome.prefab", "", Vector3(0, -2, 0), Quaternion::Identity());
-		GameObject::SpawnPrefab("/Sphere.prefab", "", Vector3(-42, -2, 0), Quaternion::Identity());
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{6a3a4afd-bb960a17-53512721}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{7d122e3d-a1d3f317-5674f320}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{9fbb0595-80ae7301-842e2393}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{21b3bd3d-c8c41717-42e3a324}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{89dfd3ac-9d23e51f-a9ea946b}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{369bd9fd-d281ee17-47c67725}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{446a837d-8f1df817-591a8f23}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{5342e6bd-95580117-5c3f5b11}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/{5342e7bd-95580117-5c3f5b22}.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/v0.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/v1.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/v2.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/v4.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/v5.indent");
+			ResourceLoader::LoadResourcesPk2("../BotQ/Data/v6.indent");
 
-		for (int i = 0; i < 13; i++)
-			if (i % 2 == 0)
-				GameObject::SpawnPrefab("/Matbol.prefab", "", Vector3(i * 1.8, 28, -6), Quaternion::Identity());
-			else
-				GameObject::SpawnPrefab("/Ogne.prefab", "", Vector3(i * 1.8, 28, -6), Quaternion::Identity());
+			LoadDefaultPrefabs();
 
-		for (int i = 0; i < 10; i++)
-		{
-			for (int j = 0; j < 3; j++)
+			GameObject::SpawnPrefab("/NT_Barrils.prefab", "", Vector3::Zero(), Quaternion::Identity());
+			GameObject::SpawnPrefab("/NT_PbrSpheres.prefab", "", Vector3::Zero(), Quaternion::Identity());
+			GameObject::SpawnPrefab("/Terrain.prefab", "", Vector3::Zero(), Quaternion::Identity());
+			GameObject::SpawnPrefab("/Doom.prefab", "", Vector3(-36, -3.1, -13), Quaternion(0, (Mathf::Pi() / 3.5f) * RAD_TO_DEG, 0));
+			GameObject::SpawnPrefab("/Palms.prefab", "", Vector3::Zero(), Quaternion::Identity());
+			GameObject::SpawnPrefab("/SandHome.prefab", "", Vector3(0, -2, 0), Quaternion::Identity());
+			GameObject::SpawnPrefab("/Sphere.prefab", "", Vector3(-42, -2, 0), Quaternion::Identity());
+
+			for (int i = 0; i < 13; i++)
+				if (i % 2 == 0)
+					GameObject::SpawnPrefab("/Matbol.prefab", "", Vector3(i * 1.8, 28, -6), Quaternion::Identity());
+				else
+					GameObject::SpawnPrefab("/Ogne.prefab", "", Vector3(i * 1.8, 28, -6), Quaternion::Identity());
+
+			for (int i = 0; i < 10; i++)
 			{
-				GameObject::SpawnPrefab("/Cars/PickUp.prefab", "", Vector3(j * 4.0, 10, i * 4.0), Quaternion::Identity());
+				for (int j = 0; j < 3; j++)
+				{
+					GameObject::SpawnPrefab("/Cars/PickUp.prefab", "", Vector3(j * 4.0, 10, i * 4.0), Quaternion::Identity());
+				}
+			}
+
+			/*	ResourceLoader::LoadResourcesFromDir("./assets");
+				GameObject* dx = MeshImporter::Import("/fe/barrel_low.fbx")->construct();
+		*/
+
+			while (instnace.GameLoop())
+			{
 			}
 		}
-
-		/*	ResourceLoader::LoadResourcesFromDir("./assets");
-			GameObject* dx = MeshImporter::Import("/fe/barrel_low.fbx")->construct();
-	*/
-
-		while (instnace.GameLoop())
+		catch (std::exception& ex)
 		{
-
+			printf("==========[CORE THREAD EXIT WAS ERROR]==========\n\s", ex.what());
 		}
+		core_thread_finished.store(true);
+	}).detach();
 
-
-		
-	});
-
-
-
-	while (true)
+	while (!core_thread_finished.load())
 	{
 		mag.m_queue.Playback();
 	}
-
-	core_thread.join();
-
-	
-
-
-
 	return 0;
 }
