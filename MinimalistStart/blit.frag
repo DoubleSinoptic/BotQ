@@ -227,7 +227,7 @@ void main()
 	
 
 		ULight light;
-		light.color = pow(vec3(1.0), vec3(2.2)) * 4;
+		light.color = pow(vec3(1.0, 0.95, 0.83), vec3(2.2)) * 16;
 		light.dir = normalize(-vec3(1.0, 1.0, -1.0));
 		USurfaceSettings surf;
 		surf.rougness = rmo3.x;
@@ -239,14 +239,17 @@ void main()
 	else
 		Lo = colorV;
 
+	vec3 ambient = vec3(0.33) * colorV ;
+	vec3 rezult = ambient + Lo ;
+
 	float cTonemapExposureBias = 6.0f;
 	float cTonemapMaxWhite = 5.0f;
 
 	 vec3 final = 
-	    Uncharted2Tonemap(max(Lo * cTonemapExposureBias, 0.0)) / 
+	    Uncharted2Tonemap(max(rezult * cTonemapExposureBias, 0.0)) / 
         Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));
 
     FragColor = vec4(pow(final , vec3(1.0/2.2)), 1.0);
-	//FragColor = vec4(vec3(occolusion), 1.0);
+	//FragColor = vec4(vec3( rmo3.x), 1.0);
 	
 }

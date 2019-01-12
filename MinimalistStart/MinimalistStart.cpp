@@ -538,54 +538,59 @@ public:
 		_geometryTanTex = New<Gl3dShader>();
 		_geometryTanTexInstancing = New<Gl3dShader>();
 
-		_blit->LoadFiles("./blit.vert", "./blit.frag", nullptr, 0);
-		_geometry->LoadFiles("./geometry.vert", "./geometry.frag", nullptr, 0);
-		_ssao->LoadFiles("./ssao.vert", "./ssao.frag", nullptr, 0);
-		_ssaoBlur->LoadFiles("./ssaoBlur.vert", "./ssaoBlur.frag", nullptr, 0);
-		
-
-		const char* mcDefines[] = {"SKYBOX"};
-		_geometrySkybox->LoadFiles("./geometry.vert", "./geometry.frag", mcDefines, 1);
-
-		const char* mcDefines2[] = { "TANGETNS_AND_TEXCOORDS" };
-		_geometryTanTex->LoadFiles("./geometry.vert", "./geometry.frag", mcDefines2, 1);
-
-		const char* mcDefines3[] = { "INSTANCING", "TANGETNS_AND_TEXCOORDS" };
-		_geometryTanTexInstancing->LoadFiles("./geometry.vert", "./geometry.frag", mcDefines3, 2);
+		try 
 		{
-			Gl3dRenderPas _ssaoUpdate(_ssao.GetPtr(), nullptr, nullptr);
+			_blit->LoadFiles("./blit.vert", "./blit.frag", nullptr, 0);
+			_geometry->LoadFiles("./geometry.vert", "./geometry.frag", nullptr, 0);
+			_ssao->LoadFiles("./ssao.vert", "./ssao.frag", nullptr, 0);
+			_ssaoBlur->LoadFiles("./ssaoBlur.vert", "./ssaoBlur.frag", nullptr, 0);
 
-			DynamicArray<Vector3> ssaoNoise;
-			for (unsigned int i = 0; i < _ssaoSamplesCount; ++i)
+
+			_geometrySkybox->LoadFiles("./skybox.vert", "./skybox.frag", nullptr, 0);
+
+
+			_geometryTanTex->LoadFiles("./geometry.vert", "./geometry.frag", nullptr, 0);
+
+			const char* mcDefines3[] = { "INSTANCING" };
+			_geometryTanTexInstancing->LoadFiles("./geometry.vert", "./geometry.frag", mcDefines3, 1);
 			{
-				Vector3 sample(Mathf::Random() * 2.0 - 1.0, Mathf::Random() * 2.0 - 1.0, Mathf::Random());
-				
-				sample.Normalize();
-				sample *= Mathf::Random();
-				float scale = float(i) / _ssaoSamplesCount;
+				Gl3dRenderPas _ssaoUpdate(_ssao.GetPtr(), nullptr, nullptr);
 
-				scale = Mathf::Lerp(0.1f, 1.0f, scale * scale);
-				sample *= scale;
-				_ssaoUpdate.Uniform(*String::Format("kernel[%d]", i), sample);
+				DynamicArray<Vector3> ssaoNoise;
+				for (unsigned int i = 0; i < _ssaoSamplesCount; ++i)
+				{
+					Vector3 sample(Mathf::Random() * 2.0 - 1.0, Mathf::Random() * 2.0 - 1.0, Mathf::Random());
+
+					sample.Normalize();
+					sample *= Mathf::Random();
+					float scale = float(i) / _ssaoSamplesCount;
+
+					scale = Mathf::Lerp(0.1f, 1.0f, scale * scale);
+					sample *= scale;
+					_ssaoUpdate.Uniform(*String::Format("kernel[%d]", i), sample);
+				}
+
+				for (unsigned int i = 0; i < 16; i++)
+				{
+					Vector3 noise(Mathf::Random() * 2.0 - 1.0, Mathf::Random() * 2.0 - 1.0, 0.0f);
+					ssaoNoise.Add(noise);
+				}
+				Gl3dSubImageDesc image;
+				image.width = 4;
+				image.height = 4;
+				image.data = (void*)ssaoNoise.GetData();
+				image.type = Gl3dFundamentalType::Float;
+				image.changelsCount = 3;
+
+				_ssaoNoise.SetData(Gl3dPixelFormat::RGB_32F, &image);
 			}
-
-			for (unsigned int i = 0; i < 16; i++)
-			{
-				Vector3 noise(Mathf::Random() * 2.0 - 1.0, Mathf::Random() * 2.0 - 1.0, 0.0f);
-				ssaoNoise.Add(noise);
-			}
-			Gl3dSubImageDesc image;
-			image.width = 4;
-			image.height = 4;
-			image.data = (void*)ssaoNoise.GetData();
-			image.type = Gl3dFundamentalType::Float;
-			image.changelsCount = 3;
-
-			_ssaoNoise.SetData(Gl3dPixelFormat::RGB_32F, &image);
+	
 		}
-		
-
-
+		catch (std::exception& ex)
+		{
+			printf("error loading shaders: %s\n", ex.what());
+		}
+	
 	}
 
 
@@ -691,12 +696,58 @@ public:
 
 				for (auto& x : renderMaterials)
 				{
-					matCall++;
-					ObjectMaterial* m = dynamic_cast<ObjectMaterial*>(x);
-					pass.Uniform("mrao", m->metalic_roughness_ao_static);
-					for (const auto& sour : x->GetRenderSources())
-						sour->Draw(&updater, RenderThreadTag());
-						
+					if (x->GetRenderSources().Length())
+					{
+						ObjectMaterial* o = dynamic_cast<ObjectMaterial*>(x);
+
+						pass.Uniform("static_albedo", o->albedo_static.ToVector3());
+
+						if (o->roughness)
+						{
+							pass.Uniform("is_roughness", true);
+							pass.Uniform("map_roughness", reinterpret_cast<Gl3dTexture*>(o->roughness->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_roughness", false);
+
+						if (o->metalic)
+						{
+							pass.Uniform("is_metalic", true);
+							pass.Uniform("map_metalic", reinterpret_cast<Gl3dTexture*>(o->metalic->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_metalic", false);
+
+						if (o->ao)
+						{
+							pass.Uniform("is_ao", true);
+							pass.Uniform("map_ao", reinterpret_cast<Gl3dTexture*>(o->ao->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_ao", false);
+
+						if (o->albedo)
+						{
+							pass.Uniform("is_albedo", true);
+							pass.Uniform("map_albedo", reinterpret_cast<Gl3dTexture*>(o->albedo->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_albedo", false);
+
+						if (o->normals)
+						{
+							pass.Uniform("is_normal", true);
+							pass.Uniform("map_normal", reinterpret_cast<Gl3dTexture*>(o->normals->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_normal", false);
+						pass.Uniform("mrao", o->metalic_roughness_ao_static);
+
+
+						matCall++;
+						for (const auto& sour : x->GetRenderSources())
+							sour->Draw(&updater, RenderThreadTag());
+					}					
 				}
 		
 			}
@@ -709,15 +760,60 @@ public:
 
 				for (auto& x : renderMaterials)
 				{
-					matCall++;
-					ObjectMaterial* m = dynamic_cast<ObjectMaterial*>(x);
-					pass.Uniform("mrao", m->metalic_roughness_ao_static);
-					for (const auto& sour : x->GetRenderSources())
+					if (x->GetRenderSources().Length())
 					{
-						sour->DrawInstanced(RenderThreadTag());
-						drawCall++;
-					}
-						
+						ObjectMaterial* o = dynamic_cast<ObjectMaterial*>(x);
+						pass.Uniform("static_albedo", o->albedo_static.ToVector3());
+
+						if (o->roughness)
+						{
+							pass.Uniform("is_roughness", true);
+							pass.Uniform("map_roughness", reinterpret_cast<Gl3dTexture*>(o->roughness->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_roughness", false);
+
+						if (o->metalic)
+						{
+							pass.Uniform("is_metalic", true);
+							pass.Uniform("map_metalic", reinterpret_cast<Gl3dTexture*>(o->metalic->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_metalic", false);
+
+						if (o->ao)
+						{
+							pass.Uniform("is_ao", true);
+							pass.Uniform("map_ao", reinterpret_cast<Gl3dTexture*>(o->ao->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_ao", false);
+
+						if (o->albedo)
+						{
+							pass.Uniform("is_albedo", true);
+							pass.Uniform("map_albedo", reinterpret_cast<Gl3dTexture*>(o->albedo->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_albedo", false);
+
+						if (o->normals)
+						{
+							pass.Uniform("is_normal", true);
+							pass.Uniform("map_normal", reinterpret_cast<Gl3dTexture*>(o->normals->GetTextureObject()));
+						}
+						else
+							pass.Uniform("is_normal", false);
+						pass.Uniform("mrao", o->metalic_roughness_ao_static);
+
+
+						matCall++;
+						for (const auto& sour : x->GetRenderSources())
+						{
+							sour->DrawInstanced(RenderThreadTag());
+							drawCall++;
+						}
+					}					
 				}
 			}
 		}

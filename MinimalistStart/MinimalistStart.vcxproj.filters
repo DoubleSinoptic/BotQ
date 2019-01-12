@@ -42,5 +42,7 @@
     <None Include="ssao.vert" />
     <None Include="ssaoBlur.frag" />
     <None Include="ssaoBlur.vert" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vert" />
   </ItemGroup>
 </Project>

@@ -72,6 +72,7 @@ void Gl3dDevice::ThrowIfError()
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
+		int error = err;
 		throw Gl3dCoreException("error");
 	}
 }
