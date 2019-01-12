@@ -97,7 +97,7 @@ MeshRenderer::MeshRenderer() :
 		m_id(0),
 		m_material(nullptr),
 		m_mesh(nullptr),
-		m_instancing(true),
+		m_instancing(false),
 		m_source(nullptr)
 {}
 

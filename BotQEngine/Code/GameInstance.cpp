@@ -62,7 +62,9 @@ GameInstance* currentGameInstance = nullptr;
 class TimeProcessor
 {
 	bool mFirstFixedFrame = true;
-	TimeSpan mLastFixedUpdateTime;
+
+	TimeSpan m_lastUpdateTime;
+
 	TimeSpan mLastFrameTime;
 public:
 	bool mIsFrameRenderingFinished = true;
@@ -99,7 +101,7 @@ public:
 
 	void AdvanceFixedUpdate(TimeSpan ste)
 	{
-		mLastFixedUpdateTime += ste;
+		m_lastUpdateTime += Time::GetStepSpan();
 	}
 
 	int64_t GetFixedUpdateStep(TimeSpan& step)
@@ -108,27 +110,17 @@ public:
 
 		if (mFirstFixedFrame)
 		{
-			mLastFixedUpdateTime = currentTime;
+			m_lastUpdateTime = currentTime;
 			mFirstFixedFrame = false;
 		}
 
-		const TimeSpan nextFrameTime = mLastFixedUpdateTime + Time::GetStepSpan();
-		if (nextFrameTime <= currentTime)
+		TimeSpan elapsed = currentTime - m_lastUpdateTime;
+
+		if (elapsed > Time::GetStepSpan())
 		{
-			TimeSpan simulationAmount = Mathf::Max(currentTime - mLastFixedUpdateTime, Time::GetStepSpan());
-			auto numIterations = Mathf::DivideAndRoundUp(simulationAmount, Time::GetStepSpan());
-
-			TimeSpan stepus = Time::GetStepSpan();
-			if (numIterations > Time::GetMaxUpdatesPerFrame())
-			{
-				stepus = Mathf::DivideAndRoundUp(simulationAmount, (TimeSpan)Time::GetMaxUpdatesPerFrame());
-				numIterations = Mathf::DivideAndRoundUp(simulationAmount, stepus);
-			}
-			step = stepus;
-			return numIterations;
+			step = Time::GetStepSpan();
+			return elapsed / Time::GetStepSpan();
 		}
-
-		step = 0;
 		return 0;
 	}
 
