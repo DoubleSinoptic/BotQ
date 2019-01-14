@@ -347,7 +347,7 @@
       <ConformanceMode>true</ConformanceMode>
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalIncludeDirectories>./Code;../BulletPhysics/Code;../BotQSystemTools/Code;;../BotQGraphics/Code;../ThirdParty/include</AdditionalIncludeDirectories>
-      <ExceptionHandling>false</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
