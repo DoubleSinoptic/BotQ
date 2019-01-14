@@ -99,12 +99,7 @@ public:
 		return 0.0f;
 	}
 
-	void AdvanceFixedUpdate(TimeSpan ste)
-	{
-		//m_lastUpdateTime += Time::GetStepSpan();
-	}
-
-	int64_t GetFixedUpdateStep(TimeSpan& step)
+	void GetFixedUpdateStep(TimeSpan& step)
 	{
 		const TimeSpan currentTime = Time::GetTotalMicroseconds();
 
@@ -117,7 +112,6 @@ public:
 		TimeSpan elapsed = currentTime - m_lastUpdateTime;
 		m_lastUpdateTime = currentTime;
 		step = elapsed;
-		return 1;
 	}
 
 };
@@ -128,30 +122,20 @@ bool GameInstance::GameLoop()
 	renderDelta = defaultProcessor.FpsLock();
 	{
 		TimeSpan step;
-		const int numIterations = defaultProcessor.GetFixedUpdateStep(step);
-
-		delta = step / 1000000.0;
-		for (int i = 0; i < numIterations; i++)
+		defaultProcessor.GetFixedUpdateStep(step);
+		TimeSpan twoSteps = Time::GetRenderStepSpan() * 2;
+		int counter = 0;
+		while (step > twoSteps)
 		{
-			SetThisCurrent();
-
-			Internal_SimulatePhysicsContext(physics, delta, -1, -1);
-			for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-			{
-				Component* c = updatebleComponents[i];
-				c->PhysicUpdate();
-				
-			}
-					
-			defaultProcessor.AdvanceFixedUpdate(step);
+			printf("proc: %d\n", counter);
+			counter++;
+			step -= Time::GetRenderStepSpan();
+			Update(Time::GetRenderStep());
 		}
+		Update(TimeSpawnToFloatSeconds(step));
 	}
 
-	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
-	{
-		Component* c = updatebleComponents[i];
-		c->FrameUpdate();
-	}
+	RenderUpdate(renderDelta);
 	renderThreadInstance->Update(this);
 	renderThreadInstance->Draw(this);
 
@@ -195,9 +179,17 @@ GameInstance * GameInstance::GetCurrent()
 медленость симул€ции.
 */
 
-bool GameInstance::Update()
+bool GameInstance::Update(double dt)
 {
-	throw Exception("not supported exception");
+	SetThisCurrent();
+	delta = dt;
+	Internal_SimulatePhysicsContext(physics, dt, -1, -1);
+	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
+	{
+		Component* c = updatebleComponents[i];
+		c->PhysicUpdate();
+	}
+	return 0;
 }
 
 /*
@@ -205,14 +197,16 @@ bool GameInstance::Update()
 так-как мы пытаемс€ уложитс€ в те тайминги которые задЄт
 конвеер
 */
-bool GameInstance::RenderUpdate()
+bool GameInstance::RenderUpdate(double dt)
 {
-	throw Exception("not supported exception");
-}
-
-bool GameInstance::FakeRenderUpdate()
-{
-	throw Exception("not supported exception");
+	SetThisCurrent();
+	renderDelta = dt;
+	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
+	{
+		Component* c = updatebleComponents[i];
+		c->FrameUpdate();
+	}
+	return 0;
 }
 
 GameInstance::~GameInstance()

@@ -65,9 +65,8 @@ public:
 	void SetThisCurrent();
 	static GameInstance* GetCurrent();
     class GameObjectEvents*               objectEventHandler = nullptr;
-	bool Update();
-	bool RenderUpdate();
-	bool FakeRenderUpdate();
+	bool Update(double delta);
+	bool RenderUpdate(double delta);
 };
 
 #define ONLY_RENDER_THREAD_ACCESS

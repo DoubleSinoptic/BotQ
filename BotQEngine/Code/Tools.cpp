@@ -127,8 +127,6 @@ void DebugFlyCamera::FrameUpdate()
 	{
 		acum += right * Matrix4::RightSign();
 	}
-
-	printf("rd: %f", renderDelta);
 	Vector3 e = acum.Normalized() * 12.9f * renderDelta;
 	GetGameObject()->SetLocalPosition(GetGameObject()->GetLocalPosition() + e);
 
