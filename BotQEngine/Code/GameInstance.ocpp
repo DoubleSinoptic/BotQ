@@ -62,9 +62,7 @@ GameInstance* currentGameInstance = nullptr;
 class TimeProcessor
 {
 	bool mFirstFixedFrame = true;
-
-	TimeSpan m_lastUpdateTime;
-
+	TimeSpan mLastFixedUpdateTime;
 	TimeSpan mLastFrameTime;
 public:
 	bool mIsFrameRenderingFinished = true;
@@ -83,7 +81,7 @@ public:
 
 				if (waitTime >= 2000)
 				{
-					std::this_thread::sleep_for(std::chrono::microseconds(waitTime - 2000));
+					std::this_thread::sleep_for(std::chrono::microseconds(waitTime));
 					currentTime = Time::GetTotalMicroseconds();
 				}
 				else
@@ -92,7 +90,7 @@ public:
 						currentTime = Time::GetTotalMicroseconds();
 				}
 			}
-			double delta =  TimeSpawnToFloatSeconds(currentTime - mLastFrameTime);
+			float delta = currentTime - mLastFrameTime;
 			mLastFrameTime = currentTime;
 			return delta;
 		}
@@ -101,7 +99,7 @@ public:
 
 	void AdvanceFixedUpdate(TimeSpan ste)
 	{
-		//m_lastUpdateTime += Time::GetStepSpan();
+		mLastFixedUpdateTime += ste;
 	}
 
 	int64_t GetFixedUpdateStep(TimeSpan& step)
@@ -110,14 +108,28 @@ public:
 
 		if (mFirstFixedFrame)
 		{
-			m_lastUpdateTime = currentTime;
+			mLastFixedUpdateTime = currentTime;
 			mFirstFixedFrame = false;
 		}
 
-		TimeSpan elapsed = currentTime - m_lastUpdateTime;
-		m_lastUpdateTime = currentTime;
-		step = elapsed;
-		return 1;
+		const TimeSpan nextFrameTime = mLastFixedUpdateTime + Time::GetStepSpan();
+		if (nextFrameTime <= currentTime)
+		{
+			TimeSpan simulationAmount = Mathf::Max(currentTime - mLastFixedUpdateTime, Time::GetStepSpan());
+			auto numIterations = Mathf::DivideAndRoundUp(simulationAmount, Time::GetStepSpan());
+
+			TimeSpan stepus = Time::GetStepSpan();
+			if (numIterations > Time::GetMaxUpdatesPerFrame())
+			{
+				stepus = Mathf::DivideAndRoundUp(simulationAmount, (TimeSpan)Time::GetMaxUpdatesPerFrame());
+				numIterations = Mathf::DivideAndRoundUp(simulationAmount, stepus);
+			}
+			step = stepus;
+			return numIterations;
+		}
+
+		step = 0;
+		return 0;
 	}
 
 };
@@ -146,7 +158,7 @@ bool GameInstance::GameLoop()
 			defaultProcessor.AdvanceFixedUpdate(step);
 		}
 	}
-
+	
 	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
 	{
 		Component* c = updatebleComponents[i];

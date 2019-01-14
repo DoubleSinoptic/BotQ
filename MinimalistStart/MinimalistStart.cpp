@@ -88,6 +88,8 @@ Phys->child thread
 #include <PhysicsComponents/CarCollider.h>
 #include <Display.h>
 #include <PhysicsComponents/RigidBody.h>
+#include "Windows.h"
+#undef GetObject
 inline Texture*  LoadTextureFileE(const String& path)
 {
 	Ref<Bitmap> bit = new Bitmap(path);
@@ -766,6 +768,8 @@ public:
 				}
 		
 			}
+
+
 			Gl3dDevice::Flush();
 			{
 				Gl3dRenderPas pass(_geometryTanTexInstancing.GetPtr(), &_geometryFrame, &passDesc);
@@ -923,10 +927,10 @@ public:
 		m_queue.QueueFunction([=]()
 		{
 			TimeSpan s = Time::GetTotalMicroseconds();
-			
+	
 			m_renderer->OnDraw();
 			m_window->SwapBuffers();
-			//printf("fr: %f\n", TimeSpawnToFloatSeconds(Time::GetTotalMicroseconds() - s));
+			//printf("                                      fr: %f\n", TimeSpawnToFloatSeconds(Time::GetTotalMicroseconds() - s));
 		});
 	}
 
@@ -1000,13 +1004,17 @@ public:
 
 int main()
 {
+
 	GameViewManager2 mag;
 
 	std::atomic_bool core_thread_finished(false);
-	std::thread([&]()
+	std::thread core([&]()
 	{	
 		try
 		{
+
+			
+
 			Guard g([]()
 			{
 				Network::UnboundDisconent();
@@ -1102,8 +1110,10 @@ int main()
 			printf("==========[CORE THREAD EXIT WAS ERROR]==========\n\s", ex.what());
 		}
 		core_thread_finished.store(true);
-	}).detach();
+	});
 
+	//SetThreadPriority(core.native_handle(), THREAD_PRIORITY_TIME_CRITICAL);
+	core.detach();
 	while (!core_thread_finished.load())
 	{
 		mag.m_queue.Playback();

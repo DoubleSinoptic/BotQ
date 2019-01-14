@@ -52,14 +52,10 @@ CommandQueue::~CommandQueue()
 
 void CommandQueue::Queue(CommandBase* command, CompliteFlag* compliteFlag)
 {
-	/*if (std::this_thread::get_id() == mImpl->id)
-	{
-		Log("[WARN]: Queue this thread called");
-		command->Execute();
-		if (compliteFlag)
-			compliteFlag->store(true);
-		return;
-	}*/
+	/*command->Execute();
+	if (compliteFlag)
+		*compliteFlag = true;*/
+
 	LockGuard<SyncObject> spin(mImpl->addlock);
 	mImpl->current->Add({ command, compliteFlag });
 }

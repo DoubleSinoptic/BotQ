@@ -25,7 +25,7 @@ class SGE_EXPORT DebugFlyCamera : public Component
 	Point curre23nt = Point(0, 0);
 public:
 	void Awake() override;
-	void PhysicUpdate() override;
+	void FrameUpdate() override;
 };
 
 class SGE_EXPORT FilmicCamera : public Component

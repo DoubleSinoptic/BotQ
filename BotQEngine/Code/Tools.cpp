@@ -100,7 +100,7 @@ void DebugFlyCamera::Awake()
 	SetEnabled(true);
 }
 
-void DebugFlyCamera::PhysicUpdate()
+void DebugFlyCamera::FrameUpdate()
 {
 
 	float mull = 1.0f;
@@ -128,7 +128,8 @@ void DebugFlyCamera::PhysicUpdate()
 		acum += right * Matrix4::RightSign();
 	}
 
-	Vector3 e = acum.Normalized() * 12.9f * Time::GetDeltaTime();
+	printf("rd: %f", renderDelta);
+	Vector3 e = acum.Normalized() * 12.9f * renderDelta;
 	GetGameObject()->SetLocalPosition(GetGameObject()->GetLocalPosition() + e);
 
 	if (Input::IsMouseKeyDown(SGE_MOUSE_BUTTON_LEFT))
