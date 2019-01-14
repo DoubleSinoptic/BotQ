@@ -88,7 +88,7 @@ Phys->child thread
 #include <PhysicsComponents/CarCollider.h>
 #include <Display.h>
 #include <PhysicsComponents/RigidBody.h>
-#include "Windows.h"
+
 #undef GetObject
 inline Texture*  LoadTextureFileE(const String& path)
 {
@@ -1012,9 +1012,6 @@ int main()
 	{	
 		try
 		{
-
-			
-
 			Guard g([]()
 			{
 				Network::UnboundDisconent();
@@ -1096,10 +1093,6 @@ int main()
 					GameObject::SpawnPrefab("/Cars/PickUp.prefab", "", Vector3(j * 4.0, 10, i * 4.0), Quaternion::Identity());
 				}
 			}
-
-			/*	ResourceLoader::LoadResourcesFromDir("./assets");
-				GameObject* dx = MeshImporter::Import("/fe/barrel_low.fbx")->construct();
-		*/
 
 			while (instnace.GameLoop())
 			{
