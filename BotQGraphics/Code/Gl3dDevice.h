@@ -70,7 +70,7 @@ public:
 	static unsigned int CastFundamentalType(Gl3dFundamentalType t);
 	static unsigned int CastPrimitiveType(Gl3dPrimitive t);
 	static unsigned int CastSideType(Gl3dSide s);
-
+	static void Flush();
 	static void GetMemory(long long& aviable, long long& total);
 	static void LinkAddresses(Gl3dDeviceLinker lnk);
 	static void ThrowIfError();

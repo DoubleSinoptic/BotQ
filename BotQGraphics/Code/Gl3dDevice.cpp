@@ -49,6 +49,11 @@ unsigned int Gl3dDevice::CastSideType(Gl3dSide s)
 	return GL_TEXTURE_CUBE_MAP_POSITIVE_X + ((int)s) - 1;
 }
 
+void Gl3dDevice::Flush()
+{
+	glFlush();
+}
+
 void Gl3dDevice::GetMemory(long long & aviable, long long & total)
 {
 #define GL_GPU_MEM_INFO_TOTAL_AVAILABLE_MEM_NVX 0x9048

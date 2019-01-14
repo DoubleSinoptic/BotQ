@@ -688,6 +688,7 @@ public:
 			_sphere.DrawIndexed(Gl3dPrimitive::Triangles, Gl3dFundamentalType::UInteger, _sphere_indeces->Length());
 				
 		}
+		Gl3dDevice::Flush();
 
 		{
 			Gl3dRenderPassDesc passDesc = {};
@@ -765,7 +766,7 @@ public:
 				}
 		
 			}
-			
+			Gl3dDevice::Flush();
 			{
 				Gl3dRenderPas pass(_geometryTanTexInstancing.GetPtr(), &_geometryFrame, &passDesc);
 
@@ -831,7 +832,7 @@ public:
 				}
 			}
 		}
-	
+		Gl3dDevice::Flush();
 		
 
 		{			
@@ -863,9 +864,8 @@ public:
 			_quad.Draw(Gl3dPrimitive::Triangles, _quadVertexes->Length());
 		}
 		
-	
+		Gl3dDevice::Flush();
 		Gl3dDevice::ThrowIfError();
-		printf("mat: %d, draw: %d\n", matCall / 2, drawCall + updater.drawCall);
 	}
 
 };

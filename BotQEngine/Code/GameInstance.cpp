@@ -92,7 +92,7 @@ public:
 						currentTime = Time::GetTotalMicroseconds();
 				}
 			}
-			float delta = currentTime - mLastFrameTime;
+			double delta =  TimeSpawnToFloatSeconds(currentTime - mLastFrameTime);
 			mLastFrameTime = currentTime;
 			return delta;
 		}

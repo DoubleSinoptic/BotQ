@@ -188,6 +188,8 @@
     <None Include="blit.vert" />
     <None Include="geometry.frag" />
     <None Include="geometry.vert" />
+    <None Include="postProcess.frag" />
+    <None Include="postProcess.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
     <None Include="ssao.frag" />

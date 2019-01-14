@@ -44,5 +44,7 @@
     <None Include="ssaoBlur.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
+    <None Include="postProcess.frag" />
+    <None Include="postProcess.vert" />
   </ItemGroup>
 </Project>
