@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "objtoc", "objtoc\objtoc.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MinimalistStart", "MinimalistStart\MinimalistStart.vcxproj", "{BEBCDBF4-8C31-4CE2-AC15-8CAADF71271B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "armpz2", "armpz2\armpz2.vcxproj", "{C186F46A-C532-4ED3-9331-BED09E5AE13B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -101,6 +103,14 @@ Global
 		{BEBCDBF4-8C31-4CE2-AC15-8CAADF71271B}.Release|x64.Build.0 = Release|x64
 		{BEBCDBF4-8C31-4CE2-AC15-8CAADF71271B}.Release|x86.ActiveCfg = Release|Win32
 		{BEBCDBF4-8C31-4CE2-AC15-8CAADF71271B}.Release|x86.Build.0 = Release|Win32
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Debug|x64.ActiveCfg = Debug|x64
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Debug|x64.Build.0 = Debug|x64
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Debug|x86.ActiveCfg = Debug|Win32
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Debug|x86.Build.0 = Debug|Win32
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Release|x64.ActiveCfg = Release|x64
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Release|x64.Build.0 = Release|x64
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Release|x86.ActiveCfg = Release|Win32
+		{C186F46A-C532-4ED3-9331-BED09E5AE13B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
