@@ -71,7 +71,7 @@ namespace model_cube {
 #include <string>
 #include <sstream>
 #include <Network/LocalHostCaster.h>
-
+#include <Light.h>
 #undef GetObject
 
 #include "Gl3dShader.h"

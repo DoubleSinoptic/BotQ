@@ -13,6 +13,8 @@ class PhysicsInstance;
 class MeshRenderer;
 class GameInstance;
 class Material;
+class Light;
+class ReflectionProbe;
 class IRenderThreadInstance
 {
 public:
@@ -42,8 +44,9 @@ public:
 	DynamicArray<GameObject*>		sceneobjects;
 	DynamicArray<Component*>		updatebleComponents;
 	DynamicArray<Resource*>			resources;
-	
+	DynamicArray<ReflectionProbe*>  reflectionProbes;
 	DynamicArray<Material*>			materials;
+	DynamicArray<Light*>			lights;
 
 	CommandQueue&					renderQueue;
 	CommandQueue					updateQueue;
@@ -76,3 +79,5 @@ public:
 #define updateQueue GameInstance::GetCurrent()->updateQueue
 #define currentDisplay GameInstance::GetCurrent()->display
 #define renderMaterials GameInstance::GetCurrent()->materials
+#define renderLights GameInstance::GetCurrent()->lights
+#define renderReflectionProbes GameInstance::GetCurrent()->reflectionProbes

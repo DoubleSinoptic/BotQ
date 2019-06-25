@@ -27,6 +27,36 @@ public:
 	int Write(const char* data, size_t length);
 	int Read(char* data, size_t length);
 
+	template<typename T>
+	void WriteT(const T& x) 
+	{
+		char* sd = (char*)&x;
+		int left = sizeof(T);
+		while (left)
+		{
+			int e = Write(sd, left);
+			Assert(e >= 0);
+			left -= e;
+			sd += e;
+		}
+	}
+	
+	template<typename T>
+	T ReadT() 
+	{
+		char d[sizeof(T)];
+		char* sd = d;
+		int left = sizeof(T);
+		while (left)
+		{
+			int e = Read(sd, left);
+			Assert(e >= 0);
+			left -= e;
+			sd += e;
+		}
+		return *(T*)d;
+	}
+
 	void WriteLine(const String& utf8str);
 	String ReadLine();
 

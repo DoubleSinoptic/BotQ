@@ -46,5 +46,11 @@
     <None Include="skybox.vert" />
     <None Include="postProcess.frag" />
     <None Include="postProcess.vert" />
+    <None Include="shadowGeometry.frag" />
+    <None Include="shadowGeometry.vert" />
+    <None Include="light\directional.frag" />
+    <None Include="light\directional.vert" />
+    <None Include="light\point.frag" />
+    <None Include="light\point.vert" />
   </ItemGroup>
 </Project>

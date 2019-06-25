@@ -88,7 +88,7 @@ Phys->child thread
 #include <PhysicsComponents/CarCollider.h>
 #include <Display.h>
 #include <PhysicsComponents/RigidBody.h>
-
+#include <Math/BBox3.h>
 #undef GetObject
 inline Texture*  LoadTextureFileE(const String& path)
 {
@@ -114,7 +114,7 @@ inline Texture* LoadTextureE(const String& path)
 
 inline void LoadModelsE(const String& name, const Vector3& pos)
 {
-	GameObject* ogne = MeshImporter::Import("/assets/" + name + "/Sphere.FBX")->construct();
+	GameObject* ogne = MeshImporter::Import("/assets/" + name + "/Sphere.FBX")->Construct();
 
 	ogne->SetPosition(pos);
 	ogne->AddComponent<FixedRotation>();
@@ -130,7 +130,7 @@ inline void LoadModelsE(const String& name, const Vector3& pos)
 
 void LoadModelsE(const String& name, const String& prefix, const Vector3& pos)
 {
-	GameObject* ogne = MeshImporter::Import("/assets/" + name + "/Barril.FBX")->construct();
+	GameObject* ogne = MeshImporter::Import("/assets/" + name + "/Barril.FBX")->Construct();
 
 	ogne->SetPosition(pos);
 
@@ -149,7 +149,7 @@ void LoadDefaultPrefabs()
 {
 	GameObject::AddPrefab("/DebugBox.prefab", []()
 	{
-		GameObject*  obj = MeshImporter::Import("/assets/GrassBlock/GrassBlock.fbx")->construct();
+		GameObject*  obj = MeshImporter::Import("/assets/GrassBlock/GrassBlock.fbx")->Construct();
 		obj->AddComponent<RigidBody>()->SetMass(1.0);
 		obj->AddComponent<BoxCollider>()->SetSize(Vector3(1.0, 1.0, 1.0));
 		return obj;
@@ -157,7 +157,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/DebugCube.prefab", []()
 	{
-		GameObject*  obj = MeshImporter::Import("/assets/DebugCube/DebugCube.fbx")->construct();
+		GameObject*  obj = MeshImporter::Import("/assets/DebugCube/DebugCube.fbx")->Construct();
 		Tools::SetMaps(obj,
 			LoadTextureE("/assets/DebugCube/Debug.png"),
 			nullptr,
@@ -170,7 +170,7 @@ void LoadDefaultPrefabs()
 	GameObject::AddPrefab("/Camera.prefab", []()
 	{
 		GameObject* oc = new GameObject();
-		GameObject* obj = MeshImporter::Import("/assets/matbol/export3dcoat.obj")->construct();
+		GameObject* obj = MeshImporter::Import("/assets/matbol/export3dcoat.obj")->Construct();
 		obj->SetName("MatBoll");
 
 		Tools::ScaleAll(obj, 0.1);
@@ -187,7 +187,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Cars/PickUp.prefab", []()
 	{
-		GameObject* pixkup = MeshImporter::Import("/assets/PickUp/PickUpBody.fbx")->construct();
+		GameObject* pixkup = MeshImporter::Import("/assets/PickUp/PickUpBody.fbx")->Construct();
 
 		pixkup->SetLocalPosition(Vector3(0.0, -0.991, 0.0));
 
@@ -201,7 +201,7 @@ void LoadDefaultPrefabs()
 		box->SetSize(Vector3(1.821319, 1.138157, 4.587969));
 		CarCollider* wc = car->AddComponent<CarCollider>();
 
-		GameObject* wheelExample1 = MeshImporter::Import("/assets/PickUp/PickUpWheel.fbx")->construct();
+		GameObject* wheelExample1 = MeshImporter::Import("/assets/PickUp/PickUpWheel.fbx")->Construct();
 		Tools::ScaleAll(wheelExample1, 0.44f);
 		//GameObject* wheelExample1 = new GameObject();
 		float upv = 0.64;
@@ -216,7 +216,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Terrain.prefab", []()
 	{
-		GameObject* ct = MeshImporter::Import("/assets/Terrain/Terrain.fbx")->construct();
+		GameObject* ct = MeshImporter::Import("/assets/Terrain/Terrain.fbx")->Construct();
 		ct->AddComponent<RigidBody>()->SetMass(0.0);
 		ct->AddComponent<TrianglesCollider>()->CollectMeshesFromRenderer();
 
@@ -246,7 +246,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Doom.prefab", []()
 	{
-		GameObject* d2 = MeshImporter::Import("/assets/Doom/Doom.FBX")->construct();
+		GameObject* d2 = MeshImporter::Import("/assets/Doom/Doom.FBX")->Construct();
 		d2->AddComponent<RigidBody>()->SetMass(0.0);
 		d2->AddComponent<TrianglesCollider>()->CollectMeshesFromRenderer(Vector3(4.0f, 4.0f, 4.0f));
 		Tools::ScaleAll(d2, 4.0f);
@@ -256,7 +256,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/SandHome.prefab", []()
 	{
-		GameObject* home = MeshImporter::Import("/assets/SandHome/SandHome.FBX")->construct();
+		GameObject* home = MeshImporter::Import("/assets/SandHome/SandHome.FBX")->Construct();
 		home->AddComponent<RigidBody>()->SetMass(0.0);
 		home->AddComponent<TrianglesCollider>()->CollectMeshesFromRenderer();
 		return home;
@@ -264,14 +264,14 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Ak12.prefab", []()
 	{
-		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.fbx")->construct();
+		GameObject* home = MeshImporter::Import("/assets/ak12/ak12.fbx")->Construct();
 		Tools::SetMRAO(home, 0.5, 0.5, 1.0);
 		return home;
 	});
 
 	GameObject::AddPrefab("/Ogne.prefab", []()
 	{
-		GameObject* ogne = MeshImporter::Import("/assets/Ogne/Ogne.FBX")->construct();
+		GameObject* ogne = MeshImporter::Import("/assets/Ogne/Ogne.FBX")->Construct();
 		ogne->AddComponent<FixedRotation>();
 		Tools::ScaleAll(ogne, 0.05);
 
@@ -287,14 +287,14 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Palms.prefab", []()
 	{
-		GameObject* d2 = MeshImporter::Import("/assets/Palms/Palms.FBX")->construct();
+		GameObject* d2 = MeshImporter::Import("/assets/Palms/Palms.FBX")->Construct();
 		Tools::ScaleAll(d2, 0.3);
 		return d2;
 	});
 
 	GameObject::AddPrefab("/Matbol.prefab", []()
 	{
-		GameObject* obj = MeshImporter::Import("/assets/matbol/export3dcoat.obj")->construct();
+		GameObject* obj = MeshImporter::Import("/assets/matbol/export3dcoat.obj")->Construct();
 		obj->AddComponent<FixedRotation>();
 		Tools::ScaleAll(obj, 0.1);
 		Tools::SetMaps(obj,
@@ -319,7 +319,7 @@ void LoadDefaultPrefabs()
 
 	GameObject::AddPrefab("/Sphere.prefab", []()
 	{
-		return MeshImporter::Import("/assets/Gold/Sphere.FBX")->construct();;
+		return MeshImporter::Import("/assets/Gold/Sphere.FBX")->Construct();;
 	});
 
 
@@ -346,7 +346,7 @@ void LoadDefaultPrefabs()
 			m = (float)row / (float)nrRows;
 			for (int col = 0; col < nrColumns; ++col)
 			{
-				GameObject* obj = MeshImporter::Import("/assets/Grass/Sphere.FBX")->construct();
+				GameObject* obj = MeshImporter::Import("/assets/Grass/Sphere.FBX")->Construct();
 				obj->SetPosition(Vector3(
 					(col - (nrColumns / 2)) * spacing,
 					30.0f + (row - (nrRows / 2)) * spacing,
@@ -434,6 +434,68 @@ constexpr T v3t(const X& v)
 	return T(v.x, v.y, v.z);
 }
 
+BBox3 CalculateBBoxOfCamera(GameObject* camera, float aspect, float nearPlane, float farPlane)
+{
+	Vector3 eye = camera->GetPosition();
+	Vector3 vZ = camera->GetForward();
+	Vector3 vX = camera->GetRight();
+	Vector3 vY = camera->GetUp();
+
+	float nearPlaneHeight = tanf(3.14f / 2.0f * 0.5f) * nearPlane;
+	float nearPlaneWidth = nearPlaneHeight * aspect;
+	float farPlaneHeight = tanf(3.14f / 2.0f * 0.5f) * farPlane;
+	float farPlaneWidth = farPlaneHeight * aspect;
+
+	Vector3 nearPlaneCenter = eye + vZ * nearPlane;
+	Vector3 farPlaneCenter = eye + vZ * farPlane;
+
+	BBox3 box;
+	box.ExtendPoint(Vector3(nearPlaneCenter - vX * nearPlaneWidth - vY * nearPlaneHeight));
+	box.ExtendPoint(Vector3(nearPlaneCenter - vX * nearPlaneWidth + vY * nearPlaneHeight));
+	box.ExtendPoint(Vector3(nearPlaneCenter + vX * nearPlaneWidth + vY * nearPlaneHeight));
+	box.ExtendPoint(Vector3(nearPlaneCenter + vX * nearPlaneWidth - vY * nearPlaneHeight));
+	box.ExtendPoint(Vector3(farPlaneCenter - vX * farPlaneWidth - vY * farPlaneHeight));
+	box.ExtendPoint(Vector3(farPlaneCenter - vX * farPlaneWidth + vY * farPlaneHeight));
+	box.ExtendPoint(Vector3(farPlaneCenter + vX * farPlaneWidth + vY * farPlaneHeight));
+	box.ExtendPoint(Vector3(farPlaneCenter + vX * farPlaneWidth - vY * farPlaneHeight));
+	return box;
+}
+
+float MaxOf(const Vector3& cf)
+{
+	float max = cf[0];
+	if (max < cf[1])
+		max = cf[1];
+	if (max < cf[2])
+		max = cf[2];
+	return max;
+}
+
+struct _CmCombine 
+{
+	Matrix4 proj;
+	Matrix4 look;
+};
+
+_CmCombine CalaculateProjection(GameObject* camera, const Vector3& lightDir, const BBox3& frustumBox, Vector3& dEye, Vector3& dCenter, Vector3& dUp, float& half)
+{
+	_CmCombine r;
+
+	float halfSize = frustumBox.GetSize().Length() * 0.5;
+	Vector3 lookAmplyFire = -lightDir;
+	Vector3 lookCenter = frustumBox.GetCenter();
+	Vector3 eyePosint = lookCenter + lookAmplyFire * halfSize;
+
+	dEye = eyePosint;
+	dCenter = lookCenter;
+	dUp = (lookCenter - eyePosint).Normalize().Cross(Vector3(0, 1, 0)).Normalized().Cross((lookCenter - eyePosint).Normalize());
+	r.look = Matrix4::LookAt(eyePosint, lookCenter, Vector3(0, 1, 0));
+
+	half = halfSize;
+	r.proj = Matrix4::Ortho(-halfSize, halfSize, -halfSize, halfSize, 0.1, halfSize * 2 + 0.1);
+	return r;
+}
+
 
 class Renderer
 {
@@ -443,12 +505,17 @@ public:
 	Ref<Gl3dShader>				_geometrySkybox;
 	Ref<Gl3dShader>				_geometryTanTex;
 	Ref<Gl3dShader>				_geometryTanTexInstancing;
+	Ref<Gl3dShader>				_shadowGeometryInstancing;
+	Ref<Gl3dShader>				_shadowGeometry;
+
+
 	Ref<Gl3dShader>				_ssao;
 	Ref<Gl3dShader>				_ssaoBlur;
 
+	Gl3dFrameBufferInstance     _shadowGeometryFrame;
 	Gl3dFrameBufferInstance     _geometryFrame;
 
-
+	Gl3dTexture					_shadowDepth;
 	Gl3dTexture					_depth;
 	Gl3dTexture					_color;
 	Gl3dTexture					_normal;
@@ -492,12 +559,17 @@ public:
 		UpdateFrameBuffers(Size(1, 1));
 
 		{
+					Gl3dFrameBufferDesc buffDesc = {};
+					buffDesc.depthAttachment = &_shadowDepth;
+					_shadowGeometryFrame.Create(&buffDesc);
+		}
+		{
 			Gl3dFrameBufferDesc buffDesc = {};
 			buffDesc.depthAttachment = &_depth;
 			buffDesc.colorAttachments[0] = &_color;
 			buffDesc.colorAttachments[1] = &_position;
 			buffDesc.colorAttachments[2] = &_normal;
-			buffDesc.colorAttachments[3] = &_rmo;		
+			buffDesc.colorAttachments[3] = &_rmo;
 			_geometryFrame.Create(&buffDesc);
 		}
 
@@ -510,7 +582,7 @@ public:
 		}
 
 
-	
+
 		_quadVertexes = new Gl3dArray<Vector2>(Gl3dArrayTarget::Array);
 		_quadVertexes->Add((Vector2*)quadVertexes, 6);
 
@@ -543,6 +615,94 @@ public:
 
 	}
 
+	struct CaptureDesc 
+	{
+		Matrix4 view;
+		Matrix4 projection;
+		int		w;
+		int		h;
+		bool	geometry;
+		bool	skybox;
+	};
+
+	void RenderToCapture(CaptureDesc* capture)
+	{
+	
+	
+	
+	}
+
+	Matrix4 RenderShadows()
+	{
+		GameObject* camera = Display::GetCurrent()->GetCamera();
+		Size viewSize = Display::GetCurrent()->GetSize();
+		const Vector3 mainLightDir = Vector3(1.0, -1.0, 1.0).Normalize();
+
+		float HalfSize = 20.0;
+
+		const Vector3 LightDir = Vector3(1, -1, 1).Normalize();
+
+		Vector3 rezCenter = Vector3::Zero();
+		Vector3 rezEye = Vector3::Zero();
+		Vector3 rezUp = Vector3::Zero();
+
+		BBox3 fb = CalculateBBoxOfCamera(camera, float(viewSize.width) / float(viewSize.height), 0.1, 20);
+		_CmCombine projToView = CalaculateProjection(camera, LightDir, fb, rezEye, rezCenter, rezUp, HalfSize);
+		Matrix4 r = projToView.proj * projToView.look;
+
+		Gl3dRenderPassDesc passDesc = {};
+		passDesc.cullFace = Gl3dCullFace::Front;
+		passDesc.depth = Gl3dDepth::LessEqual;
+		passDesc.blending = Gl3dBlending::Disable;
+		passDesc.clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+		passDesc.clearDepth = 1.0f;
+		passDesc.clear = Gl3dClear::Depth;
+		passDesc.viewport = { 0, 0, 4055, 4055 };
+
+
+		{
+			Gl3dRenderPas pass(_shadowGeometry.GetPtr(), &_shadowGeometryFrame, &passDesc);
+			updater.pass = &pass;
+
+			pass.Uniform("projection", projToView.proj);
+			pass.Uniform("view", projToView.look);
+
+			for (auto& x : renderMaterials)
+			{
+				if (x->GetRenderSources().Length())
+				{
+					for (const auto& sour : x->GetRenderSources())
+						sour->Draw(&updater, RenderThreadTag());
+				}
+			}
+
+		}
+
+
+		Gl3dDevice::Flush();
+		{
+			Gl3dRenderPas pass(_shadowGeometryInstancing.GetPtr(), &_shadowGeometryFrame, &passDesc);
+			pass.Uniform("projection", projToView.proj);
+			pass.Uniform("view", projToView.look);
+
+
+			for (auto& x : renderMaterials)
+			{
+				if (x->GetRenderSources().Length())
+				{
+					for (const auto& sour : x->GetRenderSources())
+					{
+						sour->DrawInstanced(RenderThreadTag());
+					}
+				}
+			}
+		}
+		
+		return r;
+	}
+
+
+
 
 	void UpdateShaders() 
 	{
@@ -553,7 +713,8 @@ public:
 		_ssaoBlur = New<Gl3dShader>();
 		_geometryTanTex = New<Gl3dShader>();
 		_geometryTanTexInstancing = New<Gl3dShader>();
-
+		_shadowGeometry = New<Gl3dShader>();
+		_shadowGeometryInstancing = New<Gl3dShader>();
 		try 
 		{
 			_blit->LoadFiles("./blit.vert", "./blit.frag", nullptr, 0);
@@ -566,9 +727,10 @@ public:
 
 
 			_geometryTanTex->LoadFiles("./geometry.vert", "./geometry.frag", nullptr, 0);
-
+			_shadowGeometry->LoadFiles("./shadowGeometry.vert", "./shadowGeometry.frag", nullptr, 0);
 			const char* mcDefines3[] = { "INSTANCING" };
 			_geometryTanTexInstancing->LoadFiles("./geometry.vert", "./geometry.frag", mcDefines3, 1);
+			_shadowGeometryInstancing->LoadFiles("./shadowGeometry.vert", "./shadowGeometry.frag", mcDefines3, 1);
 			{
 				Gl3dRenderPas _ssaoUpdate(_ssao.GetPtr(), nullptr, nullptr);
 
@@ -609,9 +771,32 @@ public:
 	
 	}
 
+	//Gl3dTexture* brdfLut;
+	//Gl3dTexture* 
+
+	//struct GBufferState 
+	//{
+	//	Gl3dTexture* gAlbedo = nullptr;
+	//	Gl3dTexture* gPosition = nullptr;
+	//	Gl3dTexture* gNormal = nullptr;
+	//	Gl3dTexture* gMaterial = nullptr;
+	//};
+
+
+	//void RenderLights(Gl3dFrameBufferBase* out, GBufferState* lights)
+	//{
+	//	for (auto& x : renderLights) 
+	//	{
+	//		
+
+
+	//	}
+	//}
+
 
 	void UpdateFrameBuffers(Size viewSize)
 	{
+		_shadowDepth.AllocateData(4055, 4055, Gl3dPixelFormat::DEPTH_16);
 		_color.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGBA_16F);
 		_normal.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGB_32F);
 		_position.AllocateData(viewSize.width, viewSize.height, Gl3dPixelFormat::RGB_32F);
@@ -655,6 +840,9 @@ public:
 			UpdateFrameBuffers(viewSize);
 			lastSize = viewSize;		
 		}
+
+
+		
 		
 		GameObject* camera = Display::GetCurrent()->GetCamera();
 		Vector3 lookPosition = camera->GetPosition();
@@ -857,12 +1045,16 @@ public:
 			_quad.Draw(Gl3dPrimitive::Triangles, _quadVertexes->Length());
 		}
 
+		Matrix4 shadowVP = RenderShadows();
+
 		{
 			Gl3dRenderPas pass(_blit.GetPtr(), nullptr, &postDesc);
 			pass.Uniform("ssao", &_pipe[1]);
 			pass.Uniform("color", &_color);
 			pass.Uniform("position", &_position);
 			pass.Uniform("normal", &_normal);
+			pass.Uniform("shadowVP", shadowVP);
+			pass.Uniform("shadowDepth", &_shadowDepth);
 			pass.Uniform("lookPosition", lookPosition);
 			pass.Uniform("rmo", &_rmo);		
 			_quad.Draw(Gl3dPrimitive::Triangles, _quadVertexes->Length());

@@ -6,6 +6,9 @@
 #include "glad.h"
 #include <stdio.h>
 #undef GetObject
+
+typedef void (*BlendSetFunction)();
+
 Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuffer, Gl3dRenderPassDesc* desc)
 	: mShader(shader), mFramebuffer(framebuffer)
 {
@@ -95,19 +98,17 @@ Gl3dRenderPas::Gl3dRenderPas(Gl3dShader * shader, Gl3dFrameBufferBase * framebuf
 	{
 		glEnable(GL_BLEND);
 	
-		static GLenum blendTable[] = 
+		static BlendSetFunction blendTable[] =
 		{
-			GL_NONE,
-			GL_ONE_MINUS_SRC_ALPHA,
-			GL_ONE
+			[]() { glBlendFunc(GL_NONE, GL_NONE); },
+			[]() { glBlendFunc(GL_ZERO, GL_ONE); },
+			[]() { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); },
+			[]() { glBlendFunc(GL_ONE, GL_ONE); },
 		};
-	
-		glBlendFunc(GL_SRC_ALPHA, blendTable[(size_t)desc->blending]);
+		blendTable[(size_t)desc->blending]();	
 	}
 
 	Gl3dDevice::ThrowIfError();
-
-
 }
 
 Gl3dRenderPas::~Gl3dRenderPas()

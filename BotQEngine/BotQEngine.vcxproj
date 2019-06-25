@@ -85,8 +85,12 @@
     <ClCompile Include="Code\Common\Exception.cpp" />
     <ClCompile Include="Code\Material.cpp" />
     <ClCompile Include="Code\MeshRenderer.cpp" />
+    <ClCompile Include="Code\ModelConstructor.cpp" />
+    <ClCompile Include="Code\Indent.cpp" />
+    <ClCompile Include="Code\Light.cpp" />
     <ClCompile Include="Profile.cpp" />
     <ClCompile Include="Code\RenderSource.cpp" />
+    <ClCompile Include="Code\ReflectionProbe.cpp" />
     <ClCompile Include="Threading.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -181,8 +185,12 @@
     <ClInclude Include="Code\Common\Exception.h" />
     <ClInclude Include="Code\Material.h" />
     <ClInclude Include="Code\MeshRenderer.h" />
+    <ClInclude Include="Code\ModelConstructor.h" />
+    <ClInclude Include="Code\Indent.h" />
+    <ClInclude Include="Code\Light.h" />
     <ClInclude Include="Profile.h" />
     <ClInclude Include="Code\RenderSource.h" />
+    <ClInclude Include="Code\ReflectionProbe.h" />
     <ClInclude Include="Threading.h" />
   </ItemGroup>
   <ItemGroup>
@@ -208,32 +216,32 @@
     <ProjectGuid>{FAFF638C-07E1-4482-89C6-0D335ECE9CAD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>BotQEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

@@ -12,6 +12,11 @@ uniform sampler2D ssao;
 uniform vec3 lookPosition;
 uniform sampler2D rmo;
 
+uniform mat4 shadowVP;
+uniform sampler2D shadowDepth;
+
+
+
 // Encapsulate the various inputs used by the various functions in the shading equation
 // We store values in this struct to simplify the integration of alternative implementations
 // of the shading terms, outlined in the Readme.MD Appendix.
@@ -214,8 +219,104 @@ vec3 Uncharted2Tonemap(vec3 x)
 float cTonemapExposureBias = 6.0f;
 float cTonemapMaxWhite = 11.0f;
 
+
+
+float calculateShadows(vec4 fragPosLightSpace)
+{
+	 vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5; 
+
+
+	#ifdef DEBUG_DRAW_PROJ
+	if(debugDrawShadowProjection)
+	{	
+		if(
+		((projCoords.x > 1.0) && (projCoords.x < 1.0015) && ((projCoords.y <= 1.0) && (projCoords.z >= 0.00) && (projCoords.z <= 1.0) && (projCoords.y >= 0.00))) ||
+		((projCoords.x < 0.0) && (projCoords.x > -0.0015) && ((projCoords.y <= 1.0)  && (projCoords.z >= 0.00) && (projCoords.z <= 1.0) && (projCoords.y >= 0.00))) ||
+		((projCoords.y > 1.0) && (projCoords.y < 1.0015) && ((projCoords.x <= 1.0)  && (projCoords.z >= 0.00) && (projCoords.z <= 1.0) && (projCoords.x >= 0.00))) ||
+		((projCoords.y < 0.0) && (projCoords.y > -0.0015) && ((projCoords.x <= 1.0)  && (projCoords.z >= 0.00) && (projCoords.z <= 1.0) && (projCoords.x >= 0.00))) 
+		)
+		{
+			shadowLume = 1.0;
+			return 0.0;
+		}
+	}
+	#endif
+	if(projCoords.x > 1.0 || projCoords.x < 0.0 || projCoords.y > 1.0 || projCoords.y < 0.0)
+		return 0.0;
+
+	float currentDepth = projCoords.z;
+	if(currentDepth > 1.0)
+		return 0.0;
+	float bias = 0.000;
+	float shadow = 0.0;
+	vec2 texelSize = 1.0 / textureSize(shadowDepth, 0);
+	for(int x = -1; x <= 1; ++x)
+	{
+		for(int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(shadowDepth, projCoords.xy + vec2(x, y) * texelSize).r; 
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+		}    
+	}
+	shadow /= 9.3;
+	return shadow;
+}
+
+vec3 aces(vec3 col)
+{
+    float a = 2.51f;
+    float b = 0.03f;
+    float c = 2.43f;
+    float d = 0.59f;
+    float e = 0.14f;
+    return clamp((col*(a*col+b))/(col*(c*col+d)+e), 0.0, 1.0);
+}
+
+
+vec3 RRTAndODTFit(vec3 v)
+{
+    vec3 a = v * (v + 0.0245786) - 0.000090537;
+    vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
+    return a / b;
+}
+
+vec3 ACESFitted(vec3 color)
+{
+	mat3 ACESInputMat = mat3(vec3(
+	0.59719, 0.35458, 0.04823), vec3(
+	0.07600, 0.90834, 0.01566), vec3(
+	0.02840, 0.13383, 0.83777));
+	mat3 ACESOutputMat = mat3(vec3(
+	1.60475, -0.53108, -0.07367), vec3(
+	-0.10208,  1.10813, -0.00605), vec3(
+	-0.00327, -0.07276,  1.07602));
+
+    color = color *ACESInputMat  ;
+
+    color = RRTAndODTFit(color);
+
+    color =color *ACESOutputMat ;
+
+    color = clamp(color, vec3(0.0), vec3(1.0));
+
+    return color;
+}
+vec3 LinearTosRGB(vec3 color)
+{
+    vec3 x = color * 12.92;
+    vec3 y = 1.055 * pow(clamp(color, vec3(0.0), vec3(1.0)), vec3(1.0 / 2.4)) - 0.055;
+
+    vec3 clr = color;
+    clr.r = color.r < 0.0031308 ? x.r : y.r;
+    clr.g = color.g < 0.0031308 ? x.g : y.g;
+    clr.b = color.b < 0.0031308 ? x.b : y.b;
+
+    return clr;
+}
 void main()
 {
+	float pcfDepth = texture(shadowDepth, texCoords).r; 
     vec3 positionV =  texture(position, texCoords).xyz;
 	vec3 normalV =    texture(normal, texCoords).xyz;
 	vec3 occolusion = texture(ssao, texCoords).xyz;
@@ -237,6 +338,13 @@ void main()
 	vec3 V = normalize(lookPosition - positionV);
 	vec3 N = normalV;
 	
+	float mullCoff = 1.0f;
+	float dt = dot(normalize(-vec3(1, -1, 1)), N);
+	if(dt >= 0)
+	{
+		float val = calculateShadows(shadowVP * vec4(positionV, 1));
+		mullCoff = clamp(1.0 - val, 0.0, 1.0);
+	}
 
 	ULight light;
 	light.color = pow(vec3(1.0, 0.95, 0.83), vec3(2.2)) * 29;
@@ -246,18 +354,20 @@ void main()
 	surf.metalic = rmo3.y;
 	surf.normal = N;
 	surf.albedo = colorV;
-	Lo += ue_brdf_base(light, surf, -V)  * rmo3.z;  
+	Lo += ue_brdf_base(light, surf, -V)  * rmo3.z * mullCoff;  
 	
 
 	vec3 ambient = vec3(0.33) * colorV * occolusion;
 	vec3 rezult = ambient + Lo * occolusion;
 
-	
-	 vec3 final = 
+#ifdef USE_ACES_UNCHARTED
+	vec3 final = 
 	    Uncharted2Tonemap(max(rezult * cTonemapExposureBias, 0.0)) / 
         Uncharted2Tonemap(vec3(cTonemapMaxWhite, cTonemapMaxWhite, cTonemapMaxWhite));
-
-    FragColor = vec4(pow(final , vec3(1.0/2.2)), 1.0);
-	//FragColor = vec4(vec3( rmo3.x), 1.0);
+#else
+	vec3 final = aces(rezult) ;
+#endif
+    FragColor = vec4(LinearTosRGB(final), 1.0);
+	//FragColor = vec4(vec3(1.0 - pcfDepth), 1.0);
 	
 }

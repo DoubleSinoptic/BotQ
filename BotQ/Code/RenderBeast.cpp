@@ -546,18 +546,18 @@ void RenderBeast::Draw()
 	
 	Gl3dDevice::Viewport(SHADOW_SIZE_W, SHADOW_SIZE_H);
 
-	const Vector3 mainLightDir = Vector3(1.0, -1.0, 1.0).Normalize();
-
-	float HalfSize = 20.0;
-
-	const Vector3 LightDir = Vector3(1, -1, 1).Normalize();
-
+	
 
 	/*Vector3 rezCenter = CameraObject->GetPosition() + CameraObject->GetForward() * HalfSize;
 	Vector3 rezEye = rezCenter + LightDir * -HalfSize;
 	Vector3 rezUp = Vector3(0, 1, 0);*/
 
 
+	const Vector3 mainLightDir = Vector3(1.0, -1.0, 1.0).Normalize();
+
+	float HalfSize = 20.0;
+
+	const Vector3 LightDir = Vector3(1, -1, 1).Normalize();
 
 	Vector3 rezCenter = Vector3::Zero();
 	Vector3 rezEye = Vector3::Zero();

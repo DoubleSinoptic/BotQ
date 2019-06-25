@@ -184,6 +184,7 @@ bool GameInstance::Update(double dt)
 	SetThisCurrent();
 	delta = dt;
 	Internal_SimulatePhysicsContext(physics, dt, -1, -1);
+	updateQueue.Playback();
 	for (size_t i = 0; i < updatebleComponents.LengthReference; i++)
 	{
 		Component* c = updatebleComponents[i];

@@ -14,6 +14,14 @@ public:
 		Reset();
 	}
 
+	BBox3(const Vector3& postion, const Vector3& size)
+	{
+		Reset();
+		Vector3 sz = size / 2.0f;
+		ExtendPoint(postion + Vector3(sz));
+		ExtendPoint(postion - Vector3(sz));
+	}
+
 	Vector3 GetCenter() const 
 	{
 		return (min + max) / 2;

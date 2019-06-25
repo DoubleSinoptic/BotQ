@@ -93,11 +93,11 @@ Ref<DynamicArray<Ref<Material>>> MakesMaterial(const aiScene* scene, const Strin
 
 
 
-Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene* scene, const struct aiNode* nd, const String& txtureAdditionalPath)
+Ref<ModelConstructor> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene* scene, const struct aiNode* nd, const String& txtureAdditionalPath)
 {
 	Assert(scene != nullptr);
 	Assert(nd != nullptr);
-	Ref<construct_info> mconstructor = new construct_info();
+	Ref<ModelConstructor> mconstructor = new ModelConstructor();
     mconstructor->m_name = (nd->mName.C_Str());
 	
 	aiVector3D scale;
@@ -111,7 +111,7 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 	mconstructor->m_local_rotation = Quaternion(rot.x, rot.y, rot.z, rot.w).Normalize();
 	for (unsigned int n = 0; n < nd->mNumChildren; ++n)
 	{
-		Ref<construct_info> onceChild = rootBuild(mt, scene, nd->mChildren[n], txtureAdditionalPath);
+		Ref<ModelConstructor> onceChild = rootBuild(mt, scene, nd->mChildren[n], txtureAdditionalPath);
 		mconstructor->m_childs.Add(onceChild);
 	}
 
@@ -119,7 +119,7 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 	{
 		const aiMesh* asmesh = scene->mMeshes[nd->mMeshes[n]];
 		Ref<Mesh> game_mesh = new Mesh();
-		mesh_pair pair;
+		IndexedMesh pair;
 		pair.m_mat_id = asmesh->mMaterialIndex;
 		pair.m_mesh = game_mesh;
 
@@ -194,35 +194,35 @@ Ref<construct_info> rootBuild(Ref<DynamicArray<Ref<Material>>> mt, const aiScene
 }
 
 
-Ref<construct_info> MeshImporter::Import(String file)
+Ref<ModelConstructor> MeshImporter::Import(String file)
 {
 	file = Path::PathFix(file);
 	Resource* tt = Resource::Find(file, false);
 	if (tt)
-		return tt->GetObject<Ref<construct_info>>();
+		return tt->GetObject<Ref<ModelConstructor>>();
 	
 	FileStream f(file, OpenMode::Read);
 	DynamicArray<char> dt = f.AllBytes();
 	const aiScene* sc = aiImportFileFromMemory(dt.GetData(), dt.Length(), aiProcess_Triangulate | aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_OptimizeMeshes, "");
 	Assert(sc != nullptr);
 	Ref<DynamicArray<Ref<Material>>> mt = MakesMaterial(sc, Path::FileDir(file));
-	Ref<construct_info> o = rootBuild(mt, sc, sc->mRootNode, Path::FileDir(file));
+	Ref<ModelConstructor> o = rootBuild(mt, sc, sc->mRootNode, Path::FileDir(file));
 	aiReleaseImport(sc);
 	new Resource(o, file);
 	return o;
 }
 
-Ref<construct_info> MeshImporter::ImportRW(String file, const char * data, size_t len)
+Ref<ModelConstructor> MeshImporter::ImportRW(String file, const char * data, size_t len)
 {
 	file = Path::PathFix(file);
 	Resource* tt = Resource::Find(file, false);
 	if (tt)
-		return tt->GetObject<Ref<construct_info>>();
+		return tt->GetObject<Ref<ModelConstructor>>();
 
 	const aiScene* sc = aiImportFileFromMemory(data, len, aiProcess_Triangulate | aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_OptimizeMeshes, "");
 	Assert(sc != nullptr);
 	Ref<DynamicArray<Ref<Material>>> mt = MakesMaterial(sc, Path::FileDir(file));
-	Ref<construct_info> o = rootBuild(mt, sc, sc->mRootNode, Path::FileDir(file));
+	Ref<ModelConstructor> o = rootBuild(mt, sc, sc->mRootNode, Path::FileDir(file));
 	aiReleaseImport(sc);
 	new Resource(o, file);
 	return o;
